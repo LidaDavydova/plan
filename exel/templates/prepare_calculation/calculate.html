@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Расчет{% endblock %}
+
+{% block content %}
+    
+    <a href="{% url 'exel:main' %}" class="button">Главная</a>
+    <a href="{{file.dmp.url}}" class="button">Просмотреть файл DMP</a>
+    
+{% endblock %}

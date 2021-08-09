@@ -1,0 +1,322 @@
+body{
+    background: url(../static/background/yello.jpeg);
+}
+
+div.content {
+    position: relative;
+    left: 50px;
+}
+
+div#form1{
+    position: relative;
+    top: 50px;
+    left: 40px;
+}
+
+.formtable {
+    position: relative;
+    top: 145px;
+    left: 140px;
+}
+
+.table_blur table {
+font-size: 14px;
+border-radius: 3px;
+border-spacing: 0;
+text-align: center;
+}
+
+.table_blur th, .table_blur td {
+border-style: solid;
+border-width: 0 1px 1px 0;
+border-color: white;
+}
+
+.table_blur th {
+text-align:center;
+}
+
+.table_blur th:first-child {
+border-top-left-radius: 0px;
+}
+
+.table_blur th:last-child {
+border-top-right-radius: 0px;
+border-right: none;
+}
+
+.table_blur td {
+padding: 8px 15px;
+background: white;
+}
+
+.table_blur tr:last-child td:first-child {
+border-radius: 0 0 0 10px;
+}
+
+.table_blur tr:last-child td:last-child {
+border-radius: 0 0 10px 0;
+}
+
+.table_blur tr td:last-child {
+border-right: none;
+}
+
+.table_blur {
+  background: blue;
+  text-align: center;
+  max-width: 100%;
+  width: 100%
+}
+
+.table_blur tbody:hover tr:hover td {
+  color: #444444;
+  text-shadow: none;
+}
+
+div.tab {
+    padding: 5px;
+    max-width: 70%; 
+    overflow-x: hidden; 
+    margin-bottom: 20px;
+    box-shadow: 2px 2px 4px 2px rgba(0,0,0,.2)
+}
+
+.com {
+    display: inline-block; /* Строчно-блочный элемент */
+    position: relative; /* Относительное позиционирование */
+   }
+
+.com:hover::after {
+    content: attr(data-title); /* Выводим текст */
+    position: absolute; /* Абсолютное позиционирование */
+    left: 80%; top: 90%; /* Положение подсказки */
+    z-index: 1; /* Отображаем подсказку поверх других элементов */
+    background: rgba(255,255,230,0.9); /* Полупрозрачный цвет фона */
+    font-family: Arial, sans-serif; /* Гарнитура шрифта */
+    font-size: 11px; /* Размер текста подсказки */
+    padding: 5px 10px; /* Поля */
+    border: 1px solid #333; /* Параметры рамки */
+   }
+
+input[type="checkbox"]:checked + 
+
+.xpandable-block {
+    max-height: 3000px;
+}
+
+.xpandable-block {
+    max-height: 192px;
+    overflow: hidden;
+    order: 0;
+    -webkit-transition: max-height 1s;
+    transition: max-height 1s;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+
+.labeltable {
+	color: blue;
+	font-size: 14px;
+	cursor: pointer;
+	text-align: center;
+	margin: 20px auto;
+	display: block;
+	width: 250px;
+
+}
+
+
+button#down_calc {
+    position: relative;
+    left: 10px;
+    top: -130px;
+    width: 180px;
+    height: 30px;
+    font-size: 20px;
+    border-radius: 4px;
+    background: #00ff554d;
+    color: black;
+    font: justify;
+}
+
+
+select {
+    position: relative;
+    top: -15px;
+    background: #ffa00042;
+    width: 180px;
+    height: 30px;
+    font-size: 20px;
+}
+
+select option#list {
+    width: 180px;
+    height: 30px;
+    font-size: 20px;
+    background: #ffa00042;
+    color: black;
+}
+
+p#field {
+    position: absolute;
+    text-align: center;
+    top: 410px;
+    left: -10px;
+    font-family: 'Krona One', sans-serif;
+    writing-mode: tb-rl;
+    transform: rotate(180deg);
+    
+    
+}
+
+.button {
+      position: relative;
+      top: 30px;
+      padding: 15px 20px;
+      text-decoration: none;
+      margin: 8px 10px;
+      cursor: pointer;
+      width: 200px;
+      height: 35px;
+      border-radius: 45px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 1px;
+      line-height: 35px;
+      color: #524f4e;
+      background: #ffe851;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
+      transition: .3s;
+      }
+      
+.button:hover {
+      background: #e52e2e;
+      box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
+      color: #461bd2000048;
+      transform: translateY(1px);
+}
+
+/* not_cleared.html */
+
+div.all {
+    position: absolute;
+    margin-left: 70px;
+}
+
+form#not_cl {
+    margin-top: 70px;
+}
+
+.not_cl {
+    margin-left: 270px;
+    position: relative;
+    top: -79px;
+}
+
+input.mp {
+    position: relative;
+    left: 30%;
+    padding: 7px, 10px, 7px, 10px;
+    text-decoration: none;
+    margin-bottom: 80px;
+    cursor: pointer;
+    width: 200px;
+    height: 35px;
+    border-radius: 45px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+      
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 1px;
+    line-height: 35px;
+    color: #524f4e;
+    background: #ffe851;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
+    transition: .3s;
+}
+
+hr.r {
+    height: 2px;
+    width: 740px;
+    background: red;
+    position: relative;
+    top: 10px;
+    margin-top: 10px;
+}
+
+div#form{
+    padding: 20px;
+}
+
+div.not_cl hr {
+    height: 2px;
+    width: 470px;
+    background: red;
+    position: relative;
+    margin-top: 10px;
+}
+
+div.bk h3 {
+    position: relative;
+    top: 20px;
+    left: 30px;
+}
+
+
+
+/* cleared.html */
+
+.clear {
+    position: absolute;
+    left: 70px;
+    top: 30px;
+}
+
+form#cl {
+    position: relative;
+    margin-top: 70px;
+}
+
+.hr1 {
+    height: 2px;
+    width: 710px;
+    background: red;
+    position: relative;
+    top: 10px;
+    margin-top: 10px;
+    left: -5px;
+}
+
+div.cl hr {
+    height: 2px;
+    width: 500px;
+    background: red;
+    position: relative;
+    top: 10px;
+    margin-top: 10px;
+    left: -15px;
+}
+
+.cl {
+    position: relative;
+    margin-left: 220px;
+    margin-top: -76px;
+}
+
+input.download {
+    position: relative;
+    left: 50px;
+}
+
+.complete {
+    position: relative;
+    left: 80%;
+}

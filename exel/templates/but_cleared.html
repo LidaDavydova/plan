@@ -1,0 +1,54 @@
+{% extends 'download_calc.html' %}
+
+{% load static %}
+
+{% block title %}Клиент {{file.client}}{% endblock %}
+
+{% block content %}
+    <div class="clear">
+    <a href="{% url 'exel:main' %}" class="button">Главная</a>
+	<form  method="post" enctype="multipart/form-data" id="cl">
+	{% csrf_token %}
+		<hr class="hr1">
+		<h3>Название клиента</h3>
+            <h3>{{file.client}}</h3>
+		<div class="cl">
+        	<h3>Название PK</h3>
+            {{form1.name_rk}}
+           	<hr>
+        	<h3>Медиаплан (файл)</h3>
+        	<a href="{{file.mp.url}}">Выгрузить</a> 
+        	{{form1.mp}}
+        	<hr>
+        	<h3>Доступы к GTM и т.п.</h3>
+        	{{form1.access}}
+        	<hr>
+        	<h3>Ссылка на сайт (посадочная) Utm (файл)</h3>
+        	{{form1.landing}}
+        	<a href="{% url 'exel:utm' file.name_rk %}">Utm</a>
+        	<hr>
+        	<h3>Материалы (файлы)</h3>
+        	<a href="{% url 'exel:materials' file.name_rk %}">просмотр</a>
+        	<hr>
+        	<h3>Статус запуска (списком)</h3>
+        	{{form1.comments}}
+        	<hr>
+    	</div>
+    	<input type="submit" name="form1" value="Сохранить изменения">
+
+	</form>
+	
+	<p>Статистика по РК</p>
+	{%for r in report%}
+        <a href="{{ r.file.url }}">Шаблон отчета, который надо заполнять</a>
+    {%endfor%}
+    
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+        {{form2.report}}
+    	<input type="submit" name="form2" class="download" value="Загрузить">
+	</form>
+	<a href="{% url 'exel:complete' file.name_rk %}" class="complete">Завершить проект</a>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Подготовить расчет{% endblock %}
+
+{% block content %}
+<body>
+    <div id="p">
+    </div>
+    <div id="prepare">
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <a href="{% url 'exel:main' %}" class="button">Главная</a>
+    
+    <div class="title">
+    <p id="t">Общие вопросы для брифа</p>
+    <h3>Заполнить, если новый клиент</h3>
+    <div id="dop">
+        <p>коэф. скидки от 1 (min стоимость плана)<br>до 3 (max стоимость плана)</p>
+        <input name="discount"/>
+        <p>АК, %</p> 
+            <input name="AK" list="ak"/>
+            <datalist id="ak"> 
+            <option>10%</option>
+            </datalist>
+        <p>DCM, руб.</p> 
+            <input name="DCM" list="dcm"/>
+            <datalist id="dcm"> 
+            <option>1,5р.</option>
+            </datalist>
+        <br><br>
+
+        {{form}}
+    </div>
+    
+	<div class="question">
+    <table id="table">
+        <tr>
+            <td></td>
+            <td>Клиент/Брэнд</td>
+            <td>
+                <input name="client" list="cl"/>
+                <datalist id="cl">
+                {% for i in client %}
+                    <option>{{i.client}}</option>
+                {% endfor %}
+                </datalist>
+            </td>
+    	</tr>
+    	<tr>
+            <td></td>
+            <td>Продукт/Кампания</td>
+            <td>
+                <input name="product" />
+            </td>
+    	</tr>
+    	<tr>
+            <td></td>
+            <td>Название РК</td>
+            <td>
+                <input name="name_rk" id="rk"/>
+                <datalist id="rk">
+                {% for k in client %}
+                    <option>{{k.name_rk}}</option>
+                {% endfor %}
+                </datalist>
+            </td>
+    	</tr>
+    	<tr>
+            <td></td>
+            <td>Посадочная</td>
+            <td>
+                <input name="posad" type="url" />
+            </td>
+    	</tr>
+        <tr>
+            <td>
+            </td>
+            <td>Краткое описание бренда/продукта</td>
+            <td>
+                <input type="text" name="description">
+            </td>
+        </tr>
+        <tr>    
+            <td>
+            </td>
+            <td>Конкуренты бренда/продукта</td>
+            <td>
+            	<input type="text" name="competitors">
+            </td>
+        </tr>
+    	<tr>
+            <td></td>
+            <td>Вид деятельности/Категория</td>
+            <td>
+                <input name="type_act" list="type" />
+                <datalist id="type">
+                <option>Авто</option>
+                <option>Авиа</option>
+                <option>Недвижимость</option>
+                <option>Ресторан</option>
+                <option>Одежда</option>
+                <option>fmcg</option>
+                <option>Бытовая техника</option>
+                <option>Развлечения</option>
+                <option>другое-указать</option>
+                </datalist>
+            </td>
+    	</tr>
+    	<tr>
+            <td></td>
+            <td>Страна</td>
+            <td>
+                <input name="country" list="country" />
+                <datalist id="country">
+                <option>Россия</option>
+                </datalist>
+            </td>
+    	</tr>
+    	<tr>
+            <td></td>
+            <td>Регион</td>
+            <td>
+                <input name="region" list="region" />
+                <datalist id="region">
+                <option>Москва</option>
+                </datalist>
+            </td>
+    	</tr>
+    	<tr>
+            <td></td>
+            <td>Пол</td>
+            <td>
+                <input name="gender" list="gender" />
+                <datalist id="gender">
+                <option>Женщины</option>
+                <option>Мужчины</option>
+                </datalist>
+            </td>
+    	</tr>
+    	<tr>
+            <td></td>
+            <td>Возраст</td>
+            <td>
+                <input name="age"/>
+            </td>
+    	</tr>
+    	<tr>
+            <td></td>
+            <td>Интересы</td>
+            <td>
+                <input name="interes" list="interes" />
+                <datalist id="interes">
+                <option>учитывать</option>
+                <option>не учитывать</option>
+                </datalist>
+            </td>
+    	</tr>
+    	<tr>
+            <td></td>
+            <td>Доход</td>
+            <td>
+                <input name="income" list="income" />
+                <datalist id="income">
+                <option>A-высокий</option>
+                <option>B-средний</option>
+                <option>C-низкий</option>
+                </datalist>
+            </td>
+    	</tr><tr>
+            <td></td>
+            <td>Размещение 2х и более рекламодателей</td>
+            <td>
+                <input name="rek" list="rek" />
+                <datalist id="rek">
+                <option>учитывать</option>
+                <option>не учитывать</option>
+                </datalist>
+            </td>
+    	</tr>
+    	<tr>
+            <td></td>
+            <td>
+                Материалы<br> <br>
+                Видео (указать длительность,<br>если будет несколько видео,
+                <br>то указать - длинну каждого)
+                <br>*длительность указывать желательно,<br>но не обязательно
+                <br>*обычно не более 3 роликов<br>разной длительности
+            </td>
+            <td>
+                <input name="materials" list="materials" />
+                <datalist id="materials">
+                <option>Баннеры</option>
+                <option>Видео (указать длительность) и баннеры</option>
+                <option>другое - указать</option>
+                </datalist>
+                <h6>Длительность:<br>(не более 3 видео)<h6>
+                <input name="duration1"/><br>
+                <input name="duration2"/><br>
+                <input name="duration3"/><br>
+            </td>
+    	</tr>
+    	<tr>
+            <td></td>
+            <td>Период</td>
+            <td>
+                <h4>с: </h4>
+                <input name="period_c" type="date"/><br><br>
+                <h4>по: </h4>
+                <input name="period_p" type="date" />
+            </td>
+    	</tr>
+    	<tr>
+            <td>
+            </td>
+            <td>Бюджет, с НДС и АК</td>
+            <td>
+                <input type="text" name="budget">
+            </td>
+    	</tr>
+    	<tr>
+            <td></td>
+            <td>Задача, kpi</td>
+            <td>
+                <input name="KPI" list="KPI" />
+                <datalist id="KPI">
+                <option>охват</option>
+                <option>трафик</option>
+                <option>конверсии</option>
+                <option>охват/конверсии</option>
+                <option>другое - указать</option>
+                
+                </datalist>
+            </td>
+    	</tr>
+    	<tr>
+            <td></td>
+            <td>Планирование</td>
+            <td>
+                <input name="plan" list="plan" />
+                <datalist id="plan">
+                <option>свободное</option>
+                <option>строгий список ресурсов</option>
+                </datalist>
+            </td>
+    	</tr>
+       
+        <tr>
+            <td>
+            </td>
+            <td>Кто будет готовить материалы для кампании?</td>
+            <td>
+            	<input type="text" name="who_prep_materials">
+        	</td>
+        </tr>  
+    </table>
+	
+	<input id="i" type="submit" value="РАССЧИТАТЬ">
+	</div>
+    </div>
+	</form>
+	</div>
+	</body>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+    <body>
+        <div class="prof">
+            <h1>Мой профиль</h1>
+            <form method="post">
+            {% csrf_token %}
+                Имя пользователя: {{ user.username }} <br>
+                Email: {{ user.email }}
+            
+                <input type="submit" value="Главная">
+            </form>
+        </div>
+    </body>
+{% endblock %}

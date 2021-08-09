@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Главная страница{% endblock %}</title>
+    
+    <link rel="stylesheet" href="{% static 'base.css' %}" type="text/css">
+
+</head>
+    {% block content %}
+    <body>
+    <div id="first">
+    </div>
+    <div id="base">
+        <a href="{% url 'exel:prepare' %}" class="button">ПОДГОТОВИТЬ РАСЧЕТ</a>
+        <a href="{% url 'exel:download_calc' %}" class="button">ЗАГРУЗИТЬ РАСЧЕТ</a>
+        
+        {% if body == 'on' %}
+            {% autoescape on %}
+                <a href="{% url 'exel:prepare' %}" class="button">БАИНГ</a>
+            {% endautoescape %}
+        {% endif %}
+        
+    	
+    	<a href="{% url 'exel:logout' %}" class="button">Выйти</a>
+
+    	{% if user.is_authenticated %}
+            <h3 id="user">Пользователь: {{ user.username }}</h3>
+        {% endif %}
+        
+        
+    	
+    	<form method="post" class="cleared">
+        	<p id="base">СОГЛАСОВАННЫЕ<br>ПЛАНЫ<br>ИНФО ПО ЗАПУСКУ,<br>СТАТУС ОТКРУТКИ</p>
+            <div class="form">
+            <input type="checkbox" id="button2">
+            <div class="xpandable-block">
+            <div class="tab">
+
+            <table class="table_blur">
+            	<tbody>
+                	{% for name in cleared %}
+                    	<tr>
+                        	<td><a href="{% url 'exel:but_cleared' name.name_rk %}">{{name.client}}</a>
+                        	</td>
+                        	<td>
+                        	<div class="com" data-title={{name.comments}}>
+                        	этапы проекта
+                        	</div>
+                        	</td>
+                		</tr>
+                	{% endfor %}
+            	</tbody>
+            </table>
+        </div>
+        </div>
+        <label class="labeltable" for="button2">Показатать/Cкрыть</label>
+        </div>
+                
+    	</form>
+    	<form  method="post" class="not_cleared">
+        	{% csrf_token %}
+        	<p id="not_cl">НЕ СОГЛАСОВАННЫЕ<br>ПЛАНЫ/СТАТУС</p>
+        	<div class="formtable">
+        	<input type="checkbox" id="button1">
+            <div class="xpandable-block">
+            <div class="tab">
+            	<table class="table_blur">
+            		<tbody>
+            			{% for name in files %}
+                    	<tr>
+                        	<td><a href="{% url 'exel:but_not_cleared' name.name_rk %}">{{name.client}}</a></td>
+                        	<td>/ отправлен {{name.duploaded_at}}</td>
+                        	<td>
+                        	<div class="com" data-title={{name.comments}}>
+                        	этапы проекта
+                        	</div>
+                        	</td>
+                            <td>
+                                <a href="{{ name.calculation.url }}">Выгрузить</a>
+                            </td>
+                		</tr>
+                	{% endfor %}
+            	</tbody>
+            </table>
+        </div>
+        </div>
+        <label class="labeltable" for="button1">Показатать/Cкрыть</label>
+        </div>
+	</form>
+	<p id="end">Завершенные проекты</p>
+
+    <form  method="post" class="compl">
+        	{% csrf_token %}
+        	<div class="completeform">
+        	<input type="checkbox" id="button3">
+            <div class="xpandable-block">
+            <div class="tab">
+            	<table class="table_blur_compl">
+            		<tbody>
+            			{% for name in complete %}
+                    	<tr>
+                        	<td>{{name.client}}</td>
+                        	<td>{{name.name_rk}}</td>
+                        	<td>{{name.budget}}</td>
+                        	<td>{{name.period_c}} - {{name.period_p}}</td>
+                            <td>
+                                <a href="{% url 'exel:but_cleared' name.name_rk %}">Карточка проекта</a>
+                            </td>
+                		</tr>
+                	{% endfor %}
+            	</tbody>
+            </table>
+        </div>
+        </div>
+        <label class="label" for="button3">Показатать/Cкрыть</label>
+        </div>
+	</form>
+
+	</div>
+	</body>
+	{% endblock %}
+</html>
