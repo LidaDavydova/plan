@@ -133,7 +133,7 @@ class Prepare_calc(TemplateView):
                                          who_prep_materials=who_prep_materials, img=ex,
                                          discount=discount, AK=AK, DCM=DCM)
                     except (NameError, AttributeError):
-                        s = Brief.objects.filter(username=username, client=client).first()
+                        s = Brief.objects.filter(username=username, client=client)[::-1][0]
                         k = s.img.name
                         ak = s.AK
                         disc = s.discount
@@ -157,10 +157,11 @@ class Prepare_calc(TemplateView):
                 
                 # In the down def to create a file DMP.xlsx
                 for i in Dmp.objects.all():
-                    n = i.file.url.replace("/", "\\")[1:]
-                p = pd.read_excel(n,
+                    n = i.file.url[1:]
+                hol = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                p = pd.read_excel(os.path.join(hol, n),
                                      header=5)
-                e = openpyxl.load_workbook(filename=n, data_only=True)
+                e = openpyxl.load_workbook(filename=os.path.join(hol, n), data_only=True)
                 a = p["Категория Клиента"].tolist()
                 b = p["KPI"].tolist()
                 season = p["Сезонники"].tolist()
@@ -206,20 +207,20 @@ class Prepare_calc(TemplateView):
                     data[(p.columns.ravel())[i]] = m
                 s = pd.DataFrame(data)
                 
-                if not os.path.exists(f"media\clients\{username}"):
-                    os.mkdir(f"media\clients\{username}")
-                if not os.path.exists(f"media\clients\{username}\{client}"):
-                    os.mkdir(f"media\clients\{username}\{client}")
-                s.to_excel(f"media\clients\{username}\{client}\DMP_{name_rk}.xlsx", startrow=1, index=False)
+                if not os.path.exists(os.path.join(hol, f"media/clients/{username}")):
+                    os.mkdir(os.path.join(hol, f"media/clients/{username}"))
+                if not os.path.exists(os.path.join(hol, f"media/clients/{username}/{client}")):
+                    os.mkdir(os.path.join(hol, f"media/clients/{username}/{client}"))
+                s.to_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"), startrow=1, index=False)
                 
                 ''' This is create brief file for clients'''
                 for i in Brief_pattern.objects.all():
-                    n = i.file.name.replace("/", "\\")
-                wb = openpyxl.load_workbook(filename=f'media\\{n}', data_only=True)
+                    n = i.file.url[1:]
+                wb = openpyxl.load_workbook(filename=os.path.join(hol, n), data_only=True)
                 ws = wb.worksheets[0]
                 sheet = wb.active
                 bd = Brief.objects.filter(username=username, client=client, 
-                                       product=product, name_rk=name_rk).first()
+                                       product=product, name_rk=name_rk)[::-1][0]
                 sheet['C3'] = bd.client
                 sheet['C4'] = bd.product
                 sheet['C5'] = bd.name_rk
@@ -251,13 +252,13 @@ class Prepare_calc(TemplateView):
                 for row in sheet.iter_rows():
                     for cell in row:
                         cell.alignment = Alignment(wrap_text=True,vertical='top') 
-                wb.save(f"media\\clients\\{username}\\{client}\\brief_{name_rk}.xlsx")
+                wb.save(os.path.join(hol, f"media\\clients\\{username}\\{client}\\brief_{name_rk}.xlsx"))
                 path2 = join('clients', username, client, f'brief_{name_rk}.xlsx')
                 
                 '''This is correction DMP'''
-                wb=load_workbook(f"media\clients\{username}\{client}\DMP_{name_rk}.xlsx")
+                wb=load_workbook(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"))
                 sheet = wb.active
-                p = pd.read_excel(f"media\clients\{username}\{client}\DMP_{name_rk}.xlsx",
+                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"),
                                      header=1)
                 sheet.column_dimensions['B'].width = 10
                 sheet.column_dimensions['C'].width = 8
@@ -318,16 +319,16 @@ class Prepare_calc(TemplateView):
                             right = Side(border_style='thin', color='FF000000'),
                             bottom = Side(border_style='thin', color='FF000000'),
                             left = Side(border_style='thin', color='FF000000')) 
-                wb.save(f"media\clients\{username}\{client}\DMP_{name_rk}.xlsx")
+                wb.save(os.path.join(hol, f"media\clients\{username}\{client}\DMP_{name_rk}.xlsx"))
                 
                 '''This is create mp'''
-                p = pd.read_excel(f"media\clients\{username}\{client}\DMP_{name_rk}.xlsx", 
+                p = pd.read_excel(os.path.join(hol, f"media\clients\{username}\{client}\DMP_{name_rk}.xlsx"), 
                                   header=None, skiprows=2, usecols = [1, 2, 3, 4, 5, 6,
                                                                     8, 9, 10, 12, 13,
                                                                     14, 15, 16, 17,
                                                                     18, 19, 20, 21, 22,
                                                                     23, 24, 29, 30, 31])
-                frequency = pd.read_excel(f"media\clients\{username}\{client}\DMP_{name_rk}.xlsx",
+                frequency = pd.read_excel(os.path.join(hol, f"media\clients\{username}\{client}\DMP_{name_rk}.xlsx"),
                                           header=None, skiprows=2, usecols = [37])
                 fr = frequency.to_dict(orient='list')
                 b = p.to_dict(orient='list')
@@ -371,7 +372,7 @@ class Prepare_calc(TemplateView):
                 
                 u=pd.DataFrame(b)
                 
-                wb = openpyxl.load_workbook(filename="media\pattern\медиаплан.xlsx")
+                wb = openpyxl.load_workbook(filename=os.path.join(hol, "media/pattern/медиаплан.xlsx"))
                 w = wb.worksheets[0]
                 sheet = wb.active
                 
@@ -463,7 +464,7 @@ class Prepare_calc(TemplateView):
                     for cell in row:
                         cell.number_format = '###0,00"р."'
                         
-                wb.save(f"media\clients\{username}\{client}\mp_{name_rk}.xlsx")
+                wb.save(os.path.join(hol, f"media\clients\{username}\{client}\mp_{name_rk}.xlsx"))
                 
                 
 
