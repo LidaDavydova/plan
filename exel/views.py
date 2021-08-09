@@ -23,7 +23,6 @@ from os.path import join
 from openpyxl.styles import Alignment, Border, Side, PatternFill, Font
 from openpyxl import load_workbook
 from openpyxl.worksheet.datavalidation import DataValidation
-import xlwings as xw
 from openpyxl.utils.dataframe import dataframe_to_rows
 
 
