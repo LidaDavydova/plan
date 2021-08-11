@@ -10,6 +10,12 @@
 </head>
     {% block content %}
     <body>
+     <div class="preloader">
+    <div class="preloader__row">
+      <div class="preloader__item"></div>
+      <div class="preloader__item"></div>
+    </div>
+  </div>
     <div id="first">
     </div>
     <div id="base">
@@ -42,7 +48,7 @@
             	<tbody>
                 	{% for name in cleared %}
                     	<tr>
-                        	<td><a href="{% url 'exel:but_cleared' name.name_rk %}">{{name.client}}</a>
+                        	<td><a class="s1" href="{% url 'exel:but_cleared' name.name_rk %}">{{name.client}}</a>
                         	</td>
                         	<td>
                         	<div class="com" data-title={{name.comments}}>
@@ -70,7 +76,7 @@
             		<tbody>
             			{% for name in files %}
                     	<tr>
-                        	<td><a href="{% url 'exel:but_not_cleared' name.name_rk %}">{{name.client}}</a></td>
+                        	<td><a class="s1" href="{% url 'exel:but_not_cleared' name.name_rk %}">{{name.client}}</a></td>
                         	<td>/ отправлен {{name.duploaded_at}}</td>
                         	<td>
                         	<div class="com" data-title={{name.comments}}>
@@ -89,16 +95,24 @@
         <label class="labeltable" for="button1">Показатать/Cкрыть</label>
         </div>
 	</form>
+	
 	<p id="end">Завершенные проекты</p>
 
     <form  method="post" class="compl">
         	{% csrf_token %}
         	<div class="completeform">
         	<input type="checkbox" id="button3">
-            <div class="xpandable-block">
+            <div class="xpandable-block1">
             <div class="tab">
             	<table class="table_blur_compl">
             		<tbody>
+                		<tr class="name">
+                        	<td>Клиент</td>
+                        	<td>Название РК</td>
+                        	<td>Бюджет</td>
+                        	<td>Период</td>
+                        	<td>Карточка проекта</td>
+                        </tr>
             			{% for name in complete %}
                     	<tr>
                         	<td>{{name.client}}</td>
@@ -106,7 +120,7 @@
                         	<td>{{name.budget}}</td>
                         	<td>{{name.period_c}} - {{name.period_p}}</td>
                             <td>
-                                <a href="{% url 'exel:but_cleared' name.name_rk %}">Карточка проекта</a>
+                                <a class="s3" href="{% url 'exel:but_cleared' name.name_rk %}">Карточка проекта</a>
                             </td>
                 		</tr>
                 	{% endfor %}
@@ -119,6 +133,16 @@
 	</form>
 
 	</div>
+	<script>
+    window.onload = function () {
+      document.body.classList.add('loaded_hiding');
+      window.setTimeout(function () {
+        document.body.classList.add('loaded');
+        document.body.classList.remove('loaded_hiding');
+      }, 500);
+    }
+  </script>
+	
 	</body>
 	{% endblock %}
 </html>

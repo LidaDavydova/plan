@@ -1,14 +1,59 @@
 /* base.html */
 body, html {
-    background: url(../static/background/yello.jpeg);
+    background: url(../static/background/11.png);
     width: 99%;
     height: 100%;
+}
+
+
+
+.s1 {
+   color: #000000;
+   position: relative;
+   text-decoration: none;
+   display: inline-block;
+   padding: 5px 10px;
+   letter-spacing: 1px;
+   margin: 0 20px;
+   font-size: 14px;
+   font-family: 'Fredoka One', cursive;
+   transition: .3s ease-in-out;
+}
+.s1:after {
+   content: "";
+   display: block;
+   position: relative;
+   width: 100%;
+   margin: auto;
+   border-bottom: 3px dashed #3db10d;
+   bottom: -5px;
+   transition: .5s ease-in-out;
+}
+.s1:hover:after {
+   width: 0;
+}
+
+a.s3 {
+   color: #2691ff;
+   border: 2px solid transparent;
+   text-decoration: none;
+   display: inline-block;
+   padding: 5px 10px;
+   letter-spacing: 1px;
+   margin: 0 20px;
+   font-size: 14px;
+   font-family: 'Fredoka One', cursive;
+   transition: .3s ease-in-out;
+}
+a.s3:hover {
+   border: 2px solid #f74c4c;
 }
 
 h3#user {
     position: absolute;
     top: 3%;
     left: 72vw;
+    font-family: 'Krona One', sans-serif;
 }
 
 .completeform {
@@ -106,7 +151,19 @@ input[type="checkbox"]:checked +
 }
 
 .xpandable-block {
-    max-height: 155px;
+    max-height: 160px;
+    overflow: hidden;
+    order: 0;
+    -webkit-transition: max-height 1s;
+    transition: max-height 1s;
+}
+
+.xpandable-block1 {
+    max-height: 5000px;
+}
+
+.xpandable-block1 {
+    max-height: 275px;
     overflow: hidden;
     order: 0;
     -webkit-transition: max-height 1s;
@@ -140,7 +197,7 @@ text-align: center;
 .table_blur_compl th, .table_blur_compl td {
 border-style: solid;
 border-width: 0 1px 1px 0;
-border-color: white;
+border-color: #00000000;
 }
 
 .table_blur_compl th {
@@ -158,7 +215,7 @@ border-right: none;
 
 .table_blur_compl td {
 padding: 8px 15px;
-background: white;
+background: #00000000;
 }
 
 .table_blur_compl tr:last-child td:first-child {
@@ -174,7 +231,7 @@ border-right: none;
 }
 
 .table_blur_compl {
-  background: black;
+  background: #00000000;
   text-align: center;
   max-width: 100%;
   width: 100%
@@ -199,6 +256,15 @@ border-right: none;
 	display: block;
 	width: 250px;
 
+}
+
+tr.name{
+   background: #ffc107ab;
+  text-align: center;
+  max-width: 100%;
+  width: 100%;
+  font-family: Lobster, cursive;
+  font-size: 17px;
 }
 
 div#first {
@@ -249,7 +315,7 @@ div#base {
       width: 200px;
       height: 35px;
       border-radius: 45px;
-      font-family: 'Montserrat', sans-serif;
+      font-family:  Libre Baskerville, serif;
       font-size: 14px;
       
       text-transform: uppercase;
@@ -274,7 +340,7 @@ p#base {
     text-align: center;
     top: 20vh;
     left: -10px;
-    font-family: 'Krona One', sans-serif;
+    font-family: 'Bitter', serif;
     writing-mode: tb-rl;
     transform: rotate(180deg);
 }
@@ -305,6 +371,41 @@ p#not_cl {
     transform: rotate(180deg);
 }
       
+
+
+      
+.arrow-right span {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-bottom: 3px solid #31e2ff;
+    border-left: 3px solid #ccff31;
+   
+    margin: -2px;
+    animation: arrow-right 2s infinite;
+    float: left;
+}
+ 
+.arrow-right span:nth-child(2){
+    animation-delay: -0.1s;
+}
+.arrow-right span:nth-child(3){
+    animation-delay: -0.2s;
+}
+@keyframes arrow-right {
+    0%{
+        opacity: 0;
+        transform: rotate(-130deg) translate(-0px,-0px);
+    }
+    50%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+        transform: rotate(-130deg) translate(0px,0px);
+    }
+}
+
 /* prepare.html */
 
 div#prepare {
@@ -581,3 +682,80 @@ a.button_down {
     box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
     transition: .3s;
 }
+
+
+
+
+
+
+
+
+.preloader {
+      /*фиксированное позиционирование*/
+      position: fixed;
+      /* координаты положения */
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      /* фоновый цвет элемента */
+      background: #e0e0e0;
+      /* размещаем блок над всеми элементами на странице (это значение должно быть больше, чем у любого другого позиционированного элемента на странице) */
+      z-index: 1001;
+    }
+
+    .preloader__row {
+      position: relative;
+      top: 50%;
+      left: 50%;
+      width: 70px;
+      height: 70px;
+      margin-top: -35px;
+      margin-left: -35px;
+      text-align: center;
+      animation: preloader-rotate 2s infinite linear;
+    }
+
+    .preloader__item {
+      position: absolute;
+      display: inline-block;
+      top: 0;
+      background-color: #337ab7;
+      border-radius: 100%;
+      width: 35px;
+      height: 35px;
+      animation: preloader-bounce 2s infinite ease-in-out;
+    }
+
+    .preloader__item:last-child {
+      top: auto;
+      bottom: 0;
+      animation-delay: -1s;
+    }
+
+    @keyframes preloader-rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes preloader-bounce {
+
+      0%,
+      100% {
+        transform: scale(0);
+      }
+
+      50% {
+        transform: scale(1);
+      }
+    }
+
+    .loaded_hiding .preloader {
+      transition: 0.3s opacity;
+      opacity: 0;
+    }
+
+    .loaded .preloader {
+      display: none;
+    }

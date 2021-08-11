@@ -214,7 +214,7 @@ class Prepare_calc(TemplateView):
                 
                 ''' This is create brief file for clients'''
                 for i in Brief_pattern.objects.all():
-                    n = i.file.url[1:]
+                    n = f'media/{i.file.name}'
                 wb = openpyxl.load_workbook(filename=os.path.join(hol, n), data_only=True)
                 ws = wb.worksheets[0]
                 sheet = wb.active
@@ -251,14 +251,20 @@ class Prepare_calc(TemplateView):
                 for row in sheet.iter_rows():
                     for cell in row:
                         cell.alignment = Alignment(wrap_text=True,vertical='top') 
-                wb.save(os.path.join(hol, f"media\\clients\\{username}\\{client}\\brief_{name_rk}.xlsx"))
+                wb.save(os.path.join(hol, f"media/clients/{username}/{client}/brief_{name_rk}.xlsx"))
                 path2 = join('clients', username, client, f'brief_{name_rk}.xlsx')
                 
                 '''This is correction DMP'''
                 wb=load_workbook(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"))
                 sheet = wb.active
+                
                 p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"),
                                      header=1)
+                season = p['Сезонники'].tolist()
+                for row in sheet[f'H3':f'H{len(season)+1}']:
+                    for cell in row:
+                        if cell == 'проверить':
+                            cell.fill = PatternFill(start_color='ff3333', end_color='ff3333', fill_type='solid')
                 sheet.column_dimensions['B'].width = 10
                 sheet.column_dimensions['C'].width = 8
                 sheet.column_dimensions['D'].width = 17
@@ -318,16 +324,16 @@ class Prepare_calc(TemplateView):
                             right = Side(border_style='thin', color='FF000000'),
                             bottom = Side(border_style='thin', color='FF000000'),
                             left = Side(border_style='thin', color='FF000000')) 
-                wb.save(os.path.join(hol, f"media\clients\{username}\{client}\DMP_{name_rk}.xlsx"))
+                wb.save(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"))
                 
                 '''This is create mp'''
-                p = pd.read_excel(os.path.join(hol, f"media\clients\{username}\{client}\DMP_{name_rk}.xlsx"), 
-                                  header=None, skiprows=2, usecols = [1, 2, 3, 4, 5, 6,
+                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"), 
+                                  header=None, skiprows=2, usecols = [1, 2, 3, 4, 5, 6, 7,
                                                                     8, 9, 10, 12, 13,
                                                                     14, 15, 16, 17,
                                                                     18, 19, 20, 21, 22,
                                                                     23, 24, 29, 30, 31])
-                frequency = pd.read_excel(os.path.join(hol, f"media\clients\{username}\{client}\DMP_{name_rk}.xlsx"),
+                frequency = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"),
                                           header=None, skiprows=2, usecols = [37])
                 fr = frequency.to_dict(orient='list')
                 b = p.to_dict(orient='list')
@@ -462,8 +468,21 @@ class Prepare_calc(TemplateView):
                                 +sheet[f'AS13':f'AS{height+13}']+sheet[f'AU13':f'AU{height+13}']):
                     for cell in row:
                         cell.number_format = '###0,00"р."'
-                        
-                wb.save(os.path.join(hol, f"media\clients\{username}\{client}\mp_{name_rk}.xlsx"))
+                ''' Сезонники и баинг
+                season2 = {}
+                for i in range(48, 103):
+                    if sheet.cell(row=10, column=i).value!=None:
+                        season2[sheet.cell(row=10, column=i).value] = i
+                for i in range(13, len(season)+13):
+                    if season[i-13]=='проверить' or season[i-13]=='нет':
+                        pass
+                    else:
+                        f = season2[season[i-13]]
+                        for k in range(5):
+                            sheet.cell(row=i, column=f+k).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
+                ''' 
+                
+                wb.save(os.path.join(hol, f"media/clients/{username}/{client}/mp_{name_rk}.xlsx"))
                 
                 
 
@@ -526,107 +545,134 @@ class Download_calc(TemplateView):
 def not_cleared(request, name_rk):
     if request.user.is_authenticated:
         username = request.user.username
-        m = All_file.objects.filter(name_rk=name_rk)[::-1][0]
-        data = {
-            'client': m.client,
-            'mp': m.mp,
-            'brief': m.brief,
-            'form': CommentForm(initial={
-                'name_rk': name_rk,
-                'comments': m.comments,
-                    }),
-            }
-        if request.method == 'POST':
-            form = CommentForm(request.POST or None)
-            if form.is_valid():
-                ex = request.FILES.get('presentation')
-                mp = request.FILES.get('mp')
-                comment = request.POST.get('comments')
-                rk = request.POST.get('name_rk')
-                if ex==None and mp!=None:
-                    try:
-                        d = Cleared.objects.get(username=username, name_rk=name_rk,
-                                          client=m.client)
-                        m.name_rk = rk
-                        m.mp = mp
-                        m.comments = comment
-                        m.save()
-                        d.mp = mp
-                        d.save()
-                    except:
-                        data['error'] = 'Заполните все поля'
-                        return render(request, 'but_not_cleared.html', data)
-               
-                elif mp==None and ex==None:
-                    try:
-                        d = Cleared.objects.get(username=username, name_rk=name_rk,
+        try:
+            m = All_file.objects.filter(name_rk=name_rk)[::-1][0]
+            data = {
+                'client': m.client,
+                'mp': m.mp,
+                'brief': m.brief,
+                'form': CommentForm(initial={
+                    'name_rk': name_rk,
+                    'comments': m.comments,
+                        }),
+                }
+            if request.method == 'POST':
+                form = CommentForm(request.POST or None)
+                if form.is_valid():
+                    ex = request.FILES.get('presentation')
+                    mp = request.FILES.get('mp')
+                    comment = request.POST.get('comments')
+                    rk = request.POST.get('name_rk')
+                    if name_rk!=rk:
+                        try:
+                            d = Cleared.objects.get(username=username, mp=m.mp,
+                                                  client=m.client)
+                            d.name_rk = rk
+                            d.save()
+                        except:
+                            m.name_rk = rk
+                            m.save()
+                            h = Client.objects.filter(username=username, mp=m.mp)[0]
+                            h.name_rk = rk
+                            h.save()
+                    if ex==None and mp!=None:
+                        try:
+                            d = Cleared.objects.get(username=username, name_rk=name_rk,
                                               client=m.client)
+                            m.name_rk = rk
+                            m.mp = mp
+                            m.comments = comment
+                            m.save()
+                            d.mp = mp
+                            d.save()
+                        except:
+                            data['error'] = 'Заполните все поля'
+                            return render(request, 'but_not_cleared.html', data)
+                   
+                    elif mp==None and ex==None:
+                        try:
+                            d = Cleared.objects.get(username=username, name_rk=name_rk,
+                                                  client=m.client)
+                            m.name_rk = rk
+                            m.comments = comment
+                            m.save()
+                        except:
+                            data['error'] = 'Заполните все поля'
+                            return render(request, 'but_not_cleared.html', data)
+                    else:
                         m.name_rk = rk
+                        m.presentation = ex
                         m.comments = comment
                         m.save()
-                    except:
-                        data['error'] = 'Заполните все поля'
-                        return render(request, 'but_not_cleared.html', data)
-                else:
-                    m.name_rk = rk
-                    m.presentation = ex
-                    m.comments = comment
-                    m.save()
-                    b = Brief.objects.filter(name_rk=name_rk)[::-1][0]
-                    Cleared.objects.create(username=username, name_rk=name_rk,
-                                      client=m.client, mp=m.mp, landing=b.posad)
-                h = Client.objects.filter(username=username, name_rk=name_rk)[0]
-                h.comments = comment
-                h.save()
-            return main(request)
-    return render(request, 'but_not_cleared.html', data)
+                        b = Brief.objects.filter(name_rk=name_rk)[::-1][0]
+                        try:
+                            d = Cleared.objects.get(username=username, mp=m.mp,
+                                                  client=m.client)
+                            d.name_rk = rk
+                            d.mp = mp
+                            d.save()
+                        except ObjectDoesNotExist:
+                            Cleared.objects.create(username=username, name_rk=name_rk,
+                                          client=m.client, mp=m.mp, landing=b.posad)
+
+                    h = Client.objects.filter(username=username, name_rk=name_rk)[0]
+                    h.comments = comment
+                    h.save()
+                return main(request)
+            return render(request, 'but_not_cleared.html', data)
+        except IndexError:
+            pass
+        
    
     
 def cleared(request, name_rk):
     if request.user.is_authenticated:
         username = request.user.username
-        f = Cleared.objects.get(username=username,
+        try:
+            f = Cleared.objects.get(username=username,
                                                  name_rk=name_rk)
-        data = {
-           'file': f,
-           'report': Report.objects.all(),
-           'form2': CommentForm,
-           'form1': ClearForm(initial={
-               'name_rk': name_rk,
-               'comments': f.comments,
-               'landing': f.landing,
-               'access': f.access
-                   }),
-           }
-        if request.method=='POST' and 'form1' in request.POST:
-            form1 = ClearForm(request.POST or None)
-            if form1.is_valid():
-                mp = request.FILES.get('mp')
-                comments = request.POST.get('comments')
-                rk = request.POST.get('name_rk')
-                landing = request.POST.get('landing')
-                access = request.POST.get('access')
-                if mp==None:
-                    f.name_rk = rk
-                    f.comments = comments
-                    f.landing = landing
-                    f.access = access
-                    f.save()
-                else:
-                    f.name_rk = rk
-                    f.mp = mp
-                    f.comments = comments
-                    f.save()
-        if request.method=='POST' and 'form2' in request.FILES:
-            form2 = CommentForm(request.FILES)
-            if form2.is_valid():
-                report = request.FILES.get('report')
-                a = All_file.objects.get(username=username,
-                                                 name_rk=name_rk)
-                a.report = report
-                a.save()
-                return render(request, 'but_not_cleared.html', data)
-        return render(request, 'but_cleared.html', data)
+            data = {
+               'file': f,
+               'report': Report.objects.all(),
+               'form2': CommentForm,
+               'form1': ClearForm(initial={
+                   'name_rk': name_rk,
+                   'comments': f.comments,
+                   'landing': f.landing,
+                   'access': f.access
+                       }),
+               }
+            if request.method=='POST' and 'form1' in request.POST:
+                form1 = ClearForm(request.POST or None)
+                if form1.is_valid():
+                    mp = request.FILES.get('mp')
+                    comments = request.POST.get('comments')
+                    rk = request.POST.get('name_rk')
+                    landing = request.POST.get('landing')
+                    access = request.POST.get('access')
+                    if mp==None:
+                        f.name_rk = rk
+                        f.comments = comments
+                        f.landing = landing
+                        f.access = access
+                        f.save()
+                    else:
+                        f.name_rk = rk
+                        f.mp = mp
+                        f.comments = comments
+                        f.save()
+            if request.method=='POST' and 'form2' in request.FILES:
+                form2 = CommentForm(request.FILES)
+                if form2.is_valid():
+                    report = request.FILES.get('report')
+                    a = All_file.objects.get(username=username,
+                                                     name_rk=name_rk)
+                    a.report = report
+                    a.save()
+                
+            return render(request, 'but_cleared.html', data)
+        except ObjectDoesNotExist:
+            return main(request)
     
 def utm(request, name_rk):
     if request.user.is_authenticated:

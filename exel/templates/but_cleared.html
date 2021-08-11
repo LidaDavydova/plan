@@ -25,30 +25,31 @@
         	<hr>
         	<h3>Ссылка на сайт (посадочная) Utm (файл)</h3>
         	{{form1.landing}}
-        	<a href="{% url 'exel:utm' file.name_rk %}">Utm</a>
+        	<a class="four" href="{% url 'exel:utm' file.name_rk %}">Utm</a>
         	<hr>
         	<h3>Материалы (файлы)</h3>
-        	<a href="{% url 'exel:materials' file.name_rk %}">просмотр</a>
+        	<a class="five" href="{% url 'exel:materials' file.name_rk %}">просмотр</a>
         	<hr>
         	<h3>Статус запуска (списком)</h3>
         	{{form1.comments}}
         	<hr>
     	</div>
-    	<input type="submit" name="form1" value="Сохранить изменения">
+    	<input class="button1" type="submit" name="form1" value="Сохранить изменения">
 
 	</form>
 	
-	<p>Статистика по РК</p>
+	<p id="rk">Статистика по РК</p>
 	{%for r in report%}
-        <a href="{{ r.file.url }}">Шаблон отчета, который надо заполнять</a>
+        <a class="s13" href="{{ r.file.url }}">Шаблон отчета, который надо заполнять</a>
     {%endfor%}
     
     <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
         {{form2.report}}
-    	<input type="submit" name="form2" class="download" value="Загрузить">
+    	<input type="submit" name="form2" class="button3" value="Загрузить">
+        <a href="{% url 'exel:complete' file.name_rk %}" class="button2" id="complete">Завершить проект</a>
 	</form>
-	<a href="{% url 'exel:complete' file.name_rk %}" class="complete">Завершить проект</a>
+	
     </div>
 {% endblock %}
 

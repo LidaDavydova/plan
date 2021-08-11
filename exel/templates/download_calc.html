@@ -15,7 +15,14 @@
         <div id="form1">
         <h3>Название клиента</h3>
         
-        <input name="name_client" list="name" />
+        <p>
+        	<span class="input">
+        		<input id="down" name="name_client" list="name" />
+        		<span></span>	
+        	</span>
+        </p>
+
+        
         <datalist id="name">
             {% for select in name_client %}
                 <option id="list">{{select.client}}</option>
@@ -25,7 +32,13 @@
         
         <h3>Название РК</h3>
         
-        <input name="title_rk" list="l" />
+        <p>
+        	<span class="input">
+        		<input id="down" name="title_rk" list="l" />
+        		<span></span>	
+        	</span>
+        </p>
+        
         <datalist id="l">
             {% for select in list_RK %}
                 <option>{{ select.name_rk }}</option>
