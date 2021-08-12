@@ -7,6 +7,30 @@ div.content {
     left: 50px;
 }
 
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Разместите всплывающую подсказку */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
 div#form1{
     position: relative;
     top: 50px;
@@ -524,7 +548,7 @@ input.download {
       text-decoration: none;
       margin: 10px 40px 50px 0px;
       cursor: pointer;
-      width: 130px;
+      width: 180px;
       height: 40px;
       border-radius: 45px;
       font-family: Libre Baskerville, serif;

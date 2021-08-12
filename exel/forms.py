@@ -5,6 +5,11 @@ from django.contrib.auth.models import User
 from .models import *
 from django.views.generic.edit import FormView
 
+class ReportForm(forms.ModelForm):
+    report = forms.FileField(label='Отчет')
+    class Meta:
+        model = All_file
+        fields = ['report',]
 class ClearForm(forms.ModelForm):
     comments = forms.CharField(widget=forms.Textarea(attrs={'rows':4, 'cols':40}))
     access = forms.CharField(widget=forms.Textarea(attrs={'rows':4, 'cols':40}))
@@ -20,10 +25,9 @@ class CommentForm(forms.ModelForm):
     presentation = forms.FileField(required=False)
     mp = forms.FileField(required=False)
     name_rk = forms.CharField(widget=forms.Textarea(attrs={'rows':2, 'cols':40}))
-    report = forms.FileField(label='Отчет', required=False)
     class Meta:
         model = All_file
-        fields = ['comments', 'name_rk', 'presentation', 'mp', 'report',]
+        fields = ['comments', 'name_rk', 'presentation', 'mp',]
 
 class BriefForm(forms.ModelForm):
     img = forms.ImageField(label='Логотип', required=False)

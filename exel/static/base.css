@@ -40,7 +40,6 @@ a.s3 {
    display: inline-block;
    padding: 5px 10px;
    letter-spacing: 1px;
-   margin: 0 20px;
    font-size: 14px;
    font-family: 'Fredoka One', cursive;
    transition: .3s ease-in-out;
@@ -53,7 +52,7 @@ h3#user {
     position: absolute;
     top: 3%;
     left: 72vw;
-    font-family: 'Krona One', sans-serif;
+    font-family: CURSIVE, sans-serif;
 }
 
 .completeform {
@@ -101,7 +100,7 @@ border-right: none;
 }
 
 .table_blur td {
-padding: 8px 15px;
+padding: 8px 5px;
 background: white;
 }
 
@@ -345,22 +344,30 @@ p#base {
     transform: rotate(180deg);
 }
 
-div.com {
-    display: inline-block; /* Строчно-блочный элемент */
-    position: relative; /* Относительное позиционирование */
-   }
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
 
-div.com:hover::after {
-    content: attr(data-title); /* Выводим текст */
-    position: absolute; /* Абсолютное позиционирование */
-    left: 80%; top: 90%; /* Положение подсказки */
-    z-index: 1; /* Отображаем подсказку поверх других элементов */
-    background: rgba(255,255,230,0.9); /* Полупрозрачный цвет фона */
-    font-family: Arial, sans-serif; /* Гарнитура шрифта */
-    font-size: 11px; /* Размер текста подсказки */
-    padding: 5px 10px; /* Поля */
-    border: 1px solid #333; /* Параметры рамки */
-   }
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Разместите всплывающую подсказку */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
 
 p#not_cl {
     position: relative;

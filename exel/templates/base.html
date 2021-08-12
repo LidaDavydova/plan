@@ -51,9 +51,9 @@
                         	<td><a class="s1" href="{% url 'exel:but_cleared' name.name_rk %}">{{name.client}}</a>
                         	</td>
                         	<td>
-                        	<div class="com" data-title={{name.comments}}>
-                        	этапы проекта
-                        	</div>
+                        	<div class="tooltip">этапы проекта
+                              <span class="tooltiptext">{{name.comments}}</span>
+                            </div>
                         	</td>
                 		</tr>
                 	{% endfor %}
@@ -79,9 +79,9 @@
                         	<td><a class="s1" href="{% url 'exel:but_not_cleared' name.name_rk %}">{{name.client}}</a></td>
                         	<td>/ отправлен {{name.duploaded_at}}</td>
                         	<td>
-                        	<div class="com" data-title={{name.comments}}>
-                        	этапы проекта
-                        	</div>
+                        	<div class="tooltip">этапы проекта
+                              <span class="tooltiptext">{{name.comments}}</span>
+                            </div>
                         	</td>
                             <td>
                                 <a href="{{ name.calculation.url }}">Выгрузить</a>

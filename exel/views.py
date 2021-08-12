@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.hashers import make_password
@@ -546,7 +546,7 @@ def not_cleared(request, name_rk):
     if request.user.is_authenticated:
         username = request.user.username
         try:
-            m = All_file.objects.filter(name_rk=name_rk)[::-1][0]
+            m = get_object_or_404(All_file, name_rk=name_rk)
             data = {
                 'client': m.client,
                 'mp': m.mp,
@@ -564,22 +564,26 @@ def not_cleared(request, name_rk):
                     comment = request.POST.get('comments')
                     rk = request.POST.get('name_rk')
                     if name_rk!=rk:
-                        try:
-                            d = Cleared.objects.get(username=username, mp=m.mp,
-                                                  client=m.client)
-                            d.name_rk = rk
-                            d.save()
-                        except:
-                            m.name_rk = rk
-                            m.save()
-                            h = Client.objects.filter(username=username, mp=m.mp)[0]
-                            h.name_rk = rk
-                            h.save()
+                        h = Client.objects.filter(username=username, 
+                                                  name_rk=name_rk)
+                        h.update(name_rk=rk)
+                        h = Complete.objects.filter(username=username, 
+                                                  name_rk=name_rk)
+                        h.update(name_rk=rk)
+                        h = Brief.objects.filter(username=username, 
+                                                  name_rk=name_rk)
+                        h.update(name_rk=rk)
+                    
+                        h = Cleared.objects.filter(username=username, 
+                                                  name_rk=name_rk)
+                        h.update(name_rk=rk)
+                        h = All_file.objects.filter(username=username, 
+                                                  name_rk=name_rk)
+                        h.update(name_rk=rk)
                     if ex==None and mp!=None:
                         try:
-                            d = Cleared.objects.get(username=username, name_rk=name_rk,
+                            d = Cleared.objects.get(username=username, name_rk=rk,
                                               client=m.client)
-                            m.name_rk = rk
                             m.mp = mp
                             m.comments = comment
                             m.save()
@@ -591,38 +595,31 @@ def not_cleared(request, name_rk):
                    
                     elif mp==None and ex==None:
                         try:
-                            d = Cleared.objects.get(username=username, name_rk=name_rk,
+                            d = Cleared.objects.get(username=username, name_rk=rk,
                                                   client=m.client)
-                            m.name_rk = rk
-                            m.comments = comment
-                            m.save()
+                            All_file.objects.filter(username=username, 
+                                                  name_rk=rk).update(comments=comment)
                         except:
                             data['error'] = 'Заполните все поля'
                             return render(request, 'but_not_cleared.html', data)
                     else:
-                        m.name_rk = rk
-                        m.presentation = ex
-                        m.comments = comment
-                        m.save()
-                        b = Brief.objects.filter(name_rk=name_rk)[::-1][0]
+                        All_file.objects.filter(username=username, 
+                                                  name_rk=rk).update(presentation=ex, comments=comment)
+                        b = Brief.objects.filter(name_rk=rk)[::-1][0]
                         try:
-                            d = Cleared.objects.get(username=username, mp=m.mp,
+                            d = Cleared.objects.get(username=username, name_rk=rk,
                                                   client=m.client)
-                            d.name_rk = rk
                             d.mp = mp
                             d.save()
                         except ObjectDoesNotExist:
-                            Cleared.objects.create(username=username, name_rk=name_rk,
+                            Cleared.objects.create(username=username, name_rk=rk,
                                           client=m.client, mp=m.mp, landing=b.posad)
-
-                    h = Client.objects.filter(username=username, name_rk=name_rk)[0]
-                    h.comments = comment
-                    h.save()
+                    h = Client.objects.filter(username=username, name_rk=rk)
+                    h.update(comments=comment)
                 return main(request)
             return render(request, 'but_not_cleared.html', data)
-        except IndexError:
+        except ObjectDoesNotExist:
             pass
-        
    
     
 def cleared(request, name_rk):
@@ -634,7 +631,7 @@ def cleared(request, name_rk):
             data = {
                'file': f,
                'report': Report.objects.all(),
-               'form2': CommentForm,
+               'form2': ReportForm,
                'form1': ClearForm(initial={
                    'name_rk': name_rk,
                    'comments': f.comments,
@@ -650,6 +647,19 @@ def cleared(request, name_rk):
                     rk = request.POST.get('name_rk')
                     landing = request.POST.get('landing')
                     access = request.POST.get('access')
+                    if name_rk!=rk:
+                        h = Client.objects.filter(username=username, 
+                                                  name_rk=name_rk)
+                        h.update(name_rk=rk)
+                        h = Complete.objects.filter(username=username, 
+                                                  name_rk=name_rk)
+                        h.update(name_rk=rk)
+                        h = Brief.objects.filter(username=username, 
+                                                  name_rk=name_rk)
+                        h.update(name_rk=rk)
+                        h = All_file.objects.filter(username=username, 
+                                                  name_rk=name_rk)
+                        h.update(name_rk=rk)
                     if mp==None:
                         f.name_rk = rk
                         f.comments = comments
@@ -661,19 +671,26 @@ def cleared(request, name_rk):
                         f.mp = mp
                         f.comments = comments
                         f.save()
-            if request.method=='POST' and 'form2' in request.FILES:
-                form2 = CommentForm(request.FILES)
+                    data['form1'] = ClearForm(initial={
+                                       'name_rk': rk,
+                                       'comments': comments,
+                                       'landing': landing,
+                                       'access': access
+                                           })
+            if request.method=='POST' and 'form2' in request.POST:
+                form2 = ReportForm(request.POST, request.FILES)
                 if form2.is_valid():
                     report = request.FILES.get('report')
                     a = All_file.objects.get(username=username,
-                                                     name_rk=name_rk)
+                                                     mp=f.mp)
                     a.report = report
                     a.save()
-                
             return render(request, 'but_cleared.html', data)
         except ObjectDoesNotExist:
             return main(request)
     
+
+
 def utm(request, name_rk):
     if request.user.is_authenticated:
         username = request.user.username

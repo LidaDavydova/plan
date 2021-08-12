@@ -5,9 +5,16 @@
 {% block title %}Клиент {{file.client}}{% endblock %}
 
 {% block content %}
+    <div class="preloader">
+    <div class="preloader__row">
+      <div class="preloader__item"></div>
+      <div class="preloader__item"></div>
+    </div>
+  </div>
+    
     <div class="clear">
     <a href="{% url 'exel:main' %}" class="button">Главная</a>
-	<form  method="post" enctype="multipart/form-data" id="cl">
+	<form method="post" enctype="multipart/form-data" id="cl">
 	{% csrf_token %}
 		<hr class="hr1">
 		<h3>Название клиента</h3>
@@ -37,19 +44,29 @@
     	<input class="button1" type="submit" name="form1" value="Сохранить изменения">
 
 	</form>
-	
+	{{e1}}
+	{{e2}}
 	<p id="rk">Статистика по РК</p>
 	{%for r in report%}
         <a class="s13" href="{{ r.file.url }}">Шаблон отчета, который надо заполнять</a>
     {%endfor%}
     
-    <form method="post" enctype="multipart/form-data">
+    <form  method="post" enctype="multipart/form-data">
     {% csrf_token %}
         {{form2.report}}
-    	<input type="submit" name="form2" class="button3" value="Загрузить">
+        <input type="submit" name="form2" class="button3" value="Загрузить отчет">
         <a href="{% url 'exel:complete' file.name_rk %}" class="button2" id="complete">Завершить проект</a>
 	</form>
 	
     </div>
+    <script>
+    window.onload = function () {
+      document.body.classList.add('loaded_hiding');
+      window.setTimeout(function () {
+        document.body.classList.add('loaded');
+        document.body.classList.remove('loaded_hiding');
+      }, 500);
+    }
+  </script>
 {% endblock %}
 

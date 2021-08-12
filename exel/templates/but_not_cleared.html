@@ -6,6 +6,13 @@
 
 
 {% block content %}
+    <div class="preloader">
+    <div class="preloader__row">
+      <div class="preloader__item"></div>
+      <div class="preloader__item"></div>
+    </div>
+  </div>
+
     <div class="all">
     <a href="{% url 'exel:main' %}" class="button">Главная</a>
 	<form method="post" 
@@ -51,6 +58,14 @@
 	</form>
 	</div>
 
-
+    <script>
+    window.onload = function () {
+      document.body.classList.add('loaded_hiding');
+      window.setTimeout(function () {
+        document.body.classList.add('loaded');
+        document.body.classList.remove('loaded_hiding');
+      }, 500);
+    }
+  </script>
 {% endblock %}
 
