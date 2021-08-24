@@ -98,11 +98,11 @@
 	
 	<p id="end">Завершенные проекты</p>
 
-    <form  method="post" class="compl">
+    <form method="post" class="compl">
         	{% csrf_token %}
         	<div class="completeform">
         	<input type="checkbox" id="button3">
-            <div class="xpandable-block1">
+            <div class="xpandable-block_c">
             <div class="tab">
             	<table class="table_blur_compl">
             		<tbody>
@@ -131,7 +131,8 @@
         <label class="label" for="button3">Показатать/Cкрыть</label>
         </div>
 	</form>
-
+    <div id="end">
+    </div>
 	</div>
 	<script>
     window.onload = function () {

@@ -48,6 +48,14 @@ a.s3:hover {
    border: 2px solid #f74c4c;
 }
 
+div#end {
+    position: relative;
+    top: 130px;
+    height: 50px;
+    width: 10px;
+    background: transparent;
+}
+
 h3#user {
     position: absolute;
     top: 3%;
@@ -57,7 +65,7 @@ h3#user {
 
 .completeform {
     position: relative;
-    bottom: -100px;
+    top: 100px;
     left: 10vw;
 }
 
@@ -145,6 +153,8 @@ div.tab {
 
 input[type="checkbox"]:checked + 
 
+
+
 .xpandable-block {
     max-height: 5000px;
 }
@@ -157,11 +167,17 @@ input[type="checkbox"]:checked +
     transition: max-height 1s;
 }
 
-.xpandable-block1 {
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"]:checked + 
+
+.xpandable-block_c {
     max-height: 5000px;
 }
 
-.xpandable-block1 {
+.xpandable-block_c {
     max-height: 275px;
     overflow: hidden;
     order: 0;
@@ -173,7 +189,6 @@ input[type="checkbox"] {
     display: none;
 }
 
-
 .labeltable {
 	color: blue;
 	font-size: 14px;
@@ -182,6 +197,7 @@ input[type="checkbox"] {
 	margin: 20px auto;
 	display: block;
 	width: 250px;
+	
 
 }
 

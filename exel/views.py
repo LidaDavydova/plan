@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.base import ContentFile
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -163,6 +164,7 @@ class Prepare_calc(TemplateView):
                 e = openpyxl.load_workbook(filename=os.path.join(hol, n), data_only=True)
                 a = p["Категория Клиента"].tolist()
                 b = p["KPI"].tolist()
+                video = p['Размер (в пикселях) / Формат'].tolist()
                 season = p["Сезонники"].tolist()
                 season_discont = p["Сезонный коэф."].tolist()
                 
@@ -170,7 +172,14 @@ class Prepare_calc(TemplateView):
                 k = []
                 for i in range(1, len(a)+1):
                     if (a[i-1] == 'Все' or a[i-1] == type_act) and b[i-1] == KPI and (u[i-1]=='1-3' or u[i-1] == str(Brief.objects.filter(username=username, client=client).first().discount)):
-                        k.append(6+i)
+                        if materials in "Видео (указать длительность снизу)":
+                            if ('Виде' in str(video[i-1])) or ('виде' in str(video[i-1])) or ('роли' in str(video[i-1])) or ('Роли' in str(video[i-1])) or ('vide' in str(video[i-1])) or ('Vide' in str(video[i-1])):
+                                k.append(6+i)
+                        elif materials in "Баннеры":
+                            if ('Виде' not in str(video[i-1])) and ('виде' not in str(video[i-1])) and ('роли' not in str(video[i-1])) and ('Роли' not in str(video[i-1])) and ('Vide' not in str(video[i-1])) and ('vide' not in str(video[i-1])):
+                                k.append(6+i)
+                        else:
+                            k.append(6+i)
                 data = dict.fromkeys([i for i in p.columns.ravel()])
                 d = []
                 for j in k:
@@ -234,7 +243,7 @@ class Prepare_calc(TemplateView):
                 sheet['C16'] = bd.interes
                 sheet['C17'] = bd.income
                 sheet['C18'] = bd.rek
-                sheet['C20'] = bd.materials + bd.duration1 + bd.duration2 + bd.duration3
+                sheet['C20'] = bd.materials + " " + bd.duration1 + " " + bd.duration2 + ", " + bd.duration3
                 sheet['C21'] = str(bd.period_c) + " - " + str(bd.period_p)
                 sheet['C22'] = bd.budget
                 sheet['C23'] = bd.KPI
@@ -255,6 +264,7 @@ class Prepare_calc(TemplateView):
                 path2 = join('clients', username, client, f'brief_{name_rk}.xlsx')
                 
                 '''This is correction DMP'''
+                '''
                 wb=load_workbook(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"))
                 sheet = wb.active
                 
@@ -325,6 +335,7 @@ class Prepare_calc(TemplateView):
                             bottom = Side(border_style='thin', color='FF000000'),
                             left = Side(border_style='thin', color='FF000000')) 
                 wb.save(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"))
+                '''
                 
                 '''This is create mp'''
                 p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"), 
@@ -332,12 +343,44 @@ class Prepare_calc(TemplateView):
                                                                     8, 9, 11, 12, 13,
                                                                     14, 15, 16, 17,
                                                                     18, 19, 20, 21, 22,
-                                                                    23, 24, 29, 30, 31])
+                                                                    23, 24, 27, 29, 30, 31])
                 frequency = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"),
                                           header=None, skiprows=2, usecols = [37])
+                report = pd.read_excel(os.path.join(hol, "media/pattern/ОТЧЕТ_ОБЩИЙ.xlsx"), 
+                                  header=None, skiprows=6, usecols = [1, 3, 6, 9, 34, 40, 58])
                 fr = frequency.to_dict(orient='list')
                 b = p.to_dict(orient='list')
+                report = report.to_dict(orient='list')
                 height = len(b[4])
+                
+                '''лиды'''
+                lids = [''] * height
+                for i in range(0, len(b[21])):
+                    for k in range(len(report[6])-1, 0, -1):
+                        if report[6][k]==b[21][i] and report[1][k]==client:
+                            lids[i]=report[40][k]
+                            break
+                    
+                        
+                '''ctr'''
+                ctr = [''] * height
+                for i in range(0, len(b[21])):
+                    for k in range(len(report[6])-1, 0, -1):
+                        if report[1][k]==client and report[6][k]==b[21][i]:
+                            lids[i]=report[40][k]
+                            break
+                        elif report[3][k]==b[1][i] and report[6][k]==b[21][i]:
+                            lids[i]=report[40][k]*88/100
+                            break
+                        elif report[6][k]==b[21][i]:
+                            lids[i]=report[40][k]*85/100
+                            break
+                    if ctr[i] == '':
+                        for j in range(height):
+                            if b[1][j]==b[1][i] and b[21][j]==b[21][i] and i!=j:
+                                lids[i]=report[40][k]*90/100
+                                break
+                
                 b[35] = b.pop(11)
                 b[20] = [i for i in range(1, height+1)]
                 
@@ -349,11 +392,12 @@ class Prepare_calc(TemplateView):
                 b[34] = b.pop(32)
                 b[32] = b.pop(30)
                 b[26] = b.pop(25)
+                b[30] = b.pop(28)
                 b[29] = [f'=COUNT(BF{i}:CK{i})' for i in range(13, height+13)]
-                b[30] = ['месяц']*len(b[4])
+                
                 b[31] = [f'=AB{i}/Y{i}' for i in range(13, height+13)]
                 b[21] = [f'=S{i}' for i in range(13, height+13)]
-                b[25] = ['бриф 7ю1']*height
+                b[25] = ['']*height
                 b[28] = ['1000 показов']*height
                 
                 b = dict(sorted(b.items(), key=lambda x: x[0]))
@@ -364,15 +408,15 @@ class Prepare_calc(TemplateView):
                 b[40] = [f'=AM{i}/AL{i}' for i in range(13, height+13)]
                 b[41] = fr[37]
                 b[42] = [f'=AI{i}/AJ{i}' for i in range(13, height+13)]
-                b[43] = [f'ОТЧЕТ VTR' for i in range(13, height+13)]
+                b[43] = ['']*height
                 b[44] = [f'=AB{i}' for i in range(13, height+13)]
-                b[45] = [f'CTR' for i in range(13, height+13)]
+                b[45] = ctr
                 b[46] = [f'=AI{i}*AN{i}' for i in range(13, height+13)]
                 b[47] = [f'=AG{i}/AI{i}*1000' for i in range(13, height+13)]
                 b[48] = [f'=AG{i}/AK{i}*1000' for i in range(13, height+13)]
                 b[49] = [f'=AG{i}/AM{i}' for i in range(13, height+13)]
                 b[50] = [f'=AG{i}/AO{i}' for i in range(13, height+13)]
-                b[51] = [f'отчеты кол лид' for i in range(13, height+13)]
+                b[51] = lids
                 b[52] = [f'=AG{i}/AT{i}' for i in range(13, height+13)]
                 
                 u=pd.DataFrame(b)
@@ -380,10 +424,41 @@ class Prepare_calc(TemplateView):
                 wb = openpyxl.load_workbook(filename=os.path.join(hol, "media/pattern/медиаплан.xlsx"))
                 w = wb.worksheets[0]
                 sheet = wb.active
-                
-                for r in dataframe_to_rows(u, index=None, header=None):
-                    w.append(r)
-                
+                g = []
+                for i in [bd.duration1, bd.duration2, bd.duration3]:
+                    if i!='':
+                        g.append(i)
+                if len(g)==0:
+                    for r in dataframe_to_rows(u, index=None, header=None):
+                        w.append(r)
+                else:
+                    for during in g:
+                        b[25] = [during]*height
+                        '''vtr'''
+                        vtr = [''] * height
+                        for i in range(0, len(b[21])):
+                            for k in range(len(report[6])-1, 0, -1):
+                                if report[1][k]==client and report[6][k]==b[21][i] and during==report[9][k]:
+                                    lids[i]=report[34][k]
+                                    break
+                                elif report[1][k]==client and during==report[9][k]:
+                                    lids[i]=report[34][k]*90/100
+                                    break
+                                elif report[3][k]==b[1][i] and report[6][k]==b[21][i] and during==report[9][k]:
+                                    lids[i]=report[34][k]*88/100
+                                    break
+                                elif report[6][k]==b[21][i] and during==report[9][k]:
+                                    lids[i]=report[34][k]*85/100
+                                    break
+                            if ctr[i] == '':
+                                for j in range(height):
+                                    if report[3][k]==b[1][i] and report[6][k]==b[21][i] and during==report[9][k] and i!=j:
+                                        lids[i]=report[34][k]*90/100
+                                        break
+                        b[43] = vtr
+                        u=pd.DataFrame(b)
+                        for r in dataframe_to_rows(u, index=None, header=None):
+                            w.append(r)
                 formula = '1000 показов, клики, пакет, просмотры, engagement, вовлечение, неделя, месяц, единица, единиц, день'
                 dv = DataValidation(type='list', formula1='"{}"'.format(formula), allow_blank=True)
                 sheet.add_data_validation(dv)
@@ -407,6 +482,8 @@ class Prepare_calc(TemplateView):
                             right = Side(border_style='thin', color='FF000000'),
                             bottom = Side(border_style='thin', color='FF000000'),
                             left = Side(border_style='thin', color='FF000000')) 
+                if len(g)!=0:
+                    height*=len(g)
                 sheet[f'AE{height+13}'] = 'Итого:'
                 sheet[f'AF{height+13}'] = f'=SUMIF(AI13:AI{height+12},">0",AG13:AG{height+12})/AI{height+13}*1000'
                 sheet[f'AG{height+13}'] = f'=SUM(AG13:AG{height+12})'
@@ -564,22 +641,17 @@ def not_cleared(request, name_rk):
                     comment = request.POST.get('comments')
                     rk = request.POST.get('name_rk')
                     if name_rk!=rk:
-                        h = Client.objects.filter(username=username, 
-                                                  name_rk=name_rk)
-                        h.update(name_rk=rk)
-                        h = Complete.objects.filter(username=username, 
-                                                  name_rk=name_rk)
-                        h.update(name_rk=rk)
-                        h = Brief.objects.filter(username=username, 
-                                                  name_rk=name_rk)
-                        h.update(name_rk=rk)
-                    
-                        h = Cleared.objects.filter(username=username, 
-                                                  name_rk=name_rk)
-                        h.update(name_rk=rk)
-                        h = All_file.objects.filter(username=username, 
-                                                  name_rk=name_rk)
-                        h.update(name_rk=rk)
+                        Client.objects.filter(username=username, 
+                                                  name_rk=name_rk).update(name_rk=rk)
+                        Complete.objects.filter(username=username, 
+                                                  name_rk=name_rk).update(name_rk=rk)
+                        Brief.objects.filter(username=username, 
+                                                  name_rk=name_rk).update(name_rk=rk)
+                        All_file.objects.filter(username=username, 
+                                                  name_rk=name_rk).update(name_rk=rk)
+                        Cleared.objects.filter(username=username, 
+                                                  name_rk=name_rk).update(name_rk=rk)
+                        Feed.objects.filter(name_rk=name_rk).update(name_rk=rk)
                     if ex==None and mp!=None:
                         try:
                             d = Cleared.objects.get(username=username, name_rk=rk,
@@ -589,6 +661,12 @@ def not_cleared(request, name_rk):
                             m.save()
                             d.mp = mp
                             d.save()
+                            h = Cleared.objects.filter(username=username, 
+                                                  name_rk=name_rk)
+                            h.update(mp=mp)
+                            h = All_file.objects.filter(username=username, 
+                                                      name_rk=name_rk)
+                            h.update(mp=mp)
                         except:
                             data['error'] = 'Заполните все поля'
                             return render(request, 'but_not_cleared.html', data)
@@ -648,18 +726,15 @@ def cleared(request, name_rk):
                     landing = request.POST.get('landing')
                     access = request.POST.get('access')
                     if name_rk!=rk:
-                        h = Client.objects.filter(username=username, 
-                                                  name_rk=name_rk)
-                        h.update(name_rk=rk)
-                        h = Complete.objects.filter(username=username, 
-                                                  name_rk=name_rk)
-                        h.update(name_rk=rk)
-                        h = Brief.objects.filter(username=username, 
-                                                  name_rk=name_rk)
-                        h.update(name_rk=rk)
-                        h = All_file.objects.filter(username=username, 
-                                                  name_rk=name_rk)
-                        h.update(name_rk=rk)
+                        Client.objects.filter(username=username, 
+                                                  name_rk=name_rk).update(name_rk=rk)
+                        Complete.objects.filter(username=username, 
+                                                  name_rk=name_rk).update(name_rk=rk)
+                        Brief.objects.filter(username=username, 
+                                                  name_rk=name_rk).update(name_rk=rk)
+                        All_file.objects.filter(username=username, 
+                                                  name_rk=name_rk).update(name_rk=rk)
+                        Feed.objects.filter(name_rk=name_rk).update(name_rk=rk)
                     if mp==None:
                         f.name_rk = rk
                         f.comments = comments
@@ -671,6 +746,9 @@ def cleared(request, name_rk):
                         f.mp = mp
                         f.comments = comments
                         f.save()
+                        h = All_file.objects.filter(username=username, 
+                                                  name_rk=name_rk)
+                        h.update(mp=mp)
                     data['form1'] = ClearForm(initial={
                                        'name_rk': rk,
                                        'comments': comments,
@@ -682,12 +760,25 @@ def cleared(request, name_rk):
                 if form2.is_valid():
                     report = request.FILES.get('report')
                     a = All_file.objects.get(username=username,
-                                                     mp=f.mp)
+                                                     name_rk=name_rk)
                     a.report = report
                     a.save()
+                    n = f'media/{a.report.name}'
+                    hol = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                    p = pd.read_excel(os.path.join(hol, n).replace('\\', '/'),
+                                         header=None, skiprows=6)
+                    b = p.to_dict(orient='list')
+                    wb = openpyxl.load_workbook(filename=os.path.join(hol, "media/pattern/ОТЧЕТ_ОБЩИЙ.xlsx"))
+                                                
+                    w = wb.worksheets[0]
+                    sheet = wb.active
+                    for r in dataframe_to_rows(pd.DataFrame(p), index=None, header=None):
+                        w.append(r)
+                    wb.save(os.path.join(hol, "media/pattern/ОТЧЕТ_ОБЩИЙ.xlsx"))
             return render(request, 'but_cleared.html', data)
-        except ObjectDoesNotExist:
-            return main(request)
+        except MultipleObjectsReturned:
+            pass
+       
     
 
 
@@ -696,15 +787,45 @@ def utm(request, name_rk):
         username = request.user.username
         data = {
            'file': name_rk,
+           'form': UtmForm(),
+           
            }
+        if request.method == 'POST':
+            form = UtmForm(request.POST, request.FILES)
+            if form.is_valid():
+                u = request.FILES.get('utm')
+                
+                a = Cleared.objects.get(name_rk=name_rk)
+                a.utm = u
+                a.save()
+                data['utm_name'] = u
+                
+        data['form'] = UtmForm()
+        data['utm'] = Cleared.objects.get(name_rk=name_rk)
         return render(request, 'utm.html', data)
    
 def materials(request, name_rk):
     if request.user.is_authenticated:
-        username = request.user.username
+        a = Feed.objects.filter(name_rk=name_rk)[::-1]
         data = {
-           'file': name_rk,
+            'name_rk': name_rk,
+           'files': [FeedFile.objects.filter(feed_id=i.pk) for i in a],
+           'form': FileModelForm(),
            }
+        cl = Cleared.objects.get(name_rk=name_rk)
+        username = request.user.username
+        if request.method == 'POST':
+            file_form = FileModelForm(request.POST, request.FILES)
+            files = request.FILES.getlist('file') #field name in model
+            if file_form.is_valid():
+                feed_instance = Feed.objects.create(name_rk=name_rk, client=cl.client,
+                                                    username=username)
+                for f in files:
+                    file_instance = FeedFile(file=f, feed=feed_instance)
+                    file_instance.save()
+        data['form'] = FileModelForm()
+        a = Feed.objects.filter(name_rk=name_rk)[::-1]
+        data['files'] = [FeedFile.objects.filter(feed_id=i.pk) for i in a]
         return render(request, 'materials.html', data)
    
 def complete(request, name_rk):
@@ -721,6 +842,5 @@ def complete(request, name_rk):
                                       period_c=f.period_c, period_p=f.period_p)
         except MultipleObjectsReturned:
             pass
-        
-           
         return main(request)
+    

@@ -4,6 +4,21 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import *
 from django.views.generic.edit import FormView
+from django.forms import ClearableFileInput
+
+
+class FileModelForm(forms.ModelForm):
+    class Meta:
+        model = FeedFile
+        fields = ['file']
+        widgets = {
+            'file': ClearableFileInput(attrs={'multiple': True}),
+        }
+
+class UtmForm(forms.ModelForm):
+    class Meta:
+        model = Cleared
+        fields = ['utm',]
 
 class ReportForm(forms.ModelForm):
     report = forms.FileField(label='Отчет')

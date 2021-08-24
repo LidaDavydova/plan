@@ -13,8 +13,21 @@ from openpyxl.styles import Alignment, Border, Side, PatternFill
 from openpyxl import load_workbook
 
 
+def materials(instance, file):
+    return '/'.join(['clients', 'materials', instance.username, instance.client, file])
+
 def content_file_name(instance, filename):
     return '/'.join(['clients', instance.username, instance.client, filename])
+
+
+class Feed(models.Model):
+    name_rk = models.CharField(max_length = 200)
+    username = models.CharField(max_length = 60)
+    client = models.CharField(max_length = 50)
+
+class FeedFile(models.Model):
+    file = models.FileField(upload_to="clients/materials/%Y/%m/%d")
+    feed = models.ForeignKey(Feed, on_delete=models.CASCADE)
 
 class Complete(models.Model):
     username = models.CharField(max_length = 60)
