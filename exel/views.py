@@ -367,18 +367,18 @@ class Prepare_calc(TemplateView):
                 for i in range(0, len(b[21])):
                     for k in range(len(report[6])-1, 0, -1):
                         if report[1][k]==client and report[6][k]==b[21][i]:
-                            lids[i]=report[40][k]
+                            ctr[i]=report[40][k]
                             break
                         elif report[3][k]==b[1][i] and report[6][k]==b[21][i]:
-                            lids[i]=report[40][k]*88/100
+                            ctr[i]=report[40][k]*88/100
                             break
                         elif report[6][k]==b[21][i]:
-                            lids[i]=report[40][k]*85/100
+                            ctr[i]=report[40][k]*85/100
                             break
                     if ctr[i] == '':
                         for j in range(height):
                             if b[1][j]==b[1][i] and b[21][j]==b[21][i] and i!=j:
-                                lids[i]=report[40][k]*90/100
+                                ctr[i]=report[40][k]*90/100
                                 break
                 
                 b[35] = b.pop(11)
@@ -439,21 +439,21 @@ class Prepare_calc(TemplateView):
                         for i in range(0, len(b[21])):
                             for k in range(len(report[6])-1, 0, -1):
                                 if report[1][k]==client and report[6][k]==b[21][i] and during==report[9][k]:
-                                    lids[i]=report[34][k]
+                                    vrt[i]=report[34][k]
                                     break
                                 elif report[1][k]==client and during==report[9][k]:
-                                    lids[i]=report[34][k]*90/100
+                                    vrt[i]=report[34][k]*90/100
                                     break
                                 elif report[3][k]==b[1][i] and report[6][k]==b[21][i] and during==report[9][k]:
-                                    lids[i]=report[34][k]*88/100
+                                    vrt[i]=report[34][k]*88/100
                                     break
                                 elif report[6][k]==b[21][i] and during==report[9][k]:
-                                    lids[i]=report[34][k]*85/100
+                                    vrt[i]=report[34][k]*85/100
                                     break
-                            if ctr[i] == '':
+                            if vtr[i] == '':
                                 for j in range(height):
                                     if report[3][k]==b[1][i] and report[6][k]==b[21][i] and during==report[9][k] and i!=j:
-                                        lids[i]=report[34][k]*90/100
+                                        vrt[i]=report[34][k]*90/100
                                         break
                         b[43] = vtr
                         u=pd.DataFrame(b)
