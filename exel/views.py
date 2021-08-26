@@ -19,6 +19,8 @@ import pandas as pd
 import openpyxl
 import os
 import io
+import datetime
+import locale
 from django.http import FileResponse
 from os.path import join
 from openpyxl.styles import Alignment, Border, Side, PatternFill, Font
@@ -166,7 +168,6 @@ class Prepare_calc(TemplateView):
                 b = p["KPI"].tolist()
                 video = p['Размер (в пикселях) / Формат'].tolist()
                 season = p["Сезонники"].tolist()
-                season_discont = p["Сезонный коэф."].tolist()
                 
                 u = p["коэф. скидки от 1 (min стоимость плана) до  3 (max стоимость плана) "].tolist() 
                 k = []
@@ -180,46 +181,76 @@ class Prepare_calc(TemplateView):
                                 k.append(6+i)
                         else:
                             k.append(6+i)
-                data = dict.fromkeys([i for i in p.columns.ravel()])
-                d = []
-                for j in k:
-                    line = []
-                    if season[j-7]=='проверить' or season[j-7]=='нет':
-                        for i in range(1, len(p.columns.ravel())+1):
-                            line.append(e['Лист1'].cell(row=j, column=i).value)
-                        d.append(line)
-                    else:
-                        try:
-                            for n in list(season[j-7].split()):
-                                line1 = []
-                                sd = list(season_discont[j-7].split())
-                                for v in range(1, len(p.columns.ravel())+1):
-                                    line1.append(e['Лист1'].cell(row=j, column=v).value)
-                                line1[20] = sd[sd.index(n)+1]
-                                line1[7] = n
-                                d.append(line1)
-                        except ValueError:
-                            for i in range(1, len(p.columns.ravel())+1):
-                                line.append(e['Лист1'].cell(row=j, column=i).value)
-                                line[20] = list(season_discont[j-7].split())[list(season_discont[j-7].split()).index(season[j-1])+1]
-                            d.append(line)
-                        except AttributeError:
-                            for i in range(1, len(p.columns.ravel())+1):
-                                line.append(e['Лист1'].cell(row=j, column=i).value)
-                            d.append(line)
-                        
-                for i in range(len(d[0])):
-                    m = []
-                    for j in range(len(d)):
-                        m.append(d[j][i])
-                    data[(p.columns.ravel())[i]] = m
-                s = pd.DataFrame(data)
                 
-                if not os.path.exists(os.path.join(hol, f"media/clients/{username}")):
-                    os.mkdir(os.path.join(hol, f"media/clients/{username}"))
-                if not os.path.exists(os.path.join(hol, f"media/clients/{username}/{client}")):
-                    os.mkdir(os.path.join(hol, f"media/clients/{username}/{client}"))
-                s.to_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"), startrow=1, index=False)
+                data = dict.fromkeys([i for i in p.columns.ravel()])
+                
+                locale.setlocale(locale.LC_ALL, "ru")
+                period1 = list(period_c.split('-'))
+                period2 = list(period_p.split('-'))
+                month = []
+                if period1[0]<period2[0] and period1[1]==period2[1]:
+                    m = 1
+                    for i in data:
+                        m+=1
+                        line = []
+                        for j in k:
+                            line.append(e['Лист1'].cell(row=j, column=m).value)
+                        data[i] = line
+                    s = pd.DataFrame(data)
+                
+                    if not os.path.exists(os.path.join(hol, f"media/clients/{username}")):
+                        os.mkdir(os.path.join(hol, f"media/clients/{username}"))
+                    if not os.path.exists(os.path.join(hol, f"media/clients/{username}/{client}")):
+                        os.mkdir(os.path.join(hol, f"media/clients/{username}/{client}"))
+                    s.to_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"), startrow=1, index=False)
+                else:
+                    if int(period2[1])<int(period1[1]):
+                        period2[1] = int(period2[1])+12
+                    for i in range(int(period1[1]), int(period2[1])+1):
+                        if i>12:
+                            i-=12
+                        month.append(datetime.date(1, i, 1).strftime("%B"))
+                    
+                
+                    d = []
+                    for j in k:
+                        line = []
+                        if season[j-7]=='проверить' or season[j-7]=='нет':
+                            for i in range(1, len(p.columns.ravel())+1):
+                                line.append(e['Лист1'].cell(row=j, column=i).value)
+                            d.append(line)
+                        else:
+                            try:
+                                line1 = []
+                                for n in list(season[j-7].split()):
+                                    if n in month:
+                                        line1.append(n)
+                                if line1!=[]:
+                                    for v in range(1, len(p.columns.ravel())+1):
+                                        line.append(e['Лист1'].cell(row=j, column=v).value)
+                                    line[7] = line1
+                                    d.append(line)
+                            except ValueError:
+                                for i in range(1, len(p.columns.ravel())+1):
+                                    line.append(e['Лист1'].cell(row=j, column=i).value)
+                                d.append(line)
+                            except AttributeError:
+                                for i in range(1, len(p.columns.ravel())+1):
+                                    line.append(e['Лист1'].cell(row=j, column=i).value)
+                                d.append(line)
+                            
+                    for i in range(len(d[0])):
+                        m = []
+                        for j in range(len(d)):
+                            m.append(d[j][i])
+                        data[(p.columns.ravel())[i]] = m
+                    s = pd.DataFrame(data)
+                    
+                    if not os.path.exists(os.path.join(hol, f"media/clients/{username}")):
+                        os.mkdir(os.path.join(hol, f"media/clients/{username}"))
+                    if not os.path.exists(os.path.join(hol, f"media/clients/{username}/{client}")):
+                        os.mkdir(os.path.join(hol, f"media/clients/{username}/{client}"))
+                    s.to_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"), startrow=1, index=False)
                 
                 ''' This is create brief file for clients'''
                 for i in Brief_pattern.objects.all():
@@ -347,7 +378,7 @@ class Prepare_calc(TemplateView):
                 frequency = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"),
                                           header=None, skiprows=2, usecols = [37])
                 report = pd.read_excel(os.path.join(hol, "media/pattern/ОТЧЕТ_ОБЩИЙ.xlsx"), 
-                                  header=None, skiprows=6, usecols = [1, 3, 6, 9, 34, 40, 58])
+                                  header=None, skiprows=6, usecols = [1, 3, 6, 8, 9, 34, 40, 44, 45, 46])
                 fr = frequency.to_dict(orient='list')
                 b = p.to_dict(orient='list')
                 report = report.to_dict(orient='list')
@@ -393,7 +424,7 @@ class Prepare_calc(TemplateView):
                 b[32] = b.pop(30)
                 b[26] = b.pop(25)
                 b[30] = b.pop(28)
-                b[29] = [f'=COUNT(BF{i}:CK{i})' for i in range(13, height+13)]
+                b[29] = [f'=COUNT(AV{i}:DC{i})' for i in range(13, height+13)]
                 
                 b[31] = [f'=AB{i}/Y{i}' for i in range(13, height+13)]
                 b[21] = [f'=S{i}' for i in range(13, height+13)]
@@ -545,19 +576,42 @@ class Prepare_calc(TemplateView):
                                 +sheet[f'AS13':f'AS{height+13}']+sheet[f'AU13':f'AU{height+13}']):
                     for cell in row:
                         cell.number_format = '###0,00"р."'
-                ''' Сезонники и баинг
+                        
+                ''' Сезонники и тайминг '''
+                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"),
+                                     header=1)
+                season = p['Сезонники'].tolist()
                 season2 = {}
-                for i in range(48, 103):
+                for i in range(48, 104):
                     if sheet.cell(row=10, column=i).value!=None:
                         season2[sheet.cell(row=10, column=i).value] = i
                 for i in range(13, len(season)+13):
                     if season[i-13]=='проверить' or season[i-13]=='нет':
-                        pass
+                        for s in range(48, 108):
+                            sheet.cell(row=i, column=s).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
                     else:
-                        f = season2[season[i-13]]
-                        for k in range(5):
-                            sheet.cell(row=i, column=f+k).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
-                ''' 
+                        for h in list(season[i-13][1:-1].replace("'", "").split(', ')):
+                            f = season2[h]
+                            for k in range(5):
+                                sheet.cell(row=i, column=f+k).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
+                    if period1[0]<period2[0] and period1[1]==period2[1]:
+                        for s in range(48, 108):
+                            sheet.cell(row=i, column=s).value = 1
+                    else:
+                        for g in month:
+                            for a in range(5):
+                                sheet.cell(row=i, column=season2[g]+a).value = 1
+                
+                for j in range(13, height+13):
+                    sheet.cell(row=j, column=115).value = 'доделать'
+                for j in range(13, height+13):
+                    for k in range(len(report[6])-1, 0, -1):
+                        if report[1][k]==client and report[6][k]==b[21][j-10] and b[24][j-10]==report[9][k]:
+                            sheet.cell(row=j, column=116).value=report[34][k]
+                            sheet.cell(row=j, column=117).value=report[35][k]
+                            sheet.cell(row=j, column=118).value=report[36][k]
+                            break
+                    
                 
                 wb.save(os.path.join(hol, f"media/clients/{username}/{client}/mp_{name_rk}.xlsx"))
                 
