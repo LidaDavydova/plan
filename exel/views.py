@@ -377,7 +377,9 @@ class Prepare_calc(TemplateView):
                                                                     23, 24, 27, 29, 30, 31])
                 frequency = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"),
                                           header=None, skiprows=2, usecols = [37])
-                report = pd.read_excel(os.path.join(hol, "media/pattern/ОТЧЕТ_ОБЩИЙ.xlsx"), 
+                for i in Report_common.objects.all():
+                    report_common = i.file.name
+                report = pd.read_excel(os.path.join(hol, f"media/{report_common}"), 
                                   header=None, skiprows=6, usecols = [1, 3, 6, 8, 9, 34, 40, 44, 45, 46])
                 fr = frequency.to_dict(orient='list')
                 b = p.to_dict(orient='list')
@@ -452,7 +454,9 @@ class Prepare_calc(TemplateView):
                 
                 u=pd.DataFrame(b)
                 
-                wb = openpyxl.load_workbook(filename=os.path.join(hol, "media/pattern/медиаплан.xlsx"))
+                for i in Media_plan.objects.all():
+                    media_plan = i.file.name
+                wb = openpyxl.load_workbook(filename=os.path.join(hol, f"media/{media_plan}"))
                 w = wb.worksheets[0]
                 sheet = wb.active
                 g = []
@@ -822,13 +826,15 @@ def cleared(request, name_rk):
                     p = pd.read_excel(os.path.join(hol, n).replace('\\', '/'),
                                          header=None, skiprows=6)
                     b = p.to_dict(orient='list')
-                    wb = openpyxl.load_workbook(filename=os.path.join(hol, "media/pattern/ОТЧЕТ_ОБЩИЙ.xlsx"))
+                    for i in Report_common.objects.all():
+                        report_common = i.file.name
+                    wb = openpyxl.load_workbook(filename=os.path.join(hol, f"media/{report_common}"))
                                                 
                     w = wb.worksheets[0]
                     sheet = wb.active
                     for r in dataframe_to_rows(pd.DataFrame(p), index=None, header=None):
                         w.append(r)
-                    wb.save(os.path.join(hol, "media/pattern/ОТЧЕТ_ОБЩИЙ.xlsx"))
+                    wb.save(os.path.join(hol, f"media/{report_common}"))
             return render(request, 'but_cleared.html', data)
         except MultipleObjectsReturned:
             pass

@@ -90,23 +90,3 @@ class RegisterUserForm(UserCreationForm):
 
         # Вызываем метод базового класса
         return super(RegisterFormView, self).form_valid(form)
-
-class RegistrForm(ModelForm):
-    class Meta:
-        model = Customer
-        fields = ('first_name', 'last_name', 'password')
-        
-        widgets = {
-            "first_name": TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Имя'
-                }),
-            "last_name": TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Фамилия'
-                }),
-            "password": TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Пароль'
-                })
-            }

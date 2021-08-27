@@ -89,6 +89,40 @@ class Client(models.Model):
         else:
             dataframe.to_csv(self.file.path, index=False)
 
+class Report_common(models.Model):
+    file = models.FileField(upload_to ='pattern')
+
+    def __str__(self):
+        return self.file.name
+    
+    def save(self, *args, **kwargs):
+        if self.pk is not None:
+            old_self = Report_common.objects.get(pk=self.pk)
+            if old_self.file and self.file != old_self.file:
+                old_self.file.delete(False)
+        return super(Report_common, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.file.delete()
+        super().delete(*args, **kwargs)
+
+class Media_plan(models.Model):
+    file = models.FileField(upload_to ='pattern')
+
+    def __str__(self):
+        return self.file.name
+    
+    def save(self, *args, **kwargs):
+        if self.pk is not None:
+            old_self = Media_plan.objects.get(pk=self.pk)
+            if old_self.file and self.file != old_self.file:
+                old_self.file.delete(False)
+        return super(Media_plan, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.file.delete()
+        super().delete(*args, **kwargs)
+
 class Report(models.Model):
     file = models.FileField(upload_to ='pattern')
 
@@ -111,6 +145,13 @@ class Brief_pattern(models.Model):
 
     def __str__(self):
         return self.file.name
+
+    def save(self, *args, **kwargs):
+        if self.pk is not None:
+            old_self = Brief_pattern.objects.get(pk=self.pk)
+            if old_self.file and self.file != old_self.file:
+                old_self.file.delete(False)
+        return super(Brief_pattern, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         self.file.delete()
@@ -193,20 +234,7 @@ class Dmp(models.Model):
         self.file_content = True
         return self.file_content
     
-class Customer(models.Model):
-    #user_name = models.CharField(max_length = 100)
-    
-    first_name = models.CharField(max_length = 50)
 
-    last_name = models.CharField(max_length = 50)
-
-    password = models.CharField(max_length = 50)
-    
-    
-    def __str__(self):
-        template = '{0.first_name} {0.last_name}'
-        return template.format(self)
-    
 def content(instance, img):
     return '/'.join(['clients', 'img', instance.username, img])
     
