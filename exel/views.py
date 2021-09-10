@@ -76,7 +76,6 @@ class Logout(LogoutView):
 
 class Prepare_calc(TemplateView):
     template_name = "prepare_calculation/prepare.html"
-    
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             username = request.user.username
@@ -631,9 +630,8 @@ class Prepare_calc(TemplateView):
                                       name_rk=name_rk, dmp=path, brief=path2,
                                       mp=path3)
                 return calculate(request, pk=count.id)
-            return render(request, self.template_name)
-    
-
+            return render(request, self.template_name, data)
+        return render(request, self.template_name)
 def calculate(request, pk):
     if request.user.is_authenticated:
        username = request.user.username
