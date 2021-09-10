@@ -79,7 +79,7 @@ class Prepare_calc(TemplateView):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             username = request.user.username
-            data = {
+            dataclass = {
                 'client': Brief.objects.filter(username=username)[::-1],
                 'form': BriefForm,
                 #'now' : Brief.objects.filter(username=username),
@@ -630,7 +630,7 @@ class Prepare_calc(TemplateView):
                                       name_rk=name_rk, dmp=path, brief=path2,
                                       mp=path3)
                 return calculate(request, pk=count.id)
-            return render(request, self.template_name, data)
+            return render(request, self.template_name, dataclass)
         else:
             return redirect('exel:login')
 def calculate(request, pk):
