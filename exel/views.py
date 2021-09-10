@@ -184,7 +184,7 @@ class Prepare_calc(TemplateView):
                 
                 data = dict.fromkeys([i for i in p.columns.ravel()])
                 
-                locale.setlocale(locale.LC_ALL, "ru")
+                locale.setlocale(locale.LC_ALL, "ru_RU")
                 period1 = list(period_c.split('-'))
                 period2 = list(period_p.split('-'))
                 month = []
