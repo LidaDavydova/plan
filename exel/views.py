@@ -635,18 +635,17 @@ class Prepare_calc(TemplateView):
             return redirect('exel:login')
 def calculate(request, pk):
     if request.user.is_authenticated:
-       username = request.user.username
-       data = {
+        username = request.user.username
+        data = {
            'file': All_file.objects.get(pk=pk)
            }
-       return render(request, 'prepare_calculation/calculate.html', data)
+        return render(request, 'prepare_calculation/calculate.html', data)
     else:
         return redirect('exel:login')
 
 
 class Download_calc(TemplateView):
     template_name = 'download_calc.html'
-    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
