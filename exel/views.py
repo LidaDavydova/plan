@@ -631,7 +631,7 @@ class Prepare_calc(TemplateView):
                                       name_rk=name_rk, dmp=path, brief=path2,
                                       mp=path3)
                 return calculate(request, pk=count.id)
-        return render(request, self.template_name)
+            return render(request, self.template_name)
     
 
 def calculate(request, pk):
