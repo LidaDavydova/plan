@@ -631,7 +631,8 @@ class Prepare_calc(TemplateView):
                                       mp=path3)
                 return calculate(request, pk=count.id)
             return render(request, self.template_name, data)
-        return render(request, self.template_name)
+        else:
+            return redirect('exel:login')
 def calculate(request, pk):
     if request.user.is_authenticated:
        username = request.user.username
@@ -639,7 +640,8 @@ def calculate(request, pk):
            'file': All_file.objects.get(pk=pk)
            }
        return render(request, 'prepare_calculation/calculate.html', data)
-    
+    else:
+        return redirect('exel:login')
 
 
 class Download_calc(TemplateView):
@@ -678,7 +680,8 @@ class Download_calc(TemplateView):
             else:
                 form = ClientForm
             data['form'] = form
-        return render(request, self.template_name, data)
+        else:
+            return redirect('exel:login')
 
 
     
@@ -761,6 +764,8 @@ def not_cleared(request, name_rk):
             return render(request, 'but_not_cleared.html', data)
         except ObjectDoesNotExist:
             pass
+    else:
+        return redirect('exel:login')
    
     
 def cleared(request, name_rk):
@@ -843,7 +848,8 @@ def cleared(request, name_rk):
             return render(request, 'but_cleared.html', data)
         except MultipleObjectsReturned:
             pass
-       
+    else:
+        return redirect('exel:login')
     
 
 
@@ -868,6 +874,8 @@ def utm(request, name_rk):
         data['form'] = UtmForm()
         data['utm'] = Cleared.objects.get(name_rk=name_rk)
         return render(request, 'utm.html', data)
+    else:
+        return redirect('exel:login')
    
 def materials(request, name_rk):
     if request.user.is_authenticated:
@@ -892,6 +900,8 @@ def materials(request, name_rk):
         a = Feed.objects.filter(name_rk=name_rk)[::-1]
         data['files'] = [FeedFile.objects.filter(feed_id=i.pk) for i in a]
         return render(request, 'materials.html', data)
+    else:
+        return redirect('exel:login')
    
 def complete(request, name_rk):
     if request.user.is_authenticated:
@@ -908,4 +918,6 @@ def complete(request, name_rk):
         except MultipleObjectsReturned:
             pass
         return main(request)
+    else:
+        return redirect('exel:login')
     
