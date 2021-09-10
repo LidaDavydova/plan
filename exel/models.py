@@ -239,6 +239,7 @@ def content(instance, img):
     return '/'.join(['clients', 'img', instance.username, img])
     
 class Brief(models.Model):
+    duploaded_at = models.DateTimeField(auto_now_add=True, null=True)
     username = models.CharField(max_length = 60)
     client = models.CharField(max_length = 100)
     product = models.CharField(max_length = 100)

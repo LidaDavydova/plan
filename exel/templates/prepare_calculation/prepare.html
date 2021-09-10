@@ -15,9 +15,9 @@
     <div id="p">
     </div>
     <div id="prepare">
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" autocomplete="off">
     {% csrf_token %}
-    
+    {{g}}
     <a href="{% url 'exel:main' %}" class="button">Главная</a>
     
     <div class="title">
@@ -25,17 +25,11 @@
     <h3>Заполнить, если новый клиент</h3>
     <div id="dop">
         <p>коэф. скидки от 1 (min стоимость плана)<br>до 3 (max стоимость плана)</p>
-        <input name="discount"/>
+        <input name="discount" value="3"/>
         <p>АК, %</p> 
-            <input name="AK" list="ak"/>
-            <datalist id="ak"> 
-            <option>10%</option>
-            </datalist>
+            <input name="AK" value="10%"/>
         <p>DCM, руб.</p> 
-            <input name="DCM" list="dcm"/>
-            <datalist id="dcm"> 
-            <option>1,5р.</option>
-            </datalist>
+            <input name="DCM" value="1,5р."/>
         <br><br>
 
         {{form}}
@@ -45,7 +39,7 @@
     <table id="table">
         <tr>
             <td></td>
-            <td>Клиент/Брэнд</td>
+            <td>* Клиент/Брэнд</td>
             <td>
                 <input name="client" list="cl"/>
                 <datalist id="cl">
@@ -99,7 +93,7 @@
         </tr>
     	<tr>
             <td></td>
-            <td>Вид деятельности/Категория</td>
+            <td>* Вид деятельности/Категория</td>
             <td>
                 <input name="type_act" list="type" />
                 <datalist id="type">
@@ -111,27 +105,29 @@
                 <option>fmcg</option>
                 <option>Бытовая техника</option>
                 <option>Развлечения</option>
-                <option>другое-указать</option>
+                <option>другое - указать(дописать)</option>
                 </datalist>
             </td>
     	</tr>
     	<tr>
             <td></td>
-            <td>Страна</td>
+            <td>* Страна</td>
             <td>
                 <input name="country" list="country" />
                 <datalist id="country">
                 <option>Россия</option>
+                <option>другое - указать(дописать)</option>
                 </datalist>
             </td>
     	</tr>
     	<tr>
             <td></td>
-            <td>Регион</td>
+            <td>* Регион</td>
             <td>
                 <input name="region" list="region" />
                 <datalist id="region">
                 <option>Москва</option>
+                <option>другое - указать(дописать)</option>
                 </datalist>
             </td>
     	</tr>
@@ -143,6 +139,7 @@
                 <datalist id="gender">
                 <option>Женщины</option>
                 <option>Мужчины</option>
+                <option>другое - указать(дописать)</option>
                 </datalist>
             </td>
     	</tr>
@@ -173,6 +170,7 @@
                 <option>A-высокий</option>
                 <option>B-средний</option>
                 <option>C-низкий</option>
+                <option>другое - указать(дописать)</option>
                 </datalist>
             </td>
     	</tr><tr>
@@ -189,7 +187,7 @@
     	<tr>
             <td></td>
             <td>
-                Материалы<br> <br>
+                * Материалы<br> <br>
                 Видео (указать длительность,<br>если будет несколько видео,
                 <br>то указать - длинну каждого)
                 <br>*длительность указывать желательно,<br>но не обязательно
@@ -211,7 +209,7 @@
     	</tr>
     	<tr>
             <td></td>
-            <td>Период</td>
+            <td>* Период</td>
             <td>
                 <h4>с: </h4>
                 <input name="period_c" type="date"/><br><br>
@@ -229,7 +227,7 @@
     	</tr>
     	<tr>
             <td></td>
-            <td>Задача, kpi</td>
+            <td>* Задача, kpi</td>
             <td>
                 <input name="KPI" list="KPI" />
                 <datalist id="KPI">
@@ -244,12 +242,14 @@
     	</tr>
     	<tr>
             <td></td>
-            <td>Планирование</td>
+            <td>Планирование/Пожелания<br>
+            по инструментам продвижения</td>
             <td>
                 <input name="plan" list="plan" />
                 <datalist id="plan">
                 <option>свободное</option>
                 <option>строгий список ресурсов</option>
+                <option>другое - указать</option>
                 </datalist>
             </td>
     	</tr>
@@ -259,7 +259,13 @@
             </td>
             <td>Кто будет готовить материалы для кампании?</td>
             <td>
-            	<input type="text" name="who_prep_materials">
+            	<input type="text" name="who_prep_materials" list="who">
+            	<datalist id="who">
+                <option>на стороне бренда</option>
+                <option>на стороне аг-ва (в рамках указанного бюджета)</option>
+                <option>на стороне аг-ва (доп.бюджет) - указать сумму с НДС</option>
+                <option>другое - указать</option>
+                </datalist>
         	</td>
         </tr>  
     </table>

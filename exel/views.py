@@ -19,6 +19,7 @@ import pandas as pd
 import openpyxl
 import os
 import io
+import uuid
 import datetime
 import locale
 from django.http import FileResponse
@@ -119,8 +120,7 @@ class Prepare_calc(TemplateView):
                 if form.is_valid():
                     ex = request.FILES.get('img')
                     try:
-                        if ex.name.lower().endswith(('.jpg', '.jepg', '.png', '.svg')):
-                            Brief.objects.create(username=username, client=client, product=product,
+                        brif = Brief.objects.create(username=username, client=client, product=product,
                                          name_rk=name_rk, posad=posad, 
                                          type_act=type_act, country=country, 
                                          region=region, gender=gender, 
@@ -140,7 +140,7 @@ class Prepare_calc(TemplateView):
                         ak = s.AK
                         disc = s.discount
                         dcm = s.DCM
-                        Brief.objects.create(username=username, client=client, product=product,
+                        brif = Brief.objects.create(username=username, client=client, product=product,
                                          name_rk=name_rk, posad=posad, 
                                          type_act=type_act, country=country, 
                                          region=region, gender=gender, 
@@ -202,7 +202,7 @@ class Prepare_calc(TemplateView):
                         os.mkdir(os.path.join(hol, f"media/clients/{username}"))
                     if not os.path.exists(os.path.join(hol, f"media/clients/{username}/{client}")):
                         os.mkdir(os.path.join(hol, f"media/clients/{username}/{client}"))
-                    s.to_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"), startrow=1, index=False)
+                    s.to_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{brif.duploaded_at.strftime('%x')}.xlsx"), startrow=1, index=False)
                 else:
                     if int(period2[1])<int(period1[1]):
                         period2[1] = int(period2[1])+12
@@ -250,7 +250,8 @@ class Prepare_calc(TemplateView):
                         os.mkdir(os.path.join(hol, f"media/clients/{username}"))
                     if not os.path.exists(os.path.join(hol, f"media/clients/{username}/{client}")):
                         os.mkdir(os.path.join(hol, f"media/clients/{username}/{client}"))
-                    s.to_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"), startrow=1, index=False)
+                    
+                    s.to_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{brif.duploaded_at.strftime('%x')}.xlsx"), startrow=1, index=False)
                 
                 ''' This is create brief file for clients'''
                 for i in Brief_pattern.objects.all():
@@ -283,16 +284,19 @@ class Prepare_calc(TemplateView):
                 sheet['H3'] = bd.discount
                 sheet['H4'] = bd.AK
                 sheet['H5'] = bd.DCM
-                im = openpyxl.drawing.image.Image(bd.img)
-                im.height = 250
-                im.width = 250
-                ws.add_image(im, 'H6')
+                try:
+                    im = openpyxl.drawing.image.Image(bd.img)
+                    im.height = 250
+                    im.width = 250
+                    ws.add_image(im, 'H6')
+                except:
+                    pass
                 
                 for row in sheet.iter_rows():
                     for cell in row:
                         cell.alignment = Alignment(wrap_text=True,vertical='top') 
-                wb.save(os.path.join(hol, f"media/clients/{username}/{client}/brief_{name_rk}.xlsx"))
-                path2 = join('clients', username, client, f'brief_{name_rk}.xlsx')
+                wb.save(os.path.join(hol, f"media/clients/{username}/{client}/brief_{client}_{brif.duploaded_at.strftime('%x')}.xlsx"))
+                path2 = join('clients', username, client, f'brief_{client}_{brif.duploaded_at.strftime("%x")}.xlsx')
                 
                 '''This is correction DMP'''
                 '''
@@ -369,18 +373,18 @@ class Prepare_calc(TemplateView):
                 '''
                 
                 '''This is create mp'''
-                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"), 
+                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{brif.duploaded_at.strftime('%x')}.xlsx"), 
                                   header=None, skiprows=2, usecols = [1, 2, 3, 4, 5, 6,
                                                                     8, 9, 11, 12, 13,
                                                                     14, 15, 16, 17,
                                                                     18, 19, 20, 21, 22,
                                                                     23, 24, 27, 29, 30, 31])
-                frequency = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"),
+                frequency = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{brif.duploaded_at.strftime('%x')}.xlsx"),
                                           header=None, skiprows=2, usecols = [37])
                 for i in Report_common.objects.all():
                     report_common = i.file.name
                 report = pd.read_excel(os.path.join(hol, f"media/{report_common}"), 
-                                  header=None, skiprows=6, usecols = [1, 3, 6, 8, 9, 34, 40, 44, 45, 46])
+                                  header=None, skiprows=6, usecols = [1, 3, 6, 8, 9, 34, 40, 44, 45, 46, 59, 60, 61, 62])
                 fr = frequency.to_dict(orient='list')
                 b = p.to_dict(orient='list')
                 report = report.to_dict(orient='list')
@@ -582,7 +586,7 @@ class Prepare_calc(TemplateView):
                         cell.number_format = '###0,00"р."'
                         
                 ''' Сезонники и тайминг '''
-                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"),
+                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{brif.duploaded_at.strftime('%x')}.xlsx"),
                                      header=1)
                 season = p['Сезонники'].tolist()
                 season2 = {}
@@ -607,22 +611,21 @@ class Prepare_calc(TemplateView):
                                 sheet.cell(row=i, column=season2[g]+a).value = 1
                 
                 for j in range(13, height+13):
-                    sheet.cell(row=j, column=115).value = 'доделать'
-                for j in range(13, height+13):
                     for k in range(len(report[6])-1, 0, -1):
                         if report[1][k]==client and report[6][k]==b[21][j-10] and b[24][j-10]==report[9][k]:
-                            sheet.cell(row=j, column=116).value=report[34][k]
-                            sheet.cell(row=j, column=117).value=report[35][k]
-                            sheet.cell(row=j, column=118).value=report[36][k]
+                            sheet.cell(row=j, column=115).value = report[59][k]
+                            sheet.cell(row=j, column=116).value=report[60][k]
+                            sheet.cell(row=j, column=117).value=report[61][k]
+                            sheet.cell(row=j, column=118).value=report[62][k]
                             break
                     
                 
-                wb.save(os.path.join(hol, f"media/clients/{username}/{client}/mp_{name_rk}.xlsx"))
+                wb.save(os.path.join(hol, f"media/clients/{username}/{client}/mp_{client}_{brif.duploaded_at.strftime('%x')}.xlsx"))
                 
                 
 
-                path = join('clients', username, client, f'DMP_{name_rk}.xlsx')
-                path3 = join('clients', username, client, f'mp_{name_rk}.xlsx')
+                path = join('clients', username, client, f'DMP_{client}_{brif.duploaded_at.strftime("%x")}.xlsx')
+                path3 = join('clients', username, client, f'mp_{client}_{brif.duploaded_at.strftime("%x")}.xlsx')
                 
                 count = All_file.objects.create(username=username, client=client,
                                       name_rk=name_rk, dmp=path, brief=path2,
@@ -665,6 +668,12 @@ class Download_calc(TemplateView):
                 form = ClientForm(request.POST, request.FILES)
                 if form.is_valid():
                     ex = request.FILES.get('calculation')
+                    h = Brief.objects.filter(username=username)[::-1][0]
+                    h.name_rk=title_rk
+                    h.save()
+                    h = All_file.objects.filter(username=username)[::-1][0]
+                    h.name_rk=title_rk
+                    h.save()
                     Client.objects.create(username=username, calculation=ex,
                                               client=client, name_rk=title_rk)
                     return render(request, self.template_name, data)  
