@@ -21,7 +21,6 @@ import os
 import io
 import uuid
 import datetime
-import locale
 from django.http import FileResponse
 from os.path import join
 from openpyxl.styles import Alignment, Border, Side, PatternFill, Font
@@ -183,9 +182,12 @@ class Prepare_calc(TemplateView):
                 
                 data = dict.fromkeys([i for i in p.columns.ravel()])
                 
-                locale.setlocale(locale.LC_ALL, "ru_RU")
                 period1 = list(period_c.split('-'))
                 period2 = list(period_p.split('-'))
+                
+                mon = {1: "Январь", 2: "Февраль", 3: "Март", 4: "Апрель",
+                         5: "Май", 6: "Июнь", 7: "Июль", 8: "Август",
+                         9: "Сентябрь", 10: "Октябрь", 11: "Ноябрь", 12: "Декабрь"}
                 month = []
                 if period1[0]<period2[0] and period1[1]==period2[1]:
                     m = 1
@@ -208,7 +210,7 @@ class Prepare_calc(TemplateView):
                     for i in range(int(period1[1]), int(period2[1])+1):
                         if i>12:
                             i-=12
-                        month.append(datetime.date(1, i, 1).strftime("%B"))
+                        month.append(mon[int(i)])
                     
                 
                     d = []
