@@ -382,11 +382,11 @@ class Prepare_calc(TemplateView):
                                                                     18, 19, 20, 21, 22,
                                                                     23, 24, 27, 29, 30, 31])
                 frequency = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"),
-                                          header=None, skiprows=2, usecols = [37])
+                                          header=None, skiprows=2, usecols = [37, 39, 41])
                 for i in Report_common.objects.all():
                     report_common = i.file.name
                 report = pd.read_excel(os.path.join(hol, f"media/{report_common}"), 
-                                  header=None, skiprows=6, usecols = [1, 3, 6, 8, 9, 34, 40, 44, 45, 46, 59, 60, 61, 62])
+                                  header=None, skiprows=6, usecols = [1, 3, 6, 8, 9, 34, 36, 54, 44, 45, 46, 59, 60, 61, 62])
                 fr = frequency.to_dict(orient='list')
                 b = p.to_dict(orient='list')
                 report = report.to_dict(orient='list')
@@ -397,7 +397,7 @@ class Prepare_calc(TemplateView):
                 for i in range(0, len(b[21])):
                     for k in range(len(report[6])-1, 0, -1):
                         if report[6][k]==b[21][i] and report[1][k]==client:
-                            lids[i]=report[40][k]
+                            lids[i]=report[54][k]
                             break
                     
                         
@@ -406,18 +406,18 @@ class Prepare_calc(TemplateView):
                 for i in range(0, len(b[21])):
                     for k in range(len(report[6])-1, 0, -1):
                         if report[1][k]==client and report[6][k]==b[21][i]:
-                            ctr[i]=report[40][k]
+                            ctr[i]=report[36][k]
                             break
                         elif report[3][k]==b[1][i] and report[6][k]==b[21][i]:
-                            ctr[i]=report[40][k]*88/100
+                            ctr[i]=report[36][k]*88/100
                             break
                         elif report[6][k]==b[21][i]:
-                            ctr[i]=report[40][k]*85/100
+                            ctr[i]=report[36][k]*85/100
                             break
                     if ctr[i] == '':
                         for j in range(height):
                             if b[1][j]==b[1][i] and b[21][j]==b[21][i] and i!=j:
-                                ctr[i]=report[40][k]*90/100
+                                ctr[i]=fr[41][k]*90/100
                                 break
                 
                 b[35] = b.pop(11)
@@ -444,7 +444,7 @@ class Prepare_calc(TemplateView):
                 b[37] = [f'=IF(OR(X{i}="1000 показов",X{i}="клики",X{i}="engagement",X{i}="вовлечение",X{i}="просмотры"),IF(X{i}="клики",AG{i}*1000/AI{i},IF(OR(X{i}="engagement",X{i}="просмотры",X{i}="вовлечение"),AG{i}*1000/AI{i},AC{i}*AD{i}*(1-AE{i}))),IF(ISERR(AC{i}*AD{i}/AI{i}*1000*(1-AE{i})),0,AC{i}*AD{i}*AB{i}*(1-AE{i})/AI{i}*1000))' for i in range(13, height+13)]
                 b[38] = [f'=IF(X{i}="клики",AC{i}*AD{i}*(1-AE{i})*AO{i},IF(OR(X{i}="просмотры",X{i}="engagement",X{i}="вовлечение"),AB{i}*AC{i}*AD{i}*(1-AE{i}),IF(OR(X{i}="пакет",X{i}="неделя",X{i}="день",X{i}="месяц",X{i}="единица",X{i}="единиц"),AC{i}*AD{i}*(1-AE{i})*AB{i},AB{i}*AF{i})))' for i in range(13, height+13)]
                 b[39] = [f'=AG{i}*1.2' for i in range(13, height+13)]
-                b[40] = [f'=AM{i}/AL{i}' for i in range(13, height+13)]
+                b[40] = [f'=AB{i}*1000' for i in range(13, height+13)]
                 b[41] = fr[37]
                 b[42] = [f'=AI{i}/AJ{i}' for i in range(13, height+13)]
                 b[43] = ['']*height
@@ -480,21 +480,21 @@ class Prepare_calc(TemplateView):
                         for i in range(0, len(b[21])):
                             for k in range(len(report[6])-1, 0, -1):
                                 if report[1][k]==client and report[6][k]==b[21][i] and during==report[9][k]:
-                                    vrt[i]=report[34][k]
+                                    vrt[i]=report[30][k]
                                     break
                                 elif report[1][k]==client and during==report[9][k]:
-                                    vrt[i]=report[34][k]*90/100
+                                    vrt[i]=report[30][k]*90/100
                                     break
                                 elif report[3][k]==b[1][i] and report[6][k]==b[21][i] and during==report[9][k]:
-                                    vrt[i]=report[34][k]*88/100
+                                    vrt[i]=report[30][k]*88/100
                                     break
                                 elif report[6][k]==b[21][i] and during==report[9][k]:
-                                    vrt[i]=report[34][k]*85/100
+                                    vrt[i]=report[30][k]*85/100
                                     break
                             if vtr[i] == '':
                                 for j in range(height):
                                     if report[3][k]==b[1][i] and report[6][k]==b[21][i] and during==report[9][k] and i!=j:
-                                        vrt[i]=report[34][k]*90/100
+                                        vrt[i]=fr[39][k]*90/100
                                         break
                         b[43] = vtr
                         u=pd.DataFrame(b)
@@ -586,6 +586,13 @@ class Prepare_calc(TemplateView):
                                 +sheet[f'AS13':f'AS{height+13}']+sheet[f'AU13':f'AU{height+13}']):
                     for cell in row:
                         cell.number_format = '###0,00"р."'
+                for row in list(sheet[f'AL13':f'AL{height+19}']+sheet[f'AN13':f'AN{height+13}']):
+                    for cell in row:
+                        cell.number_format = '0.00%'
+                
+                for row in list(sheet.iter_rows())[12:]:
+                    for cell in row:
+                        cell.alignment = Alignment(wrap_text=True,vertical='top')
                         
                 ''' Сезонники и тайминг '''
                 p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"),

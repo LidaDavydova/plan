@@ -15,7 +15,7 @@
     <div id="p">
     </div>
     <div id="prepare">
-    <form method="post" enctype="multipart/form-data" autocomplete="off">
+    <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{g}}
     <a href="{% url 'exel:main' %}" class="button">Главная</a>
