@@ -241,6 +241,9 @@ class Prepare_calc(TemplateView):
                                     line.append(e['Лист1'].cell(row=j, column=i).value)
                                 d.append(line)
                             
+                    if len(d)==0:
+                        dataclass['er'] = 'нет данных по пункту - Задача, kpi'
+                        return render(request, self.template_name, dataclass)
                     for i in range(len(d[0])):
                         m = []
                         for j in range(len(d)):
@@ -593,7 +596,9 @@ class Prepare_calc(TemplateView):
                 for row in list(sheet.iter_rows())[12:]:
                     for cell in row:
                         cell.alignment = Alignment(wrap_text=True,vertical='top')
-                        
+                for i in range(13, height+13):
+                    sheet.row_dimensions[i].height = 70
+                    
                 ''' Сезонники и тайминг '''
                 p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"),
                                      header=1)
