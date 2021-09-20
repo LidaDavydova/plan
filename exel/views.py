@@ -171,7 +171,7 @@ class Prepare_calc(TemplateView):
                 u = p["коэф. скидки от 1 (min стоимость плана) до  3 (max стоимость плана) "].tolist() 
                 k = []
                 for i in range(1, len(a)+1):
-                    if (a[i-1] == 'Все' or a[i-1] == type_act) and b[i-1] == KPI and (u[i-1]=='1-3' or u[i-1] == str(Brief.objects.filter(username=username, client=client).first().discount)):
+                    if (a[i-1] == 'Все' or a[i-1] == type_act) and KPI in b[i-1] and (u[i-1]=='1-3' or u[i-1] == str(Brief.objects.filter(username=username, client=client).first().discount)):
                         if materials in "Видео (указать длительность снизу)":
                             if ('Виде' in str(video[i-1])) or ('виде' in str(video[i-1])) or ('роли' in str(video[i-1])) or ('Роли' in str(video[i-1])) or ('vide' in str(video[i-1])) or ('Vide' in str(video[i-1])):
                                 k.append(6+i)

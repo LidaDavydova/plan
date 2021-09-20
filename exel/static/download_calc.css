@@ -1,5 +1,4 @@
 body{
-    background: url(../static/background/11.png);
 }
 
 div.content {
@@ -238,6 +237,7 @@ h3 {
       width: 200px;
       height: 35px;
       border-radius: 45px;
+      font-weight: bold;
       font-family: Libre Baskerville, serif;
       font-size: 14px;
       
@@ -245,8 +245,8 @@ h3 {
       text-align: center;
       letter-spacing: 1px;
       line-height: 35px;
-      color: #524f4e;
-      background: #ffe851;
+      color: #40382D;
+      background: #C8CCF4;
       box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
       transition: .3s;
       }
@@ -368,8 +368,9 @@ input.mp {
     margin-bottom: 80px;
     cursor: pointer;
     width: 200px;
-    height: 35px;
+    height: 40px;
     border-radius: 45px;
+    font-weight: bold;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
       
@@ -377,8 +378,8 @@ input.mp {
     text-align: center;
     letter-spacing: 1px;
     line-height: 35px;
-    color: #524f4e;
-    background: #ffe851;
+    color: #40382D;
+    background: #C8CCF4;
     box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
     transition: .3s;
 }
@@ -478,7 +479,7 @@ div.cl hr {
 a.five {
    border-radius: 10px;
    color: #40382D;
-   box-shadow: inset 0 -5px 0 #40382D;
+   box-shadow: inset 0 -5px 0 #C8CCF4;
    display: inline-block;
    text-decoration: none;
    text-transform: uppercase;
@@ -491,8 +492,8 @@ a.five {
    transition: 0.4s ease-in-out;
 }
 a.five:hover {
-   box-shadow: inset 0 -60px 0 #40382D, 2px 2px 3px rgba(0, 0, 0, 0.3);
-   color: #DECDA5;
+   box-shadow: inset 0 -60px 0 #C8CCF4, 2px 2px 3px rgba(0, 0, 0, 0.3);
+   color: #40382D;
 }
 
 a.four {
@@ -543,9 +544,10 @@ input.download {
       text-decoration: none;
       margin: 8px 10px;
       cursor: pointer;
-      width: 220px;
+      width: 240px;
       height: 50px;
       border-radius: 45px;
+      font-weight: bold;
       font-family: Libre Baskerville, serif;
       font-size: 14px;
       
@@ -553,8 +555,8 @@ input.download {
       text-align: center;
       letter-spacing: 1px;
       line-height: 35px;
-      color: #524f4e;
-      background: #ffe851;
+      color: #40382D;
+      background: #C8CCF4;
       box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
       transition: .3s;
       }
@@ -575,6 +577,7 @@ input.download {
       width: 180px;
       height: 40px;
       border-radius: 45px;
+      font-weight: bold;
       font-family: Libre Baskerville, serif;
       font-size: 14px;
       
@@ -582,8 +585,8 @@ input.download {
       text-align: center;
       letter-spacing: 1px;
       line-height: 35px;
-      color: #524f4e;
-      background: #ffe851;
+      color: #40382D;
+      background: #C8CCF4;
       box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
       transition: .3s;
       }
@@ -605,6 +608,7 @@ input.download {
       width: 220px;
       height: 50px;
       border-radius: 45px;
+      font-weight: bold;
       font-family: Libre Baskerville, serif;
       font-size: 14px;
       
@@ -612,8 +616,8 @@ input.download {
       text-align: center;
       letter-spacing: 1px;
       line-height: 35px;
-      color: #524f4e;
-      background: #ffe851;
+      color: #40382D;
+      background: #C8CCF4;
       box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
       transition: .3s;
       }
@@ -678,6 +682,7 @@ input.mat {
     height: 35px;
     border: none;
     border-radius: 45px;
+    font-weight: bold;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
       
@@ -685,10 +690,18 @@ input.mat {
     text-align: center;
     letter-spacing: 1px;
     line-height: 35px;
-    color: #524f4e;
-    background: #ffe851;
+    color: #40382D;
+    background: #C8CCF4;
     box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
     transition: .3s;
+}
+
+      
+input.mat:hover {
+      background: #e52e2e;
+      box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
+      color: #461bd2000048;
+      transform: translateY(1px);
 }
 
 /* utm.html */

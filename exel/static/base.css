@@ -1,6 +1,5 @@
 /* base.html */
 body, html {
-    background: url(../static/background/11.png);
     width: 99%;
     height: 100%;
 }
@@ -125,7 +124,7 @@ border-right: none;
 }
 
 .table_blur {
-  background: blue;
+  background: #C8CCF4;
   text-align: center;
   max-width: 100%;
   width: 100%
@@ -274,7 +273,7 @@ border-right: none;
 }
 
 tr.name{
-   background: #ffc107ab;
+   background: #C8CCF4;
   text-align: center;
   max-width: 100%;
   width: 100%;
@@ -337,8 +336,8 @@ div#base {
       text-align: center;
       letter-spacing: 1px;
       line-height: 35px;
-      color: #524f4e;
-      background: #ffe851;
+      color: white;
+      background: #C8CCF4;
       box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
       transition: .3s;
       }
@@ -442,7 +441,6 @@ div#prepare {
 }
 
 div#p {
-    background: url(../static/background/green.jpeg);
     opacity: 0.7;
     width: 90vw;
     height: 100vh;
@@ -478,9 +476,9 @@ div#p {
 
 .title h3{
     position: relative;
-    left: 550px;
+    left: 549px;
     width: 270px;
-    background: #ff8c56;
+    background: #C8CCF4;
     padding: 10px 20px;
 }
 
@@ -489,22 +487,21 @@ div#p {
     counter-reset: rowNumber;
     overflow: auto;
     white-space: nowrap;
-    border: 5px green solid;
-    border-spacing: 10 0px;
+    border: none;
 font-family: 'Open Sans', sans-serif;
 font-weight: bold;
 }
 
 .question #table td:first-child {
-background: #AFCDE7;
-color: white;
+background: white;
+color: black;
 padding: 10px 20px;
 }
 
 .question #table td {
     padding: 10px 10px;
-    background: #b5d6ff;
-    border-bottom: 3px solid #e061451f;
+    background: white;
+    border-bottom: 3px solid #AEC0C7;
 }
 
 input {
@@ -555,8 +552,9 @@ input#i {
     margin: 8px 5px;
     cursor: pointer;
     width: 140px;
-    height: 35px;
+    height: 40px;
     border-radius: 45px;
+    font-weight: bold;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
       
@@ -564,8 +562,8 @@ input#i {
     text-align: center;
     letter-spacing: 1px;
     line-height: 35px;
-    color: #524f4e;
-    background: #ffe851;
+    color: #40382D;
+    background: #C8CCF4;
     box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
     transition: .3s;
 }
