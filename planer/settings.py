@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'exel',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -141,3 +142,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
 
+IMPORT_EXPORT_USE_TRANSACTIONS = True
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "onlinemanager84@gmail.com"
+EMAIL_HOST_PASSWORD = "5TU-HL4-JU3"
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False

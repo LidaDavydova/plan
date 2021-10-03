@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from .resources import ByingResource
+from tablib import Dataset
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.base import ContentFile
@@ -17,16 +19,20 @@ from django.conf import settings
 from django.contrib import messages
 import pandas as pd
 import openpyxl
+import codecs
 import os
 import io
 import uuid
 import datetime
+import math
 from django.http import FileResponse
 from os.path import join
 from openpyxl.styles import Alignment, Border, Side, PatternFill, Font
 from openpyxl import load_workbook
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.utils.dataframe import dataframe_to_rows
+from django.core.mail import send_mail
+from tablib import Dataset
 
 
 def main(request, super_us = False):
@@ -37,7 +43,6 @@ def main(request, super_us = False):
             'cleared': Cleared.objects.filter(username=username)[::-1],
             'complete': Complete.objects.filter(username=username)[::-1]
                 }
-        #if not auth_user.objects.get()
         if request.user.is_superuser == 1:
             data['body'] = 'on'
             return render(request, 'base.html', data)
@@ -69,9 +74,23 @@ class Login(LoginView):
         context = super().get_context_data(**kwargs)
         return dict(list(context.items()))
 
+class Send_email(TemplateView):
+    template_name = "registration/send_email.html"
+    def dispatch(self, request, *args, **kwargs):
+        send_mail('Тема', 'Тело письма', settings.EMAIL_HOST_USER, ['davydoval2005@gmail.com'])
+    
+class Change(TemplateView):
+    template_name = "registration/change.html"
+    def dispatch(self, request, *args, **kwargs):
+        data = {
+            }
+        return redirect('exel:login')
+
 class Logout(LogoutView):
     def dispatch(self, request, *args, **kwargs):
         return redirect('exel:login')
+
+
 
 class Prepare_calc(TemplateView):
     template_name = "prepare_calculation/prepare.html"
@@ -167,11 +186,12 @@ class Prepare_calc(TemplateView):
                 b = p["KPI"].tolist()
                 video = p['Размер (в пикселях) / Формат'].tolist()
                 season = p["Сезонники"].tolist()
+                baing = p["Баинговые приоритеты"].tolist()
                 
                 u = p["коэф. скидки от 1 (min стоимость плана) до  3 (max стоимость плана) "].tolist() 
                 k = []
                 for i in range(1, len(a)+1):
-                    if (a[i-1] == 'Все' or a[i-1] == type_act) and KPI in b[i-1] and (u[i-1]=='1-3' or u[i-1] == str(Brief.objects.filter(username=username, client=client).first().discount)):
+                    if (a[i-1] == 'Все' or a[i-1] == type_act) and (str(KPI) in str(b[i-1])) and (u[i-1]=='1-3' or u[i-1] == str(Brief.objects.filter(username=username, client=client).first().discount)):
                         if materials in "Видео (указать длительность снизу)":
                             if ('Виде' in str(video[i-1])) or ('виде' in str(video[i-1])) or ('роли' in str(video[i-1])) or ('Роли' in str(video[i-1])) or ('vide' in str(video[i-1])) or ('Vide' in str(video[i-1])):
                                 k.append(6+i)
@@ -180,7 +200,18 @@ class Prepare_calc(TemplateView):
                                 k.append(6+i)
                         else:
                             k.append(6+i)
+                baing_d = dict()
+                k2 = []
                 
+                for i in k:
+                    try:
+                        baing_d[int(baing[i-7])]=i
+                    except ValueError:
+                        k2.append(i)
+                k=[]
+                for i in sorted(baing_d):
+                    k.append(baing_d[i])
+                k.extend(k2)
                 data = dict.fromkeys([i for i in p.columns.ravel()])
                 
                 period1 = list(period_c.split('-'))
@@ -250,6 +281,8 @@ class Prepare_calc(TemplateView):
                             m.append(d[j][i])
                         data[(p.columns.ravel())[i]] = m
                     s = pd.DataFrame(data)
+                    
+                    
                     
                     if not os.path.exists(os.path.join(hol, f"media/clients/{username}")):
                         os.mkdir(os.path.join(hol, f"media/clients/{username}"))
@@ -383,7 +416,7 @@ class Prepare_calc(TemplateView):
                                                                     8, 9, 11, 12, 13,
                                                                     14, 15, 16, 17,
                                                                     18, 19, 20, 21, 22,
-                                                                    23, 24, 27, 29, 30, 31])
+                                                                    23, 24, 25, 26, 27, 29, 30, 31])
                 frequency = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"),
                                           header=None, skiprows=2, usecols = [37, 39, 41])
                 for i in Report_common.objects.all():
@@ -394,7 +427,7 @@ class Prepare_calc(TemplateView):
                 b = p.to_dict(orient='list')
                 report = report.to_dict(orient='list')
                 height = len(b[4])
-                
+                h1 = height
                 '''лиды'''
                 lids = [''] * height
                 for i in range(0, len(b[21])):
@@ -424,26 +457,24 @@ class Prepare_calc(TemplateView):
                                 break
                 
                 b[35] = b.pop(11)
+                
                 b[20] = [i for i in range(1, height+1)]
-                
-                for i in list(b.keys())[::-1]:
-                    if i>=21:
-                        b[i+1] = b.pop(i)
-                
-                b[33] = b.pop(31)
-                b[34] = b.pop(32)
-                b[32] = b.pop(30)
-                b[26] = b.pop(25)
-                b[30] = b.pop(28)
+                b[33] = b.pop(30)
+                b[34] = b.pop(31)
+                b[32] = b.pop(29)
+                b[30] = b.pop(27)
                 b[29] = [f'=COUNT(AV{i}:DC{i})' for i in range(13, height+13)]
-                
                 b[31] = [f'=AB{i}/Y{i}' for i in range(13, height+13)]
+                b[27] = b.pop(25)
+                b[26] = b.pop(24)
+                b[24] = b.pop(23)
+                b[23] = b.pop(22)
+                b[22] = b.pop(21)
                 b[21] = [f'=S{i}' for i in range(13, height+13)]
-                b[25] = ['']*height
-                b[28] = ['1000 показов']*height
+                
+                b[25] = ['']*height #длит видео
                 
                 b = dict(sorted(b.items(), key=lambda x: x[0]))
-                
                 b[37] = [f'=IF(OR(X{i}="1000 показов",X{i}="клики",X{i}="engagement",X{i}="вовлечение",X{i}="просмотры"),IF(X{i}="клики",AG{i}*1000/AI{i},IF(OR(X{i}="engagement",X{i}="просмотры",X{i}="вовлечение"),AG{i}*1000/AI{i},AC{i}*AD{i}*(1-AE{i}))),IF(ISERR(AC{i}*AD{i}/AI{i}*1000*(1-AE{i})),0,AC{i}*AD{i}*AB{i}*(1-AE{i})/AI{i}*1000))' for i in range(13, height+13)]
                 b[38] = [f'=IF(X{i}="клики",AC{i}*AD{i}*(1-AE{i})*AO{i},IF(OR(X{i}="просмотры",X{i}="engagement",X{i}="вовлечение"),AB{i}*AC{i}*AD{i}*(1-AE{i}),IF(OR(X{i}="пакет",X{i}="неделя",X{i}="день",X{i}="месяц",X{i}="единица",X{i}="единиц"),AC{i}*AD{i}*(1-AE{i})*AB{i},AB{i}*AF{i})))' for i in range(13, height+13)]
                 b[39] = [f'=AG{i}*1.2' for i in range(13, height+13)]
@@ -503,6 +534,8 @@ class Prepare_calc(TemplateView):
                         u=pd.DataFrame(b)
                         for r in dataframe_to_rows(u, index=None, header=None):
                             w.append(r)
+                
+                
                 formula = '1000 показов, клики, пакет, просмотры, engagement, вовлечение, неделя, месяц, единица, единиц, день'
                 dv = DataValidation(type='list', formula1='"{}"'.format(formula), allow_blank=True)
                 sheet.add_data_validation(dv)
@@ -592,7 +625,6 @@ class Prepare_calc(TemplateView):
                 for row in list(sheet[f'AL13':f'AL{height+19}']+sheet[f'AN13':f'AN{height+13}']):
                     for cell in row:
                         cell.number_format = '0.00%'
-                
                 for row in list(sheet.iter_rows())[12:]:
                     for cell in row:
                         cell.alignment = Alignment(wrap_text=True,vertical='top')
@@ -607,6 +639,7 @@ class Prepare_calc(TemplateView):
                 for i in range(48, 104):
                     if sheet.cell(row=10, column=i).value!=None:
                         season2[sheet.cell(row=10, column=i).value] = i
+                
                 for i in range(13, len(season)+13):
                     if season[i-13]=='проверить' or season[i-13]=='нет':
                         for s in range(48, 108):
@@ -619,10 +652,25 @@ class Prepare_calc(TemplateView):
                     if period1[0]<period2[0] and period1[1]==period2[1]:
                         for s in range(48, 108):
                             sheet.cell(row=i, column=s).value = 1
-                    else:
-                        for g in month:
+                            """если 2 месяца"""
+                    elif int(period2[1])-int(period1[1])==1: 
+                        for a in range(math.ceil(int(period1[2])/7)-1, 5):
+                            sheet.cell(row=i, column=season2[month[0]]+a).value = 1
+                        for a in range(math.ceil(int(period2[2])/7)):
+                            sheet.cell(row=i, column=season2[month[1]]+a).value = 1
+                            """если больше 2 месяцев"""
+                    elif int(period2[1])-int(period1[1])>1:
+                        for a in range(math.ceil(int(period1[2])/7)-1, 5):
+                            sheet.cell(row=i, column=season2[month[0]]+a).value = 1
+                        for g in month[1:-1]:
                             for a in range(5):
                                 sheet.cell(row=i, column=season2[g]+a).value = 1
+                        for a in range(math.ceil(int(period2[2])/7)):
+                            sheet.cell(row=i, column=season2[month[-1]]+a).value = 1
+                            """если 1 месяц"""
+                    else:
+                        for a in range(math.ceil(int(period1[2])/7)-1, math.ceil(int(period2[2])/7)):
+                            sheet.cell(row=i, column=season2[month[0]]+a).value = 1
                 
                 for j in range(13, height+13):
                     for k in range(len(report[6])-1, 0, -1):
@@ -632,12 +680,50 @@ class Prepare_calc(TemplateView):
                             sheet.cell(row=j, column=117).value=report[61][k]
                             sheet.cell(row=j, column=118).value=report[62][k]
                             break
-                    
                 
                 wb.save(os.path.join(hol, f"media/clients/{username}/{client}/mp_{client}_{datet}.xlsx"))
                 
+                wb2 = openpyxl.load_workbook(filename=os.path.join(hol, f"media/pattern/buying.xlsx"))
+                w2 = wb2.worksheets[0]
+                sheet2 = wb2.active
+                f = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/mp_{client}_{datet}.xlsx"),
+                                     header=None, skiprows=12, usecols=(18, 23, 27, 28, 29, 30))
                 
-
+                price_b_s = []
+                for i in range(h1):
+                    if f[23][i]=='1000 показов':
+                        price = f[27][i]*f[28][i]/1000
+                        if f[29][i]!=None:
+                            price*=f[29][i]
+                        if f[30][i]!=None:
+                            price*=(1-f[30][i])
+                        price_b_s.append(price)
+                    else:
+                        price = f[27][i]*f[28][i]
+                        if f[29][i]!=None:
+                            price*=f[29][i]
+                        if f[30][i]!=None:
+                            price*=(1-f[30][i])
+                        price_b_s.append(price)
+                f1 = {0: f[18][:h1], 1: f[18][:h1], 2: price_b_s}
+                bu = pd.DataFrame(f1)
+                       
+                bu.to_excel(os.path.join(hol, f"media/pattern/buying.xlsx"), header=None, index=None)
+                
+                bying_resource = ByingResource()
+                dataset = Dataset()
+                f = pd.read_excel(os.path.join(hol, f"media/pattern/buying.xlsx"),
+                                     header=None)
+                import_data = dataset.load(pd.DataFrame(f))
+                for k in import_data:
+                    try:
+                        a = Bying.objects.get(sell=k[0],site=k[1])
+                        a.phact = float(k[2])+float(a.phact)
+                        a.save()
+                    except ObjectDoesNotExist:
+                        value = Bying(None, k[0], k[1], None, k[2])
+                        value.save()
+                
                 path = join('clients', username, client, f"DMP_{client}_{datet}.xlsx")
                 path3 = join('clients', username, client, f"mp_{client}_{datet}.xlsx")
                 
@@ -658,6 +744,166 @@ def calculate(request, pk):
     else:
         return redirect('exel:login')
 
+class Buying(TemplateView):
+    template_name = 'buying.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            username = request.user.username
+            by = Bying.objects.all()
+            data = {
+                'count': [i for i in range(5)],
+                'seller': set(by.values_list('sell', flat=True)),
+                'site': set(by.values_list('site', flat=True)),
+                }
+            c = []
+            hol = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            data['bying'] = by
+            pl = 0
+            ph = 0
+            if request.POST.getlist('name')!=[] and request.POST.getlist('name')!=[]:
+                if request.method=='POST' and 'form1' in request.POST:
+                    for j in request.POST.getlist('name'):
+                        for k in Bying.objects.filter(sell=j):
+                            try:
+                                pl += float(k.plan)
+                            except:
+                                pass
+                            try:
+                                ph += float(k.phact)
+                            except:
+                                pass
+                        c.extend(Bying.objects.filter(sell=j))
+                    if request.POST.getlist('na') != [] and request.POST.getlist('name') != []:
+                        c1 = []
+                        pl1 = 0
+                        ph1 = 0
+                        for j in request.POST.getlist('name'):
+                            for j1 in request.POST.getlist('na'):
+                                for k1 in Bying.objects.filter(site=j1, sell=j):
+                                    try:
+                                        pl1 += float(k1.plan)
+                                    except:
+                                        pass
+                                    try:
+                                        ph1 += float(k1.phact)
+                                    except:
+                                        pass
+                                c1.extend(Bying.objects.filter(site=j1, sell=j))
+                        data['bying'] = c1
+                        data['plan_sum'] = pl1
+                        data['phact_sum'] = ph1
+                        data['checked_na'] = request.POST.getlist('na')
+                        data['checked_name'] = request.POST.getlist('name')
+                    else:
+                        data['bying'] = c
+                        data['plan_sum'] = pl
+                        data['phact_sum'] = ph
+                        data['checked_name'] = request.POST.getlist('name')
+                        data['checked_na'] = request.POST.getlist('na')
+                    return render(request, self.template_name, data)
+                    
+                
+                elif request.method=='POST' and 'form3' in request.POST:
+                    for j in request.POST.getlist('na'):
+                        for k in Bying.objects.filter(site=j):
+                            try:
+                                pl += float(k.plan)
+                            except:
+                                pass
+                            try:
+                                ph += float(k.phact)
+                            except:
+                                pass
+                        c.extend(Bying.objects.filter(site=j))
+                        
+                    if request.POST.getlist('name')!=[] and request.POST.getlist('na') != []:
+                        c1 = []
+                        pl1 = 0
+                        ph1 = 0
+                        for j in request.POST.getlist('na'):
+                            for j1 in request.POST.getlist('name'):
+                                for k1 in Bying.objects.filter(site=j, sell=j1):
+                                    try:
+                                        pl1 += float(k1.plan)
+                                    except:
+                                        pass
+                                    try:
+                                        ph1 += float(k1.phact)
+                                    except:
+                                        pass
+                                c1.extend(Bying.objects.filter(site=j, sell=j1))
+                        data['bying'] = c1
+                        data['plan_sum'] = pl1
+                        data['phact_sum'] = ph1
+                        data['checked_na'] = request.POST.getlist('na')
+                        data['checked_name'] = request.POST.getlist('name')
+                    else:
+                        data['bying'] = c
+                        data['plan_sum'] = pl
+                        data['phact_sum'] = ph
+                        data['checked_na'] = request.POST.getlist('na')
+                        data['checked_name'] = request.POST.getlist('name')
+                    return render(request, self.template_name, data)
+            
+            if request.method=='POST' and 'form4' in request.POST:
+                response = HttpResponse(content_type='application/vnd.ms-excel')
+                response['Content-Disposition'] = 'attachment; filename="Data.xlsx"'
+                
+                name = ['Селлер', 'Сайт', 'План, до НДС/рубли', 'Факт, клиентские суммы, до НДС/рубли', '%']
+                dic = {}
+                k = request.POST.get(f'dict_byi')
+                for j in range(5):
+                    sp = []
+                    for i in list(k[1:-1].split(',')):
+                        sp.append(request.POST.get(f'{j}_{i[(i.index("(")+1):(i.index(")"))]}'))
+                    dic[name[j]] = sp
+                h = len(sp)
+                download = pd.DataFrame(dic)
+                download.to_excel(os.path.join(hol, f"media/pattern/data.xlsx"), index=None)
+                wb = openpyxl.load_workbook(filename=os.path.join(hol, f"media/pattern/data.xlsx"))
+                w = wb.worksheets[0]
+                sheet = wb.active
+                sheet[f'B{h+2}'] = "Итого:"
+                sheet[f'C{h+2}'] = str(request.POST.get('plan_sum1'))
+                sheet[f'D{h+2}'] = str(request.POST.get('phact_sum1'))
+                wb.save(response)
+                return response 
+                
+            if request.method=='POST' and 'form2' in request.POST:
+                k = request.POST.get(f'dict_byi')
+                for i in list(k[1:-1].split(',')):
+                    c1 = []
+                    for j in range(5):
+                        c1.append(request.POST.get(f'{j}_{i[(i.index("(")+1):(i.index(")"))]}'))
+                    m = Bying.objects.filter(pk=i[(i.index("(")+1):(i.index(")"))])
+                    m.update(sell=c1[0],site=c1[1],plan=c1[2],phact=c1[3])
+                    for u in m:
+                        try:
+                            pl += float(u.plan)
+                        except:
+                            pass
+                        try:
+                            ph += float(u.phact)
+                        except:
+                            pass
+                    c.extend(m)
+                    try:
+                        m.update(procent=round(float(c1[3])/float(c1[2])*100, 2))
+                    except (ValueError, TypeError):
+                        pass
+                data['bying'] = c
+                data['plan_sum'] = pl
+                data['phact_sum'] = ph
+                data['checked_na'] = request.POST.getlist('na')
+                data['checked_name'] = request.POST.getlist('name')
+            
+            return render(request, self.template_name, data)
+        else:
+            return redirect('exel:login')
+                    
 
 class Download_calc(TemplateView):
     template_name = 'download_calc.html'

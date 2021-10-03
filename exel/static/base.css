@@ -24,7 +24,7 @@ body, html {
    position: relative;
    width: 100%;
    margin: auto;
-   border-bottom: 3px dashed #3db10d;
+   border-bottom: 3px dashed #C8CCF4;
    bottom: -5px;
    transition: .5s ease-in-out;
 }
@@ -93,7 +93,7 @@ border-width: 0 1px 1px 0;
 border-color: white;
 }
 
-.table_blur th {
+.table_blur {
 text-align:center;
 }
 
@@ -109,6 +109,7 @@ border-right: none;
 .table_blur td {
 padding: 8px 5px;
 background: white;
+text-align: center;
 }
 
 .table_blur tr:last-child td:first-child {
@@ -150,7 +151,7 @@ div.tab {
 }
 
 
-input[type="checkbox"]:checked + 
+div#base input[type="checkbox"]:checked + 
 
 
 
@@ -166,11 +167,11 @@ input[type="checkbox"]:checked +
     transition: max-height 1s;
 }
 
-input[type="checkbox"] {
+div#base input[type="checkbox"] {
     display: none;
 }
 
-input[type="checkbox"]:checked + 
+div#base input[type="checkbox"]:checked + 
 
 .xpandable-block_c {
     max-height: 5000px;
@@ -184,18 +185,23 @@ input[type="checkbox"]:checked +
     transition: max-height 1s;
 }
 
-input[type="checkbox"] {
+div#base input[type="checkbox"] {
     display: none;
 }
 
 .labeltable {
-	color: blue;
+	color: white;
+      background: #5A1EB8;
 	font-size: 14px;
 	cursor: pointer;
 	text-align: center;
 	margin: 20px auto;
 	display: block;
-	width: 250px;
+	width: 150px;
+	height: 20px;
+	font: justify;
+	 padding: 10px 10px;
+	 border-radius: 17px;
 	
 
 }
@@ -230,6 +236,7 @@ border-right: none;
 .table_blur_compl td {
 padding: 8px 15px;
 background: #00000000;
+text-align: center;
 }
 
 .table_blur_compl tr:last-child td:first-child {
@@ -262,13 +269,19 @@ border-right: none;
 }
 
 .label {
-	color: black;
+    border: none;
+	color: white;
+    background: #5A1EB8;
 	font-size: 14px;
 	cursor: pointer;
 	text-align: center;
 	margin: 20px auto;
 	display: block;
-	width: 250px;
+	width: 150px;
+	height: 20px;
+	font: justify;
+	 padding: 10px 10px;
+	 border-radius: 17px;
 
 }
 
@@ -337,7 +350,7 @@ div#base {
       letter-spacing: 1px;
       line-height: 35px;
       color: white;
-      background: #C8CCF4;
+      background: #5A1EB8;
       box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
       transition: .3s;
       }
@@ -504,7 +517,7 @@ padding: 10px 20px;
     border-bottom: 3px solid #AEC0C7;
 }
 
-input {
+.question input {
     border: none;
     border-bottom: 1px solid black;
     background-color: transparent; # Фон будет прозрачным. 
@@ -562,8 +575,8 @@ input#i {
     text-align: center;
     letter-spacing: 1px;
     line-height: 35px;
-    color: #40382D;
-    background: #C8CCF4;
+    color: white;
+      background: #5A1EB8;
     box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
     transition: .3s;
 }
@@ -618,8 +631,8 @@ input#pass {
 }
 
 input#in {
-    background: #00ff554d;
-    color: black;
+    background: #5A1EB8;
+    color: white;
     position: relative;
     width: 100px;
     height: 50px;
@@ -698,8 +711,8 @@ a.button_down {
     text-align: center;
     letter-spacing: 1px;
     line-height: 35px;
-    color: #524f4e;
-    background: #ffe851;
+    color: white;
+      background: #5A1EB8;
     box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
     transition: .3s;
 }
@@ -780,3 +793,212 @@ a.button_down {
     .loaded .preloader {
       display: none;
     }
+    
+    
+    
+table#myTable {
+    table-layout: fixed;
+    margin-left: 7%;
+    position: relative;
+    z-index:1;
+    top: 110px;
+    border-spacing: 0;
+    width: 86%;
+    border: 1px solid #ddd;
+}
+
+table#myTable th {
+    cursor: pointer;
+}
+
+table#myTable th, td {
+    text-align: left;
+    padding: 16px;
+}
+
+table#myTable tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table#myTable1 tr#compl td {
+    width: 30px;
+}
+
+table#myTable1 {
+    table-layout: fixed;
+    top: 90vh;
+    margin-left: 7%;
+    position: fixed;
+    z-index:2;
+    border-spacing: 0;
+    width: 86%;
+    border: 1px solid white;
+    background-color: white;
+}
+
+table#myTable1 th {
+    cursor: pointer;
+}
+
+table#myTable1 th, td {
+    text-align: left;
+    padding: 16px;
+}
+
+
+
+input#sub {
+    position: relative;
+    border: 1px solid black;
+    background-color: transparent; 
+    outline: none;
+    transition: 0.3s;
+    left: 60%;
+    top: 95px;
+    padding: 7px, 10px, 7px, 10px;
+    text-decoration: none;
+    cursor: pointer;
+    width: 200px;
+    height: 40px;
+    border-radius: 45px;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+      
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 1px;
+    line-height: 35px;
+    color: white;
+    background: #5A1EB8;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
+    transition: .3s;
+}
+
+input#sub1 {
+    position: fixed;
+    top: 90vh;
+    border: 1px solid black;
+    background-color: transparent; 
+    outline: none;
+    transition: 0.3s;
+    padding: 7px, 10px, 7px, 10px;
+    text-decoration: none;
+    margin-bottom: 80px;
+    cursor: pointer;
+    height: 40px;
+    border-radius: 45px;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    left: 1%;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 1px;
+    line-height: 35px;
+    color: white;
+    background: #5A1EB8;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
+    transition: .3s;
+}
+
+.bying_dict{
+    display: none;
+}
+
+a.sort_sell {
+    z-index:2;
+    position: absolute;
+    top: 95px;
+    left: 7%;
+    text-decoration: none;
+   display: inline-block;
+   padding: 5px 10px;
+   letter-spacing: 1px;
+   margin: 0 20px;
+   font-size: 18px;
+   font-family: 'Fredoka One', cursive;
+   transition: .3s ease-in-out;
+}
+
+a.sort_sell:hover {
+   transform: scaleX(1.1);
+}
+
+
+a.sort_site {
+    z-index:2;
+    position: absolute;
+    top: 95px;
+    left: 25%;
+    text-decoration: none;
+   display: inline-block;
+   padding: 5px 10px;
+   letter-spacing: 1px;
+   margin: 0 20px;
+   font-size: 18px;
+   font-family: 'Fredoka One', cursive;
+   transition: .3s ease-in-out;
+}
+
+a.sort_site:hover {
+   transform: scaleX(1.1);
+}
+
+#main {
+        display: none;
+        position: absolute;
+        top: 200px;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+#okno {
+        width: 200px;
+        z-index:2;
+        height: 100%;
+        padding: 15px;
+        border: 3px solid #a09f9d00;
+        background: white;
+        border-radius: 10px;
+        color: black;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 7%;
+      }
+#main:target {display: block;}
+
+#main1 {
+        display: none;
+        position: absolute;
+        top: 200px;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+#okno1 {
+        width: 200px;
+        z-index:2;
+        height: 100%;
+        padding: 15px;
+        border: 3px solid #a09f9d00;
+        background: white;
+        border-radius: 10px;
+        color: black;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 24%;
+      }
+#main1:target {display: block;}
+
+input#bu {
+    border: none;
+    border-bottom: 1px solid #cac4c4;
+    background-color: transparent; # Фон будет прозрачным. 
+    outline: none;
+    transition: 0.3s;
+}

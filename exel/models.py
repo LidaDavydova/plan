@@ -270,6 +270,12 @@ class Brief(models.Model):
     DCM = models.CharField(max_length = 20, null=True)
     img = models.ImageField('Логотип', upload_to=content)
     
+
     
-    
+class Bying(models.Model):
+    sell = models.CharField(max_length = 100, null=True)
+    site = models.CharField(max_length = 100, null=True)
+    plan = models.CharField(max_length = 100, null=True)
+    phact = models.CharField(max_length = 100, null=True)
+    procent = models.CharField(max_length = 10, null=True)
     

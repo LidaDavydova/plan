@@ -14,8 +14,9 @@ urlpatterns = [
     path('not_cleared/<name_rk>/', views.not_cleared, name='but_not_cleared'),
     path('download/', Download_calc.as_view(), name='download_calc'),
     path('prepare/', Prepare_calc.as_view(), name='prepare'),
-    path('account/login', Login.as_view(), name='login'),
-    path('account/register', RegisterView.as_view(), name='register'),
+    path('buying/', Buying.as_view(), name='buying'),
+    path('account/login/', Login.as_view(), name='login'),
+    path('account/register/', RegisterView.as_view(), name='register'),
     path('logout/', Logout.as_view(), name='logout'),
 ]
 
