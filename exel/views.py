@@ -154,9 +154,6 @@ class Prepare_calc(TemplateView):
                     except (NameError, AttributeError):
                         s = Brief.objects.filter(username=username, client=client)[::-1][0]
                         k = s.img.name
-                        ak = s.AK
-                        disc = s.discount
-                        dcm = s.DCM
                         brif = Brief.objects.create(username=username, client=client, product=product,
                                          name_rk=name_rk, posad=posad, 
                                          type_act=type_act, country=country, 
@@ -170,7 +167,7 @@ class Prepare_calc(TemplateView):
                                          description=description, 
                                          competitors=competitors,
                                          who_prep_materials=who_prep_materials, img=k,
-                                         discount=disc, AK=ak, DCM=dcm)
+                                         discount=discount, AK=AK, DCM=DCM)
                     except Location.MultipleObjectsReturned:
                         pass
                 
@@ -191,7 +188,7 @@ class Prepare_calc(TemplateView):
                 u = p["коэф. скидки от 1 (min стоимость плана) до  3 (max стоимость плана) "].tolist() 
                 k = []
                 for i in range(1, len(a)+1):
-                    if (a[i-1] == 'Все' or a[i-1] == type_act) and (str(KPI) in str(b[i-1])) and (u[i-1]=='1-3' or u[i-1] == str(Brief.objects.filter(username=username, client=client).first().discount)):
+                    if (a[i-1] == 'Все' or a[i-1] == type_act) and (str(KPI) in str(b[i-1])) and (u[i-1]=='1-3' or u[i-1] == discount):
                         if materials in "Видео (указать длительность снизу)":
                             if ('Виде' in str(video[i-1])) or ('виде' in str(video[i-1])) or ('роли' in str(video[i-1])) or ('Роли' in str(video[i-1])) or ('vide' in str(video[i-1])) or ('Vide' in str(video[i-1])):
                                 k.append(6+i)
@@ -202,16 +199,20 @@ class Prepare_calc(TemplateView):
                             k.append(6+i)
                 baing_d = dict()
                 k2 = []
-                
                 for i in k:
                     try:
-                        baing_d[int(baing[i-7])]=i
+                        if int(baing[i-7]) not in baing_d:
+                            baing_d[int(baing[i-7])]=[i]
+                        else:
+                            baing_d[int(baing[i-7])].append(i)
                     except ValueError:
                         k2.append(i)
                 k=[]
+                
                 for i in sorted(baing_d):
-                    k.append(baing_d[i])
+                    k.extend(baing_d[i])
                 k.extend(k2)
+                
                 data = dict.fromkeys([i for i in p.columns.ravel()])
                 
                 period1 = list(period_c.split('-'))
@@ -440,20 +441,23 @@ class Prepare_calc(TemplateView):
                 '''ctr'''
                 ctr = [''] * height
                 for i in range(0, len(b[21])):
-                    for k in range(len(report[6])-1, 0, -1):
-                        if report[1][k]==client and report[6][k]==b[21][i]:
-                            ctr[i]=report[36][k]
+                    for j in range(len(report[6])-1, 0, -1):
+                        if report[1][j]==client and report[6][j]==b[21][i]:
+                            ctr[i]=report[36][j]
                             break
-                        elif report[3][k]==b[1][i] and report[6][k]==b[21][i]:
-                            ctr[i]=report[36][k]*88/100
+                        elif report[3][j]==b[1][i] and report[6][j]==b[21][i]:
+                            ctr[i]=report[36][j]*88/100
                             break
-                        elif report[6][k]==b[21][i]:
-                            ctr[i]=report[36][k]*85/100
-                            break
+                        elif report[6][j]==b[21][i]:
+                            try:
+                                ctr[i]=float(report[36][j]*0.85)
+                                break
+                            except TypeError:
+                                pass
                     if ctr[i] == '':
-                        for j in range(height):
-                            if b[1][j]==b[1][i] and b[21][j]==b[21][i] and i!=j:
-                                ctr[i]=fr[41][k]*90/100
+                        for w in range(height):
+                            if b[1][w]==b[1][i] and b[21][w]==b[21][i] and i!=w:
+                                ctr[i]=fr[41][j]*90/100
                                 break
                 
                 b[35] = b.pop(11)
@@ -692,19 +696,25 @@ class Prepare_calc(TemplateView):
                 price_b_s = []
                 for i in range(h1):
                     if f[23][i]=='1000 показов':
-                        price = f[27][i]*f[28][i]/1000
-                        if f[29][i]!=None:
-                            price*=f[29][i]
-                        if f[30][i]!=None:
-                            price*=(1-f[30][i])
-                        price_b_s.append(price)
+                        try:
+                            price = int(f[27][i])*int(f[28][i])/1000
+                            if f[29][i]!=None:
+                                price*=int(f[29][i])
+                            if f[30][i]!=None:
+                                price*=(1-int(f[30][i]))
+                            price_b_s.append(price)
+                        except ValueError:
+                            price_b_s.append('')
                     else:
-                        price = f[27][i]*f[28][i]
-                        if f[29][i]!=None:
-                            price*=f[29][i]
-                        if f[30][i]!=None:
-                            price*=(1-f[30][i])
-                        price_b_s.append(price)
+                        try:
+                            price = int(f[27][i])*int(f[28][i])
+                            if f[29][i]!=None:
+                                price*=int(f[29][i])
+                            if f[30][i]!=None:
+                                price*=(1-int(f[30][i]))
+                            price_b_s.append(price)
+                        except ValueError:
+                            price_b_s.append('')
                 f1 = {0: f[18][:h1], 1: f[18][:h1], 2: price_b_s}
                 bu = pd.DataFrame(f1)
                        
@@ -854,11 +864,23 @@ class Buying(TemplateView):
                 
                 name = ['Селлер', 'Сайт', 'План, до НДС/рубли', 'Факт, клиентские суммы, до НДС/рубли', '%']
                 dic = {}
-                k = request.POST.get(f'dict_byi')
+                id_list = []
+                if request.POST.getlist('name')!=[] and request.POST.getlist('na') != []:
+                    for j in request.POST.getlist('na'):
+                        for j1 in request.POST.getlist('name'):
+                            id_list.extend(Bying.objects.filter(site=j, sell=j1))
+                elif request.POST.getlist('name')!=[]:
+                    for j1 in request.POST.getlist('name'):
+                        id_list.extend(Bying.objects.filter(sell=j1))
+                elif request.POST.getlist('na') != []:
+                    for j in request.POST.getlist('na'):
+                        id_list.extend(Bying.objects.filter(site=j))
+                else: 
+                    id_list = by 
                 for j in range(5):
                     sp = []
-                    for i in list(k[1:-1].split(',')):
-                        sp.append(request.POST.get(f'{j}_{i[(i.index("(")+1):(i.index(")"))]}'))
+                    for i in id_list:
+                        sp.append(request.POST.get(f'{j}_{i.pk}'))
                     dic[name[j]] = sp
                 h = len(sp)
                 download = pd.DataFrame(dic)
@@ -873,12 +895,24 @@ class Buying(TemplateView):
                 return response 
                 
             if request.method=='POST' and 'form2' in request.POST:
-                k = request.POST.get(f'dict_byi')
-                for i in list(k[1:-1].split(',')):
+                id_list = []
+                if request.POST.getlist('name')!=[] and request.POST.getlist('na') != []:
+                    for j in request.POST.getlist('na'):
+                        for j1 in request.POST.getlist('name'):
+                            id_list.extend(Bying.objects.filter(site=j, sell=j1))
+                elif request.POST.getlist('name')!=[]:
+                    for j1 in request.POST.getlist('name'):
+                        id_list.extend(Bying.objects.filter(sell=j1))
+                elif request.POST.getlist('na') != []:
+                    for j in request.POST.getlist('na'):
+                        id_list.extend(Bying.objects.filter(site=j))
+                else: 
+                    id_list = by 
+                for i in id_list:
                     c1 = []
                     for j in range(5):
-                        c1.append(request.POST.get(f'{j}_{i[(i.index("(")+1):(i.index(")"))]}'))
-                    m = Bying.objects.filter(pk=i[(i.index("(")+1):(i.index(")"))])
+                        c1.append(request.POST.get(f'{j}_{i.pk}'))
+                    m = Bying.objects.filter(pk=i.pk)
                     m.update(sell=c1[0],site=c1[1],plan=c1[2],phact=c1[3])
                     for u in m:
                         try:

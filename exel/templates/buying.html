@@ -14,8 +14,9 @@
 <body>
     <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    {{m}}
     <a href="{% url 'exel:main' %}" class="button">Главная</a>
-    
+
     <a href="#" id="main">
       <div id="okno">
         {%for s in seller%}
@@ -41,7 +42,13 @@
     
     <input id="sub" type="submit" name="form4" value="Выгрузить в Excel">
     
-    <input type="text" name="dict_byi" class="bying_dict" value="{{bying}}" />
+    <input list="byi" name="dict_byi" class="bying_dict" {{bying}} />
+    <datalist id="byi">
+        {% for i in bying %}
+            <option>{{i}}</option>
+        {% endfor %}
+    </datalist>
+    
     <input type="text" name="plan_sum1" class="bying_dict" value="{{plan_sum}}" />
     <input type="text" name="phact_sum1" class="bying_dict" value="{{phact_sum}}" />
     <table id="myTable">
