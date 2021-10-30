@@ -831,9 +831,9 @@ table#myTable1 {
     position: fixed;
     z-index:2;
     border-spacing: 0;
-    width: 86%;
+    width: 84%;
     border: 1px solid white;
-    background-color: white;
+    background-color: #C8CCF4;
 }
 
 table#myTable1 th {
@@ -945,6 +945,25 @@ a.sort_site:hover {
    transform: scaleX(1.1);
 }
 
+.checkdiv{
+    width: 300px;
+    height: 30px;
+    border: none;
+    background: white;
+    padding: 10px;
+}
+
+.ok {
+    position: fixed;
+    top: 85%;
+    background: #C8CCF4;
+    border: none;
+    width: 50px;
+    height: 20px;
+    text-align: center;
+    margin: 10px;
+}
+
 #main {
         display: none;
         position: absolute;
@@ -955,8 +974,8 @@ a.sort_site:hover {
       }
 #okno {
         width: 200px;
-        z-index:2;
-        height: 100%;
+        z-index:3;
+        height: 100vh;
         padding: 15px;
         border: 3px solid #a09f9d00;
         background: white;
@@ -980,11 +999,9 @@ a.sort_site:hover {
       }
 #okno1 {
         width: 200px;
-        z-index:2;
-        height: 100%;
+        z-index:3;
+        height: 100vh;
         padding: 15px;
-        border: 3px solid #a09f9d00;
-        background: white;
         border-radius: 10px;
         color: black;
         position: absolute;
@@ -1001,4 +1018,9 @@ input#bu {
     background-color: transparent; # Фон будет прозрачным. 
     outline: none;
     transition: 0.3s;
+}
+
+div.b1{
+    position: relative;
+    padding-bottom: 300px;
 }

@@ -12,16 +12,21 @@
 </head>
 
 <body>
+    <div class="b">
     <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <a href="{% url 'exel:main' %}" class="button">Главная</a>
 
     <a href="#" id="main">
       <div id="okno">
+      <input type="button" value="Выделить все(даже список из 2 колонки)" onclick="check();">
+        <input type="button" value="Удалить все(даже список из 2 колонки)" onclick="uncheck();">
         {%for s in seller%}
+        <div class="checkdiv">
             <input type="checkbox" class="check" id="{{s}}" name="name" value="{{s}}" {% if s in checked_name %} checked {% endif %}/>{{s}}<br />
+        </div>
         {%endfor%}
-        <input type="submit" name="form1" value="OK" />
+        <input type="submit" class="ok" name="form1" value="OK" />
       </div>
     </a>
     <a href="#main" class="sort_sell">Сортировать<br>по селлеру</a>
@@ -29,11 +34,12 @@
     
     <a href="#" id="main1">
       <div id="okno1">
-
         {%for si in site%}
-            <input type="checkbox" class="chec" id="{{si}}" name="na" value="{{si}}" {% if si in checked_na %} checked {% endif %}/>{{si}}<br />
+            <div class="checkdiv">
+                <input type="checkbox" class="chec" id="{{si}}" name="na" value="{{si}}" {% if si in checked_na %} checked {% endif %}/>{{si}}<br />
+            </div>
         {%endfor%}
-        <input type="submit" name="form3" value="OK" />
+        <input type="submit" class="ok" name="form3" value="OK" />
     
     </div>
     </a>
@@ -41,13 +47,12 @@
     
     <input id="sub" type="submit" name="form4" value="Выгрузить в Excel">
     
-    <input list="byi" name="dict_byi" class="bying_dict" {{bying}} />
     <datalist id="byi">
         {% for i in bying %}
             <option>{{i}}</option>
         {% endfor %}
     </datalist>
-    
+    <div class="b1">
     <input type="text" name="plan_sum1" class="bying_dict" value="{{plan_sum}}" />
     <input type="text" name="phact_sum1" class="bying_dict" value="{{phact_sum}}" />
     <table id="myTable">
@@ -70,6 +75,7 @@
           
       {% endfor %}
     </table>
+    
     <input id="sub1" type="submit" name="form2" value="Обновить">
     
     <table id="myTable1">
@@ -81,9 +87,40 @@
             <td></td>
         </tr>
     </table>
-    
+    </div>
     </form>
-    
+    </div>
+<script>
+
+function preventDef(event) {
+  event.preventDefault();
+}
+
+function check()
+{
+ var check=document.getElementsByTagName('input');
+ for(var i=0;i<check.length;i++)
+ {
+  if(check[i].type=='checkbox')
+  {
+   check[i].checked=true;
+  }
+ }
+}
+
+function uncheck()
+{
+ var uncheck=document.getElementsByTagName('input');
+ for(var i=0;i<uncheck.length;i++)
+ {
+  if(uncheck[i].type=='checkbox')
+  {
+   uncheck[i].checked=false;
+  }
+ }
+}
+
+</script>
     <script>
   function triggerPost(idnum) {
     

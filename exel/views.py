@@ -773,7 +773,7 @@ class Buying(TemplateView):
             data['bying'] = by
             pl = 0
             ph = 0
-            if request.POST.getlist('name')!=[] and request.POST.getlist('name')!=[]:
+            if request.POST.getlist('na')!=[] or request.POST.getlist('name')!=[]:
                 if request.method=='POST' and 'form1' in request.POST:
                     for j in request.POST.getlist('name'):
                         for k in Bying.objects.filter(sell=j):

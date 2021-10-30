@@ -19,7 +19,6 @@ def materials(instance, file):
 def content_file_name(instance, filename):
     return '/'.join(['clients', instance.username, instance.client, filename])
 
-
 class Feed(models.Model):
     name_rk = models.CharField(max_length = 200)
     username = models.CharField(max_length = 60)
