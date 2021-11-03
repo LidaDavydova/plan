@@ -19,12 +19,14 @@
     <div id="first">
     </div>
     <div id="base">
+    
         <a href="{% url 'exel:prepare' %}" class="button">ПОДГОТОВИТЬ РАСЧЕТ</a>
         <a href="{% url 'exel:download_calc' %}" class="button">ЗАГРУЗИТЬ РАСЧЕТ</a>
         
         {% if body == 'on' %}
             {% autoescape on %}
                 <a href="{% url 'exel:buying' %}" class="button">БАИНГ</a>
+                <a href="{% url 'exel:dmp' %}" class="button">Баинговые приоритеты</a>
             {% endautoescape %}
         {% endif %}
         

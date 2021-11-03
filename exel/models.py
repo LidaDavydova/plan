@@ -19,6 +19,15 @@ def materials(instance, file):
 def content_file_name(instance, filename):
     return '/'.join(['clients', instance.username, instance.client, filename])
 
+def content_file(instance, filename):
+    return '/'.join(['clients', instance.bying_username, filename])
+
+class Profile(models.Model):
+    agency = models.CharField(max_length = 60)
+    bying_username = models.CharField(max_length = 60)
+    manager_username = models.CharField(max_length = 60)
+    report_common = models.FileField(upload_to = content_file, null=True)
+
 class Feed(models.Model):
     name_rk = models.CharField(max_length = 200)
     username = models.CharField(max_length = 60)
@@ -56,13 +65,6 @@ class All_file(models.Model):
     presentation = models.FileField(upload_to = content_file_name, null=True)
     comments = models.TextField(null=True)
     mp = models.FileField(upload_to = content_file_name, null=True)
-    
-    def create_mp(self):
-        dmp = f"media\clients\{self.username}\{self.client}\DMP_{self.name_rk}.xlsx"
-        p = pd.read_excel(dmp, header=0)
-        w = openpyxl.load_workbook(filename=dmp, data_only=True)
-        max_row = w.get_highest_row()
-        max_col = w.get_highest_column()
 
 class Client(models.Model):
     username = models.CharField(max_length = 60)
@@ -71,24 +73,9 @@ class Client(models.Model):
     name_rk = models.CharField(max_length = 200)
     duploaded_at = models.DateTimeField(auto_now_add=True, null=True)
     comments = models.TextField(null=True)
-    
-    def __str__(self):
-        return self.file.name
-    
-
-    def delete(self, *args, **kwargs):
-        self.file.delete()
-        super().delete(*args, **kwargs)
-        
-    def save_excel(self, dataframe):
-        if self.file.name.lower().endswith(('.xlsx', '.xls')):
-            excelWriter = pd.ExcelWriter(self.file.path)
-            dataframe.to_excel(excelWriter, index=False)
-            excelWriter.save()
-        else:
-            dataframe.to_csv(self.file.path, index=False)
 
 class Report_common(models.Model):
+    agency = models.CharField(max_length = 100, null=True)
     file = models.FileField(upload_to ='pattern')
 
     def __str__(self):
@@ -158,9 +145,8 @@ class Brief_pattern(models.Model):
         
 
 class Dmp(models.Model):
+    agency = models.CharField(max_length = 100, null=True)
     file = models.FileField(upload_to ='pattern')
-    corrected = models.BooleanField(default=False) # pandas correction status
-    file_content = models.BooleanField(default=False) # df required columns checker
 
     def __str__(self):
         return self.file.name
@@ -185,59 +171,13 @@ class Dmp(models.Model):
             dataframe.to_csv(self.file.path, index=False)
         
 
-    def odo(self):
-        if self.file.name.lower().endswith(('.xlsx', '.xls')):
-            df = pd.read_excel(self.file.path)
-        else:
-            df = pd.read_csv(self.file.path)
-
-        df.loc[:,"ODOMETER_FW"] = df.loc[:,"ODOMETER_FW"].fillna(0).astype('int')
-        df.dropna(inplace = True)
-        df.sort_values(by=['VEHICLE_ID_FW','TRANSACTION_DATE_FW','TRANSACTION_TIME_FW'], ascending=[True,False,False],inplace=True)
-        df['ODOMETER_FW'] = df['ODOMETER_FW'].apply(lambda x: 0 if x <1000 else x)
-        df.set_index(['VEHICLE_ID_FW'], inplace=True)
-        ids = df.index.unique().tolist() #create of unique Vehicle IDs list
-        df_corrected = pd.DataFrame() #create new df to store corrected data from dawnloaded df
-        
-        for i in ids: #odo correction and storing data in df_corrected
-            temp_df = df.loc[i]
-            odo = df.loc[i,"ODOMETER_FW"].tolist()
-            if type(odo) == list:
-                odo.sort(reverse=True)   
-                for j in range(len(odo)-1):
-                    if abs(odo[j] - odo[j+1]) > 9999 or odo[j] - odo[j+1] < 0:
-                        odo[j+1] = 0    
-                temp_df.loc[:,"ODOMETER_FW"] = odo #temp_df["ODOMETER_FW"] = odo
-                df_corrected = df_corrected.append(temp_df)
-            else:
-                df_corrected = df_corrected.append(temp_df)
-                
-        df_corrected.reset_index(inplace=True)
-        df_corrected.rename(columns = {'index':'VEHICLE_ID_FW'}, inplace = True)
-        return df_corrected
-
-
-    def columns_check(self): # columns check
-        if self.file.name.lower().endswith(('.xlsx', '.xls')):
-            df = pd.read_excel(self.file.path)
-        else:
-            df = pd.read_csv(self.file.path)
-
-        cols_in_files = [col for col in df.columns]
-        mandatory_cols = ['TRANSACTION_DATE_FW','TRANSACTION_TIME_FW','VEHICLE_ID_FW','ODOMETER_FW']
-        for col in mandatory_cols:
-            if col in cols_in_files:
-                pass
-            else:
-                return self.file_content        
-        self.file_content = True
-        return self.file_content
     
 
 def content(instance, img):
     return '/'.join(['clients', 'img', instance.username, img])
     
 class Brief(models.Model):
+    agency = models.CharField(max_length = 100, null=True)
     duploaded_at = models.DateTimeField(auto_now_add=True, null=True)
     username = models.CharField(max_length = 60)
     client = models.CharField(max_length = 100)
@@ -269,12 +209,19 @@ class Brief(models.Model):
     DCM = models.CharField(max_length = 20, null=True)
     img = models.ImageField('Логотип', upload_to=content)
     
-
     
 class Bying(models.Model):
+    agency = models.CharField(max_length = 100, null=True)
     sell = models.CharField(max_length = 100, null=True)
     site = models.CharField(max_length = 100, null=True)
     plan = models.CharField(max_length = 100, null=True)
     phact = models.CharField(max_length = 100, null=True)
     procent = models.CharField(max_length = 10, null=True)
     
+
+class Dmp_priority(models.Model):
+    agency = models.CharField(max_length = 100, null=True)
+    sell = models.CharField(max_length = 100, null=True)
+    site = models.CharField(max_length = 100, null=True)
+
+

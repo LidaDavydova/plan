@@ -41,7 +41,7 @@ def main(request, super_us = False):
         data = {
             'files': Client.objects.filter(username=username)[::-1],
             'cleared': Cleared.objects.filter(username=username)[::-1],
-            'complete': Complete.objects.filter(username=username)[::-1]
+            'complete': Complete.objects.filter(username=username)[::-1],
                 }
         if request.user.is_superuser == 1:
             data['body'] = 'on'
@@ -62,6 +62,7 @@ class RegisterView(CreateView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         return dict(list(context.items()))
+    
     
 class Login(LoginView):
     form_class  = AuthenticationForm
@@ -201,10 +202,16 @@ class Prepare_calc(TemplateView):
                 k2 = []
                 for i in k:
                     try:
-                        if int(baing[i-7]) not in baing_d:
-                            baing_d[int(baing[i-7])]=[i]
+                        if Profile.objects.filter(bying_username=request.user.username) != None:
+                            if int(Dmp_priority.objects.get(agency=Profile.objects.filter(bying_username=request.user.username).agency)) not in baing_d:
+                                baing_d[int(baing[i-7])]=[i]
+                            else:
+                                baing_d[int(baing[i-7])].append(i)
                         else:
-                            baing_d[int(baing[i-7])].append(i)
+                            if int(Dmp_priority.objects.get(agency=Profile.objects.filter(manager_username=request.user.username).agency)) not in baing_d:
+                                baing_d[int(baing[i-7])]=[i]
+                            else:
+                                baing_d[int(baing[i-7])].append(i)
                     except ValueError:
                         k2.append(i)
                 k=[]
@@ -720,7 +727,6 @@ class Prepare_calc(TemplateView):
                        
                 bu.to_excel(os.path.join(hol, f"media/pattern/buying.xlsx"), header=None, index=None)
                 
-                bying_resource = ByingResource()
                 dataset = Dataset()
                 f = pd.read_excel(os.path.join(hol, f"media/pattern/buying.xlsx"),
                                      header=None)
@@ -939,6 +945,47 @@ class Buying(TemplateView):
             return redirect('exel:login')
                     
 
+class Dmp_buying(TemplateView):
+    template_name = 'dmp.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            username = request.user.username
+            for i in Dmp.objects.all():
+                n = i.file.url[1:]
+            hol = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            p = pd.read_excel(os.path.join(hol, n),
+                                     header=5)
+            seller = p["Категория Клиента"].tolist()
+            
+            dataset = Dataset()
+            f = {}
+            f['seller'] = seller
+            import_data = dataset.load(pd.DataFrame(f))
+            for k in seller:
+                try:
+                    value = Dmp_priority(sell=k,agency=Profile.objects.get(bying_username=request.user.username).agency)
+                except:
+                    value = Dmp_priority(sell=k,agency=Profile.objects.get(manager_username=request.user.username).agency)
+                value.save()
+                '''
+                try:
+                    a = Dmp_priority.objects.get(sell=k)
+                    a.save()
+                except ObjectDoesNotExist:
+                    value = Dmp_priority(sell=k)
+                    value.save()
+                    '''
+            
+            data = {
+                'bying': Dmp_priority.objects.all(),
+                }
+            return render(request, self.template_name, data)
+        else:
+            return redirect('exel:login')
+
 class Download_calc(TemplateView):
     template_name = 'download_calc.html'
     def get_context_data(self, **kwargs):
@@ -1139,7 +1186,13 @@ def cleared(request, name_rk):
                     sheet = wb.active
                     for r in dataframe_to_rows(pd.DataFrame(p), index=None, header=None):
                         w.append(r)
-                    wb.save(os.path.join(hol, f"media/{report_common}"))
+                    wb.save(os.path.join(hol, f"media/clients/{username}/report.xlsx"))
+                    try:
+                        f = Profile.objects.get(bying_username=username)
+                    except ObjectDoesNotExist:
+                        f = Profile.objects.get(manager_username=username)
+                    f.report_common = 'report.xlsx'
+                    f.save()
             return render(request, 'but_cleared.html', data)
         except MultipleObjectsReturned:
             pass

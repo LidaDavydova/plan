@@ -15,6 +15,7 @@ urlpatterns = [
     path('download/', Download_calc.as_view(), name='download_calc'),
     path('prepare/', Prepare_calc.as_view(), name='prepare'),
     path('buying/', Buying.as_view(), name='buying'),
+    path('buying_priority/', Dmp_buying.as_view(), name='dmp'),
     path('account/login/', Login.as_view(), name='login'),
     path('account/register/', RegisterView.as_view(), name='register'),
     path('logout/', Logout.as_view(), name='logout'),
