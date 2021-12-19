@@ -1,22 +1,35 @@
-{% extends 'base.html' %}
-
 {% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Войти{% endblock %}</title>
 
-{% block title %}Войти{% endblock %}
+    <link rel="stylesheet" href="{% static 'reg.css' %}" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-1b93190375e9ccc259df3a57c1abc0e64599724ae30d7ea4c6877eb615f89387.js"></script>
 
-{% block content %}
+</head>
+    {% block content %}
+
     <body id="login">
-        <div style="color:red;position:absolute;top:20%;left:50%;margin-right:-50%;transform: translate(-50%, -50%);">{{ form.non_field_errors }}</div>
-    <form class="login" method="post">
+      <form class="login-form" method="post">
         {% csrf_token %}
-        <h1>Вход</h1>
-        <input id="log" type="text" name="username" placeholder="Логин"><br>
-        <input id="pass" type="password" name="password" placeholder="Пароль"><br>
-        <input id="in" type="submit" value="Войти"><br>
-        <a href="{% url 'exel:register' %}" class="but">Забыли пароль</a><br>
-        <a href="{% url 'exel:register' %}" class="but">Регистрация</a>
-        
-    </form>
-    
+        <h1>Log In</h1>
+        <div class="form-input-material">
+          <label for="username">Username</label>
+          <input id="input" type="text" name="username" id="username" placeholder="" class="form-control-material"/>
+        </div>
+        <div class="form-input-material">
+          <label for="password">Password</label>
+          <input id="input" type="password" name="password" id="password" placeholder="" class="form-control-material"/>
+        </div>
+        <input type="submit" value="GET STARTED" class="btn btn-primary btn-ghost" id="button"/>
+      </form>
+        <div class="error">{{ form.non_field_errors }}</div>
     </body>
+
+
+
 {% endblock %}
+</html>

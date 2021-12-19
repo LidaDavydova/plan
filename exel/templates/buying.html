@@ -16,7 +16,7 @@
     <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <a href="{% url 'exel:main' %}" class="button">Главная</a>
-
+<!--
     <a href="#" id="main">
       <div id="okno">
       <input type="button" value="Выделить все(даже список из 2 колонки)" onclick="check();">
@@ -30,8 +30,8 @@
       </div>
     </a>
     <a href="#main" class="sort_sell">Сортировать<br>по селлеру</a>
-        
-    
+
+
     <a href="#" id="main1">
       <div id="okno1">
         {%for si in site%}
@@ -40,21 +40,23 @@
             </div>
         {%endfor%}
         <input type="submit" class="ok" name="form3" value="OK" />
-    
+
     </div>
     </a>
     <a href="#main1" class="sort_site">Сортировать<br>по сайту</a>
-    
+    -->
     <input id="sub" type="submit" name="form4" value="Выгрузить в Excel">
-    
+
     <datalist id="byi">
         {% for i in bying %}
             <option>{{i}}</option>
         {% endfor %}
     </datalist>
     <div class="b1">
+      <!--
     <input type="text" name="plan_sum1" class="bying_dict" value="{{plan_sum}}" />
     <input type="text" name="phact_sum1" class="bying_dict" value="{{phact_sum}}" />
+    -->
     <table id="myTable">
       <thead>
         <tr id="myTable">
@@ -66,18 +68,18 @@
         </tr>
     </thead>
       {%for i in bying%}
-          
+
           <tr id="myTable">
           {%for j in count%}
               <td id="myTable"><input name="{{j}}_{{i.id}}" id="bu" value="{% cycle i.sell i.site i.plan i.phact i.procent %}"></td>
           {% endfor %}
           </tr>
-          
+
       {% endfor %}
     </table>
-    
+
     <input id="sub1" type="submit" name="form2" value="Обновить">
-    
+
     <table id="myTable1">
         <tr id="compl">
             <td></td>
@@ -123,14 +125,14 @@ function uncheck()
 </script>
     <script>
   function triggerPost(idnum) {
-    
+
     $('#hostform').on("submit", function () {
       localStorage.input = $("#"+idnum).checked;
     });
     $('#hostform').submit()
   };
 </script>
- <!--   
+ <!--
 <script>
 
 
@@ -163,7 +165,7 @@ function sortTable(n) {
   table = document.getElementById("myTable");
   switching = true;
   //Set the sorting direction to ascending:
-  dir = "asc"; 
+  dir = "asc";
   /*Make a loop that will continue until
   no switching has been done:*/
   while (switching) {
@@ -201,7 +203,7 @@ function sortTable(n) {
       rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
       switching = true;
       //Each time a switch is done, increase this count by 1:
-      switchcount ++;      
+      switchcount ++;
     } else {
       /*If no switching has been done AND the direction is "asc",
       set the direction to "desc" and run the while loop again.*/
@@ -215,7 +217,7 @@ function sortTable(n) {
 
 class Stogage {
     constructor(name){
-      // конструктор. создает в localStorage 
+      // конструктор. создает в localStorage
       // именованное хранилище
 
       // запоминаем название именованного хранилища
@@ -225,32 +227,32 @@ class Stogage {
       // быстрого доступа будут кэшироваться объекты
       // сохраняемые в именованном хранилище
       this.hash = {};
-      
-      // если в localStorage уже есть данные 
+
+      // если в localStorage уже есть данные
       // сохраненые под ключем с именем this.name
       // то считываем их в this.hash
       let text = localStorage.getItem(this.name);
       if(text)
         this.hash = JSON.parse(text);
-      
+
       // сохраняем ассоциативный массив this.hash в
-      // localStorage под именем this.name 
-      this.save();  
+      // localStorage под именем this.name
+      this.save();
     }
-  
+
     get(id){
-      // получить значение по его id из именованного хранилища 
+      // получить значение по его id из именованного хранилища
       // с именем this.name
       return this.item.find(item=>item.id===id)
     }
-  
+
     add(id, data){
       // сохранить значение по его id в именованном хранилище
       // с именем this.name
       this.hash[id] = data;
       this.save();
     }
-  
+
     del(id){
       // удалить значение по его id в именованном хранилище
       // с именем this.name
@@ -261,15 +263,15 @@ class Stogage {
     save(){
       // преобразуем ассоциативный массив this.hash в массив list
       this.list = Object.values(this.hash);
-      
+
       // преобразуем массив list в строку text
       const text = JSON.stringify(this.hash);
-      
+
       // сохраняем строку text в localStorage под
       // именем this.name
-      localStorage.setItem(this.name, text);      
+      localStorage.setItem(this.name, text);
     }
-    
+
 }
 
 

@@ -143,7 +143,7 @@ border-right: none;
 
 div.tab {
     padding: 5px;
-    max-width: 70%; 
+    max-width: 70%;
     overflow-x: scroll;
     /*overflow-x: hidden; */
     margin-bottom: 20px;
@@ -151,7 +151,7 @@ div.tab {
 }
 
 
-div#base input[type="checkbox"]:checked + 
+div#base input[type="checkbox"]:checked +
 
 
 
@@ -171,7 +171,7 @@ div#base input[type="checkbox"] {
     display: none;
 }
 
-div#base input[type="checkbox"]:checked + 
+div#base input[type="checkbox"]:checked +
 
 .xpandable-block_c {
     max-height: 5000px;
@@ -202,7 +202,7 @@ div#base input[type="checkbox"] {
 	font: justify;
 	 padding: 10px 10px;
 	 border-radius: 17px;
-	
+
 
 }
 
@@ -344,7 +344,7 @@ div#base {
       border-radius: 45px;
       font-family:  Libre Baskerville, serif;
       font-size: 14px;
-      
+
       text-transform: uppercase;
       text-align: center;
       letter-spacing: 1px;
@@ -354,7 +354,7 @@ div#base {
       box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
       transition: .3s;
       }
-      
+
 .button:hover {
       background: #e52e2e;
       box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
@@ -380,7 +380,7 @@ p#base {
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 160px;
+  width: 200px;
   background-color: black;
   color: #fff;
   text-align: center;
@@ -389,7 +389,7 @@ p#base {
 
   /* Разместите всплывающую подсказку */
   position: absolute;
-  z-index: 1;
+  z-index: 0;
 }
 
 .tooltip:hover .tooltiptext {
@@ -405,22 +405,22 @@ p#not_cl {
     writing-mode: tb-rl;font-family: 'Krona One', sans-serif;
     transform: rotate(180deg);
 }
-      
 
 
-      
+
+
 .arrow-right span {
     display: block;
     width: 10px;
     height: 10px;
     border-bottom: 3px solid #31e2ff;
     border-left: 3px solid #ccff31;
-   
+
     margin: -2px;
     animation: arrow-right 2s infinite;
     float: left;
 }
- 
+
 .arrow-right span:nth-child(2){
     animation-delay: -0.1s;
 }
@@ -520,7 +520,7 @@ padding: 10px 20px;
 .question input {
     border: none;
     border-bottom: 1px solid black;
-    background-color: transparent; # Фон будет прозрачным. 
+    background-color: transparent; # Фон будет прозрачным.
     outline: none;
     transition: 0.3s;
 }
@@ -570,7 +570,7 @@ input#i {
     font-weight: bold;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
-      
+
     text-transform: uppercase;
     text-align: center;
     letter-spacing: 1px;
@@ -585,9 +585,99 @@ input#i {
     position: relative;
     top: 30px;
 }
-      
+
 /* login.html */
 
+body#login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #eceffc;
+  }
+
+.form-input-material::before {
+      position: absolute;
+      content: "";
+      left: 0;
+      bottom: -1px;
+      width: 100%;
+      height: .125rem;
+      background: var(--input-valid-border-color);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: .3s;
+  }
+
+.btn {
+  padding: 8px 20px;
+  border-radius: 0;
+  overflow: hidden;
+
+  &::before {
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent,
+      var(--primary-color),
+      transparent
+    );
+    transform: translateX(-100%);
+    transition: 0.6s;
+  }
+
+  &:hover {
+    background: transparent;
+    box-shadow: 0 0 20px 10px hsla(204, 70%, 53%, 0.5);
+
+    &::before {
+      transform: translateX(100%);
+    }
+  }
+}
+
+.form-input-material {
+  --input-default-border-color: white;
+  --input-border-bottom-color: white;
+
+  input {
+    color: white;
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 40px;
+  color: white;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 0.4px 0.4px rgba(128, 128, 128, 0.109),
+    0 1px 1px rgba(128, 128, 128, 0.155),
+    0 2.1px 2.1px rgba(128, 128, 128, 0.195),
+    0 4.4px 4.4px rgba(128, 128, 128, 0.241),
+    0 12px 12px rgba(128, 128, 128, 0.35);
+
+  h1 {
+    margin: 0 0 24px 0;
+  }
+
+  .form-input-material {
+    margin: 12px 0;
+  }
+
+  .btn {
+    width: 100%;
+    margin: 18px 0 9px 0;
+  }
+}
+/*
 a.but {
     position: relative;
     left: 37%;
@@ -605,7 +695,7 @@ form.login {
     left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
-    width: 300px;	
+    width: 300px;
     height: 350px;
     border: 3px #0e0080 solid;
     border-radius: 20px;
@@ -706,7 +796,7 @@ a.button_down {
     border-radius: 45px;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
-      
+
     text-transform: uppercase;
     text-align: center;
     letter-spacing: 1px;
@@ -722,6 +812,18 @@ a.button_down {
 
 
 
+@keyframes infinite-spinning {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.block-spin {
+  animation: infinite-spinning 3s infinite;
+}
 
 
 .preloader {
@@ -793,9 +895,9 @@ a.button_down {
     .loaded .preloader {
       display: none;
     }
-    
-    
-    
+
+
+
 table#myTable {
     table-layout: fixed;
     margin-left: 7%;
@@ -849,8 +951,9 @@ table#myTable1 th, td {
 
 input#sub {
     position: relative;
+    z-index:1;
     border: 1px solid black;
-    background-color: transparent; 
+    background-color: transparent;
     outline: none;
     transition: 0.3s;
     left: 60%;
@@ -864,7 +967,7 @@ input#sub {
     font-weight: bold;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
-      
+
     text-transform: uppercase;
     text-align: center;
     letter-spacing: 1px;
@@ -879,7 +982,7 @@ input#sub1 {
     position: fixed;
     top: 90vh;
     border: 1px solid black;
-    background-color: transparent; 
+    background-color: transparent;
     outline: none;
     transition: 0.3s;
     padding: 7px, 10px, 7px, 10px;
@@ -1011,12 +1114,14 @@ a.sort_site:hover {
 input#bu {
     border: none;
     border-bottom: 1px solid #cac4c4;
-    background-color: transparent; # Фон будет прозрачным. 
+    background-color: transparent; # Фон будет прозрачным.
     outline: none;
     transition: 0.3s;
 }
 
 div.b1{
+    z-index:0;
     position: relative;
-    padding-bottom: 300px;
+    top: 50px;
+    padding-bottom: 0px;
 }

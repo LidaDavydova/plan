@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Главная страница{% endblock %}</title>
-    
-    <link rel="stylesheet" href="{% static 'base.css' %}" type="text/css">
 
+    <link rel="stylesheet" href="{% static 'base.css' %}" type="text/css">
+    <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-1b93190375e9ccc259df3a57c1abc0e64599724ae30d7ea4c6877eb615f89387.js"></script>
 </head>
     {% block content %}
     <body>
@@ -19,26 +19,27 @@
     <div id="first">
     </div>
     <div id="base">
-    
+
         <a href="{% url 'exel:prepare' %}" class="button">ПОДГОТОВИТЬ РАСЧЕТ</a>
         <a href="{% url 'exel:download_calc' %}" class="button">ЗАГРУЗИТЬ РАСЧЕТ</a>
-        
+        <!--
         {% if body == 'on' %}
             {% autoescape on %}
                 <a href="{% url 'exel:buying' %}" class="button">БАИНГ</a>
-                <a href="{% url 'exel:dmp' %}" class="button">Баинговые приоритеты</a>
+                <a href="{% url 'exel:dmp' %}" name="button_dmp" class="button">Баинговые приоритеты</a>
             {% endautoescape %}
         {% endif %}
-        
-    	
+      -->
+
+
     	<a href="{% url 'exel:logout' %}" class="button">Выйти</a>
 
     	{% if user.is_authenticated %}
             <h3 id="user">Пользователь: {{ user.username }}</h3>
         {% endif %}
-        
-        
-    	
+
+
+
     	<form method="post" class="cleared">
         	<p id="base">СОГЛАСОВАННЫЕ<br>ПЛАНЫ<br>ИНФО ПО ЗАПУСКУ,<br>СТАТУС ОТКРУТКИ</p>
             <div class="form">
@@ -65,7 +66,7 @@
         </div>
         <label class="labeltable" for="button2">ПОКАЗАТЬ/CКРЫТЬ</label>
         </div>
-                
+
     	</form>
     	<form  method="post" class="not_cleared">
         	{% csrf_token %}
@@ -97,7 +98,7 @@
         <label class="labeltable" for="button1">ПОКАЗАТЬ/CКРЫТЬ</label>
         </div>
 	</form>
-	
+
 	<p id="end">Завершенные проекты</p>
 
     <form method="post" class="compl">
@@ -136,7 +137,29 @@
     <div id="end">
     </div>
 	</div>
+
+<script>
+function clickMe() {
+  document.querySelector(".preloader").classList.toggle("block-spin");
+}
+
+  $('button_dmp').click(function() {
+    $.ajax({
+        beforeSend: function (data) {
+            timer = setTimeout(function() {
+                gif.show();
+            }, 500);
+        },
+        complete: function() {
+            clearTimeout(timer);
+            gif.hide();
+        },
+          });
+      });
+</script>
+
 	<script>
+
     window.onload = function () {
       document.body.classList.add('loaded_hiding');
       window.setTimeout(function () {
@@ -144,8 +167,10 @@
         document.body.classList.remove('loaded_hiding');
       }, 500);
     }
+
+
   </script>
-	
+
 	</body>
 	{% endblock %}
 </html>

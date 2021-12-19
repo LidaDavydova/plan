@@ -55,22 +55,22 @@ def main(request, super_us = False):
 class RegisterView(CreateView):
     form_class  = RegisterUserForm
     template_name = 'registration/register.html'
-    
+
     def get_success_url(self):
         return reverse('exel:login')
-    
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         return dict(list(context.items()))
-    
-    
+
+
 class Login(LoginView):
     form_class  = AuthenticationForm
     template_name = 'registration/login.html'
-    
+
     def get_success_url(self):
-        return reverse('exel:main')
-    
+        return redirect('exel:main')
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         return dict(list(context.items()))
@@ -79,7 +79,7 @@ class Send_email(TemplateView):
     template_name = "registration/send_email.html"
     def dispatch(self, request, *args, **kwargs):
         send_mail('Тема', 'Тело письма', settings.EMAIL_HOST_USER, ['davydoval2005@gmail.com'])
-    
+
 class Change(TemplateView):
     template_name = "registration/change.html"
     def dispatch(self, request, *args, **kwargs):
@@ -132,23 +132,23 @@ class Prepare_calc(TemplateView):
                 description = request.POST.get('description')
                 competitors = request.POST.get('competitors')
                 who_prep_materials = request.POST.get('who_prep_materials')
-            
+
                 form = BriefForm(request.POST, request.FILES)
- 
+
                 if form.is_valid():
                     ex = request.FILES.get('img')
                     try:
                         brif = Brief.objects.create(username=username, client=client, product=product,
-                                         name_rk=name_rk, posad=posad, 
-                                         type_act=type_act, country=country, 
-                                         region=region, gender=gender, 
-                                         age=age, interes=interes, income=income, 
+                                         name_rk=name_rk, posad=posad,
+                                         type_act=type_act, country=country,
+                                         region=region, gender=gender,
+                                         age=age, interes=interes, income=income,
                                          rek=rek, materials=materials,
                                          duration1=duration1, duration2=duration2,
                                          duration3=duration3,
                                          period_c=period_c, period_p=period_p,
                                          KPI=KPI, plan=plan, budget=budget,
-                                         description=description, 
+                                         description=description,
                                          competitors=competitors,
                                          who_prep_materials=who_prep_materials, img=ex,
                                          discount=discount, AK=AK, DCM=DCM)
@@ -156,22 +156,22 @@ class Prepare_calc(TemplateView):
                         s = Brief.objects.filter(username=username, client=client)[::-1][0]
                         k = s.img.name
                         brif = Brief.objects.create(username=username, client=client, product=product,
-                                         name_rk=name_rk, posad=posad, 
-                                         type_act=type_act, country=country, 
-                                         region=region, gender=gender, 
-                                         age=age, interes=interes, income=income, 
+                                         name_rk=name_rk, posad=posad,
+                                         type_act=type_act, country=country,
+                                         region=region, gender=gender,
+                                         age=age, interes=interes, income=income,
                                          rek=rek, materials=materials,
                                          duration1=duration1, duration2=duration2,
                                          duration3=duration3,
                                          period_c=period_c, period_p=period_p,
                                          KPI=KPI, plan=plan, budget=budget,
-                                         description=description, 
+                                         description=description,
                                          competitors=competitors,
                                          who_prep_materials=who_prep_materials, img=k,
                                          discount=discount, AK=AK, DCM=DCM)
                     except Location.MultipleObjectsReturned:
                         pass
-                
+
                 datet = brif.duploaded_at.strftime('%x').replace('/', '.')
                 # In the down def to create a file DMP.xlsx
                 for i in Dmp.objects.all():
@@ -185,8 +185,8 @@ class Prepare_calc(TemplateView):
                 video = p['Размер (в пикселях) / Формат'].tolist()
                 season = p["Сезонники"].tolist()
                 baing = p["Баинговые приоритеты"].tolist()
-                
-                u = p["коэф. скидки от 1 (min стоимость плана) до  3 (max стоимость плана) "].tolist() 
+
+                u = p["коэф. скидки от 1 (min стоимость плана) до  3 (max стоимость плана) "].tolist()
                 k = []
                 for i in range(1, len(a)+1):
                     if (a[i-1] == 'Все' or a[i-1] == type_act) and (str(KPI) in str(b[i-1])) and (u[i-1]=='1-3' or u[i-1] == discount):
@@ -198,8 +198,10 @@ class Prepare_calc(TemplateView):
                                 k.append(6+i)
                         else:
                             k.append(6+i)
+                '''
                 baing_d = dict()
                 k2 = []
+
                 for i in k:
                     try:
                         if Profile.objects.filter(bying_username=request.user.username) != None:
@@ -214,17 +216,18 @@ class Prepare_calc(TemplateView):
                                 baing_d[int(baing[i-7])].append(i)
                     except ValueError:
                         k2.append(i)
+
                 k=[]
-                
+
                 for i in sorted(baing_d):
                     k.extend(baing_d[i])
                 k.extend(k2)
-                
+                '''
                 data = dict.fromkeys([i for i in p.columns.ravel()])
-                
+
                 period1 = list(period_c.split('-'))
                 period2 = list(period_p.split('-'))
-                
+
                 mon = {1: "Январь", 2: "Февраль", 3: "Март", 4: "Апрель",
                          5: "Май", 6: "Июнь", 7: "Июль", 8: "Август",
                          9: "Сентябрь", 10: "Октябрь", 11: "Ноябрь", 12: "Декабрь"}
@@ -238,7 +241,7 @@ class Prepare_calc(TemplateView):
                             line.append(e['Лист1'].cell(row=j, column=m).value)
                         data[i] = line
                     s = pd.DataFrame(data)
-                
+
                     if not os.path.exists(os.path.join(hol, f"media/clients/{username}")):
                         os.mkdir(os.path.join(hol, f"media/clients/{username}"))
                     if not os.path.exists(os.path.join(hol, f"media/clients/{username}/{client}")):
@@ -251,8 +254,8 @@ class Prepare_calc(TemplateView):
                         if i>12:
                             i-=12
                         month.append(mon[int(i)])
-                    
-                
+
+
                     d = []
                     for j in k:
                         line = []
@@ -279,7 +282,7 @@ class Prepare_calc(TemplateView):
                                 for i in range(1, len(p.columns.ravel())+1):
                                     line.append(e['Лист1'].cell(row=j, column=i).value)
                                 d.append(line)
-                            
+
                     if len(d)==0:
                         dataclass['er'] = 'нет данных по пункту - Задача, kpi'
                         return render(request, self.template_name, dataclass)
@@ -289,23 +292,23 @@ class Prepare_calc(TemplateView):
                             m.append(d[j][i])
                         data[(p.columns.ravel())[i]] = m
                     s = pd.DataFrame(data)
-                    
-                    
-                    
+
+
+
                     if not os.path.exists(os.path.join(hol, f"media/clients/{username}")):
                         os.mkdir(os.path.join(hol, f"media/clients/{username}"))
                     if not os.path.exists(os.path.join(hol, f"media/clients/{username}/{client}")):
                         os.mkdir(os.path.join(hol, f"media/clients/{username}/{client}"))
-                    
+
                     s.to_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"), startrow=1, index=False)
-                
+
                 ''' This is create brief file for clients'''
                 for i in Brief_pattern.objects.all():
                     n = f'media/{i.file.name}'
                 wb = openpyxl.load_workbook(filename=os.path.join(hol, n), data_only=True)
                 ws = wb.worksheets[0]
                 sheet = wb.active
-                bd = Brief.objects.filter(username=username, client=client, 
+                bd = Brief.objects.filter(username=username, client=client,
                                        product=product, name_rk=name_rk)[::-1][0]
                 sheet['C3'] = bd.client
                 sheet['C4'] = bd.product
@@ -337,18 +340,18 @@ class Prepare_calc(TemplateView):
                     ws.add_image(im, 'H6')
                 except:
                     pass
-                
+
                 for row in sheet.iter_rows():
                     for cell in row:
-                        cell.alignment = Alignment(wrap_text=True,vertical='top') 
+                        cell.alignment = Alignment(wrap_text=True,vertical='top')
                 wb.save(os.path.join(hol, f"media/clients/{username}/{client}/brief_{client}_{datet}.xlsx"))
                 path2 = join('clients', username, client, f"brief_{client}_{datet}.xlsx")
-                
+
                 '''This is correction DMP'''
                 '''
                 wb=load_workbook(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"))
                 sheet = wb.active
-                
+
                 p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"),
                                      header=1)
                 season = p['Сезонники'].tolist()
@@ -414,12 +417,12 @@ class Prepare_calc(TemplateView):
                         cell.border = Border(top = Side(border_style='thin', color='FF000000'),
                             right = Side(border_style='thin', color='FF000000'),
                             bottom = Side(border_style='thin', color='FF000000'),
-                            left = Side(border_style='thin', color='FF000000')) 
+                            left = Side(border_style='thin', color='FF000000'))
                 wb.save(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{name_rk}.xlsx"))
                 '''
-                
+
                 '''This is create mp'''
-                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"), 
+                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"),
                                   header=None, skiprows=2, usecols = [1, 2, 3, 4, 5, 6,
                                                                     8, 9, 11, 12, 13,
                                                                     14, 15, 16, 17,
@@ -429,7 +432,7 @@ class Prepare_calc(TemplateView):
                                           header=None, skiprows=2, usecols = [37, 39, 41])
                 for i in Report_common.objects.all():
                     report_common = i.file.name
-                report = pd.read_excel(os.path.join(hol, f"media/{report_common}"), 
+                report = pd.read_excel(os.path.join(hol, f"media/{report_common}"),
                                   header=None, skiprows=6, usecols = [1, 3, 6, 8, 9, 34, 36, 54, 44, 45, 46, 59, 60, 61, 62])
                 fr = frequency.to_dict(orient='list')
                 b = p.to_dict(orient='list')
@@ -438,37 +441,43 @@ class Prepare_calc(TemplateView):
                 h1 = height
                 '''лиды'''
                 lids = [''] * height
-                for i in range(0, len(b[21])):
-                    for k in range(len(report[6])-1, 0, -1):
-                        if report[6][k]==b[21][i] and report[1][k]==client:
-                            lids[i]=report[54][k]
-                            break
-                    
-                        
+                try:
+                    for i in range(0, len(b[21])):
+                        for k in range(len(report[6])-1, 0, -1):
+                            if report[6][k]==b[21][i] and report[1][k]==client:
+                                lids[i]=report[54][k]
+                                break
+                except:
+                    pass
+
+
                 '''ctr'''
                 ctr = [''] * height
-                for i in range(0, len(b[21])):
-                    for j in range(len(report[6])-1, 0, -1):
-                        if report[1][j]==client and report[6][j]==b[21][i]:
-                            ctr[i]=report[36][j]
-                            break
-                        elif report[3][j]==b[1][i] and report[6][j]==b[21][i]:
-                            ctr[i]=report[36][j]*88/100
-                            break
-                        elif report[6][j]==b[21][i]:
-                            try:
-                                ctr[i]=float(report[36][j]*0.85)
+                try:
+                    for i in range(0, len(b[21])):
+                        for j in range(len(report[6])-1, 0, -1):
+                            if report[1][j]==client and report[6][j]==b[21][i]:
+                                ctr[i]=report[36][j]
                                 break
-                            except TypeError:
-                                pass
-                    if ctr[i] == '':
-                        for w in range(height):
-                            if b[1][w]==b[1][i] and b[21][w]==b[21][i] and i!=w:
-                                ctr[i]=fr[41][j]*90/100
+                            elif report[3][j]==b[1][i] and report[6][j]==b[21][i]:
+                                ctr[i]=report[36][j]*88/100
                                 break
-                
+                            elif report[6][j]==b[21][i]:
+                                try:
+                                    ctr[i]=float(report[36][j]*0.85)
+                                    break
+                                except TypeError:
+                                    pass
+                        if ctr[i] == '':
+                            for w in range(height):
+                                if b[1][w]==b[1][i] and b[21][w]==b[21][i] and i!=w:
+                                    ctr[i]=fr[41][j]*90/100
+                                    break
+                except:
+                    pass
+
                 b[35] = b.pop(11)
-                
+
                 b[20] = [i for i in range(1, height+1)]
                 b[33] = b.pop(30)
                 b[34] = b.pop(31)
@@ -482,9 +491,9 @@ class Prepare_calc(TemplateView):
                 b[23] = b.pop(22)
                 b[22] = b.pop(21)
                 b[21] = [f'=S{i}' for i in range(13, height+13)]
-                
+
                 b[25] = ['']*height #длит видео
-                
+
                 b = dict(sorted(b.items(), key=lambda x: x[0]))
                 b[37] = [f'=IF(OR(X{i}="1000 показов",X{i}="клики",X{i}="engagement",X{i}="вовлечение",X{i}="просмотры"),IF(X{i}="клики",AG{i}*1000/AI{i},IF(OR(X{i}="engagement",X{i}="просмотры",X{i}="вовлечение"),AG{i}*1000/AI{i},AC{i}*AD{i}*(1-AE{i}))),IF(ISERR(AC{i}*AD{i}/AI{i}*1000*(1-AE{i})),0,AC{i}*AD{i}*AB{i}*(1-AE{i})/AI{i}*1000))' for i in range(13, height+13)]
                 b[38] = [f'=IF(X{i}="клики",AC{i}*AD{i}*(1-AE{i})*AO{i},IF(OR(X{i}="просмотры",X{i}="engagement",X{i}="вовлечение"),AB{i}*AC{i}*AD{i}*(1-AE{i}),IF(OR(X{i}="пакет",X{i}="неделя",X{i}="день",X{i}="месяц",X{i}="единица",X{i}="единиц"),AC{i}*AD{i}*(1-AE{i})*AB{i},AB{i}*AF{i})))' for i in range(13, height+13)]
@@ -502,9 +511,9 @@ class Prepare_calc(TemplateView):
                 b[50] = [f'=AG{i}/AO{i}' for i in range(13, height+13)]
                 b[51] = lids
                 b[52] = [f'=AG{i}/AT{i}' for i in range(13, height+13)]
-                
+
                 u=pd.DataFrame(b)
-                
+
                 for i in Media_plan.objects.all():
                     media_plan = i.file.name
                 wb = openpyxl.load_workbook(filename=os.path.join(hol, f"media/{media_plan}"))
@@ -545,31 +554,31 @@ class Prepare_calc(TemplateView):
                         u=pd.DataFrame(b)
                         for r in dataframe_to_rows(u, index=None, header=None):
                             w.append(r)
-                
-                
+
+
                 formula = '1000 показов, клики, пакет, просмотры, engagement, вовлечение, неделя, месяц, единица, единиц, день'
                 dv = DataValidation(type='list', formula1='"{}"'.format(formula), allow_blank=True)
                 sheet.add_data_validation(dv)
                 dv.add(f'X13:X{height+12}')
-                
+
                 formula1 = 'день, дней, дня, неделя, недели, недель, месяц, месяца, месяцев, единица, единиц, единицы'
                 dv = DataValidation(type='list', formula1='"{}"'.format(formula1), allow_blank=True)
                 sheet.add_data_validation(dv)
                 dv.add(f'Z13:Z{height+12}')
-                
+
                 sheet['T2'] = bd.client
                 sheet['T3'] = bd.product
                 sheet['T4'] = bd.posad
                 sheet['T5'] = bd.gender + ", " + bd.age + ", " + bd.interes
                 sheet['T6'] = bd.country + ", " + bd.region
                 sheet['T7'] = bd.KPI
-                
+
                 for row in list(sheet)[12:]:
                     for cell in row:
                         cell.border = Border(top = Side(border_style='thin', color='FF000000'),
                             right = Side(border_style='thin', color='FF000000'),
                             bottom = Side(border_style='thin', color='FF000000'),
-                            left = Side(border_style='thin', color='FF000000')) 
+                            left = Side(border_style='thin', color='FF000000'))
                 if len(g)!=0:
                     height*=len(g)
                 sheet[f'AE{height+13}'] = 'Итого:'
@@ -598,14 +607,14 @@ class Prepare_calc(TemplateView):
                 sheet[f'AC{height+19}'] = 'Итого (с учётом НДС и АК)'
                 sheet[f'AF{height+16}'] = bd.AK
                 sheet[f'AF{height+17}'] = '20%'
-                
+
                 sheet[f'AG{height+14}'] = f'=(AI{height+13}*2.5)*1.5/1000'
                 sheet[f'AG{height+15}'] = f'=SUM(AG{height+13}:AG{height+14})'
                 sheet[f'AG{height+16}'] = f'=AG{height+15}*AF{height+16}'
                 sheet[f'AG{height+17}'] = f'=((AG{height+15})+AG{height+16})*AF{height+17}'
                 sheet[f'AG{height+18}'] = '0.00р'
                 sheet[f'AG{height+19}'] = f'=SUM(AG{height+15}:AG{height+18})'
-                
+
                 font = Font(color="FFFFFFFF")
                 HeaderFill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
                 for row in sheet[f'Q{height+13}':f'AV{height+13}']:
@@ -620,13 +629,13 @@ class Prepare_calc(TemplateView):
                     for cell in row:
                         cell.border = Border(
                             left = Side(border_style='thin', color='FF000000'))
-    
+
                 for row in sheet[f'AG{height+14}':f'AG{height+19}']:
                     for cell in row:
                         cell.border = Border(top = Side(border_style='thin', color='FF000000'),
                             right = Side(border_style='thin', color='FF000000'),
                             bottom = Side(border_style='thin', color='FF000000'),
-                            left = Side(border_style='thin', color='FF000000')) 
+                            left = Side(border_style='thin', color='FF000000'))
                 for row in list(sheet[f'AG13':f'AG{height+19}']+sheet[f'AC13':f'AC{height+13}']
                                 +sheet[f'AH13':f'AH{height+13}']+sheet[f'AP13':f'AP{height+13}']
                                 +sheet[f'AQ13':f'AQ{height+13}']+sheet[f'AR13':f'AR{height+13}']
@@ -641,7 +650,7 @@ class Prepare_calc(TemplateView):
                         cell.alignment = Alignment(wrap_text=True,vertical='top')
                 for i in range(13, height+13):
                     sheet.row_dimensions[i].height = 70
-                    
+
                 ''' Сезонники и тайминг '''
                 p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"),
                                      header=1)
@@ -650,7 +659,7 @@ class Prepare_calc(TemplateView):
                 for i in range(48, 104):
                     if sheet.cell(row=10, column=i).value!=None:
                         season2[sheet.cell(row=10, column=i).value] = i
-                
+
                 for i in range(13, len(season)+13):
                     if season[i-13]=='проверить' or season[i-13]=='нет':
                         for s in range(48, 108):
@@ -664,7 +673,7 @@ class Prepare_calc(TemplateView):
                         for s in range(48, 108):
                             sheet.cell(row=i, column=s).value = 1
                             """если 2 месяца"""
-                    elif int(period2[1])-int(period1[1])==1: 
+                    elif int(period2[1])-int(period1[1])==1:
                         for a in range(math.ceil(int(period1[2])/7)-1, 5):
                             sheet.cell(row=i, column=season2[month[0]]+a).value = 1
                         for a in range(math.ceil(int(period2[2])/7)):
@@ -682,24 +691,27 @@ class Prepare_calc(TemplateView):
                     else:
                         for a in range(math.ceil(int(period1[2])/7)-1, math.ceil(int(period2[2])/7)):
                             sheet.cell(row=i, column=season2[month[0]]+a).value = 1
-                
-                for j in range(13, height+13):
-                    for k in range(len(report[6])-1, 0, -1):
-                        if report[1][k]==client and report[6][k]==b[21][j-10] and b[24][j-10]==report[9][k]:
-                            sheet.cell(row=j, column=115).value = report[59][k]
-                            sheet.cell(row=j, column=116).value=report[60][k]
-                            sheet.cell(row=j, column=117).value=report[61][k]
-                            sheet.cell(row=j, column=118).value=report[62][k]
-                            break
-                
+
+                try:
+                    for j in range(13, height+13):
+                        for k in range(len(report[6])-1, 0, -1):
+                            if report[1][k]==client and report[6][k]==b[21][j-10] and b[24][j-10]==report[9][k]:
+                                sheet.cell(row=j, column=115).value = report[59][k]
+                                sheet.cell(row=j, column=116).value=report[60][k]
+                                sheet.cell(row=j, column=117).value=report[61][k]
+                                sheet.cell(row=j, column=118).value=report[62][k]
+                                break
+                except:
+                    pass
+
                 wb.save(os.path.join(hol, f"media/clients/{username}/{client}/mp_{client}_{datet}.xlsx"))
-                
+
                 wb2 = openpyxl.load_workbook(filename=os.path.join(hol, f"media/pattern/buying.xlsx"))
                 w2 = wb2.worksheets[0]
                 sheet2 = wb2.active
                 f = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/mp_{client}_{datet}.xlsx"),
                                      header=None, skiprows=12, usecols=(18, 23, 27, 28, 29, 30))
-                
+
                 price_b_s = []
                 for i in range(h1):
                     if f[23][i]=='1000 показов':
@@ -724,9 +736,9 @@ class Prepare_calc(TemplateView):
                             price_b_s.append('')
                 f1 = {0: f[18][:h1], 1: f[18][:h1], 2: price_b_s}
                 bu = pd.DataFrame(f1)
-                       
+
                 bu.to_excel(os.path.join(hol, f"media/pattern/buying.xlsx"), header=None, index=None)
-                
+
                 dataset = Dataset()
                 f = pd.read_excel(os.path.join(hol, f"media/pattern/buying.xlsx"),
                                      header=None)
@@ -739,10 +751,10 @@ class Prepare_calc(TemplateView):
                     except ObjectDoesNotExist:
                         value = Bying(None, k[0], k[1], None, k[2])
                         value.save()
-                
+
                 path = join('clients', username, client, f"DMP_{client}_{datet}.xlsx")
                 path3 = join('clients', username, client, f"mp_{client}_{datet}.xlsx")
-                
+
                 count = All_file.objects.create(username=username, client=client,
                                       name_rk=name_rk, dmp=path, brief=path2,
                                       mp=path3)
@@ -820,8 +832,8 @@ class Buying(TemplateView):
                         data['checked_name'] = request.POST.getlist('name')
                         data['checked_na'] = request.POST.getlist('na')
                     return render(request, self.template_name, data)
-                    
-                
+
+
                 elif request.method=='POST' and 'form3' in request.POST:
                     for j in request.POST.getlist('na'):
                         for k in Bying.objects.filter(site=j):
@@ -834,7 +846,7 @@ class Buying(TemplateView):
                             except:
                                 pass
                         c.extend(Bying.objects.filter(site=j))
-                        
+
                     if request.POST.getlist('name')!=[] and request.POST.getlist('na') != []:
                         c1 = []
                         pl1 = 0
@@ -863,11 +875,11 @@ class Buying(TemplateView):
                         data['checked_na'] = request.POST.getlist('na')
                         data['checked_name'] = request.POST.getlist('name')
                     return render(request, self.template_name, data)
-            
+
             if request.method=='POST' and 'form4' in request.POST:
                 response = HttpResponse(content_type='application/vnd.ms-excel')
                 response['Content-Disposition'] = 'attachment; filename="Data.xlsx"'
-                
+
                 name = ['Селлер', 'Сайт', 'План, до НДС/рубли', 'Факт, клиентские суммы, до НДС/рубли', '%']
                 dic = {}
                 id_list = []
@@ -881,8 +893,8 @@ class Buying(TemplateView):
                 elif request.POST.getlist('na') != []:
                     for j in request.POST.getlist('na'):
                         id_list.extend(Bying.objects.filter(site=j))
-                else: 
-                    id_list = by 
+                else:
+                    id_list = by
                 for j in range(5):
                     sp = []
                     for i in id_list:
@@ -898,8 +910,8 @@ class Buying(TemplateView):
                 sheet[f'C{h+2}'] = str(request.POST.get('plan_sum1'))
                 sheet[f'D{h+2}'] = str(request.POST.get('phact_sum1'))
                 wb.save(response)
-                return response 
-                
+                return response
+
             if request.method=='POST' and 'form2' in request.POST:
                 id_list = []
                 if request.POST.getlist('name')!=[] and request.POST.getlist('na') != []:
@@ -912,8 +924,8 @@ class Buying(TemplateView):
                 elif request.POST.getlist('na') != []:
                     for j in request.POST.getlist('na'):
                         id_list.extend(Bying.objects.filter(site=j))
-                else: 
-                    id_list = by 
+                else:
+                    id_list = by
                 for i in id_list:
                     c1 = []
                     for j in range(5):
@@ -939,11 +951,11 @@ class Buying(TemplateView):
                 data['phact_sum'] = ph
                 data['checked_na'] = request.POST.getlist('na')
                 data['checked_name'] = request.POST.getlist('name')
-            
+
             return render(request, self.template_name, data)
         else:
             return redirect('exel:login')
-                    
+
 
 class Dmp_buying(TemplateView):
     template_name = 'dmp.html'
@@ -959,7 +971,7 @@ class Dmp_buying(TemplateView):
             p = pd.read_excel(os.path.join(hol, n),
                                      header=5)
             seller = p["Категория Клиента"].tolist()
-            
+
             dataset = Dataset()
             f = {}
             f['seller'] = seller
@@ -978,7 +990,7 @@ class Dmp_buying(TemplateView):
                     value = Dmp_priority(sell=k)
                     value.save()
                     '''
-            
+
             data = {
                 'bying': Dmp_priority.objects.all(),
                 }
@@ -1015,7 +1027,8 @@ class Download_calc(TemplateView):
                     h.save()
                     Client.objects.create(username=username, calculation=ex,
                                               client=client, name_rk=title_rk)
-                    return render(request, self.template_name, data)  
+                    data['files'] = Client.objects.filter(username=username)[::-1]
+                    return render(request, self.template_name, data)
                 else:
                     messages.error(request, f'ERROR: Format of uploaded file: {ex.name} is NOT supported !')
             else:
@@ -1026,7 +1039,7 @@ class Download_calc(TemplateView):
             return redirect('exel:login')
 
 
-    
+
 def not_cleared(request, name_rk):
     if request.user.is_authenticated:
         username = request.user.username
@@ -1049,15 +1062,15 @@ def not_cleared(request, name_rk):
                     comment = request.POST.get('comments')
                     rk = request.POST.get('name_rk')
                     if name_rk!=rk:
-                        Client.objects.filter(username=username, 
+                        Client.objects.filter(username=username,
                                                   name_rk=name_rk).update(name_rk=rk)
-                        Complete.objects.filter(username=username, 
+                        Complete.objects.filter(username=username,
                                                   name_rk=name_rk).update(name_rk=rk)
-                        Brief.objects.filter(username=username, 
+                        Brief.objects.filter(username=username,
                                                   name_rk=name_rk).update(name_rk=rk)
-                        All_file.objects.filter(username=username, 
+                        All_file.objects.filter(username=username,
                                                   name_rk=name_rk).update(name_rk=rk)
-                        Cleared.objects.filter(username=username, 
+                        Cleared.objects.filter(username=username,
                                                   name_rk=name_rk).update(name_rk=rk)
                         Feed.objects.filter(name_rk=name_rk).update(name_rk=rk)
                     if ex==None and mp!=None:
@@ -1069,27 +1082,27 @@ def not_cleared(request, name_rk):
                             m.save()
                             d.mp = mp
                             d.save()
-                            h = Cleared.objects.filter(username=username, 
+                            h = Cleared.objects.filter(username=username,
                                                   name_rk=name_rk)
                             h.update(mp=mp)
-                            h = All_file.objects.filter(username=username, 
+                            h = All_file.objects.filter(username=username,
                                                       name_rk=name_rk)
                             h.update(mp=mp)
                         except:
                             data['error'] = 'Заполните все поля'
                             return render(request, 'but_not_cleared.html', data)
-                   
+
                     elif mp==None and ex==None:
                         try:
                             d = Cleared.objects.get(username=username, name_rk=rk,
                                                   client=m.client)
-                            All_file.objects.filter(username=username, 
+                            All_file.objects.filter(username=username,
                                                   name_rk=rk).update(comments=comment)
                         except:
                             data['error'] = 'Заполните все поля'
                             return render(request, 'but_not_cleared.html', data)
                     else:
-                        All_file.objects.filter(username=username, 
+                        All_file.objects.filter(username=username,
                                                   name_rk=rk).update(presentation=ex, comments=comment)
                         b = Brief.objects.filter(name_rk=rk)[::-1][0]
                         try:
@@ -1108,8 +1121,8 @@ def not_cleared(request, name_rk):
             pass
     else:
         return redirect('exel:login')
-   
-    
+
+
 def cleared(request, name_rk):
     if request.user.is_authenticated:
         username = request.user.username
@@ -1136,13 +1149,13 @@ def cleared(request, name_rk):
                     landing = request.POST.get('landing')
                     access = request.POST.get('access')
                     if name_rk!=rk:
-                        Client.objects.filter(username=username, 
+                        Client.objects.filter(username=username,
                                                   name_rk=name_rk).update(name_rk=rk)
-                        Complete.objects.filter(username=username, 
+                        Complete.objects.filter(username=username,
                                                   name_rk=name_rk).update(name_rk=rk)
-                        Brief.objects.filter(username=username, 
+                        Brief.objects.filter(username=username,
                                                   name_rk=name_rk).update(name_rk=rk)
-                        All_file.objects.filter(username=username, 
+                        All_file.objects.filter(username=username,
                                                   name_rk=name_rk).update(name_rk=rk)
                         Feed.objects.filter(name_rk=name_rk).update(name_rk=rk)
                     if mp==None:
@@ -1156,7 +1169,7 @@ def cleared(request, name_rk):
                         f.mp = mp
                         f.comments = comments
                         f.save()
-                        h = All_file.objects.filter(username=username, 
+                        h = All_file.objects.filter(username=username,
                                                   name_rk=name_rk)
                         h.update(mp=mp)
                     data['form1'] = ClearForm(initial={
@@ -1181,7 +1194,7 @@ def cleared(request, name_rk):
                     for i in Report_common.objects.all():
                         report_common = i.file.name
                     wb = openpyxl.load_workbook(filename=os.path.join(hol, f"media/{report_common}"))
-                                                
+
                     w = wb.worksheets[0]
                     sheet = wb.active
                     for r in dataframe_to_rows(pd.DataFrame(p), index=None, header=None):
@@ -1191,14 +1204,14 @@ def cleared(request, name_rk):
                         f = Profile.objects.get(bying_username=username)
                     except ObjectDoesNotExist:
                         f = Profile.objects.get(manager_username=username)
-                    f.report_common = 'report.xlsx'
+                    f.report_common = f"media/clients/{username}/report.xlsx"
                     f.save()
             return render(request, 'but_cleared.html', data)
         except MultipleObjectsReturned:
             pass
     else:
         return redirect('exel:login')
-    
+
 
 
 def utm(request, name_rk):
@@ -1207,24 +1220,24 @@ def utm(request, name_rk):
         data = {
            'file': name_rk,
            'form': UtmForm(),
-           
+
            }
         if request.method == 'POST':
             form = UtmForm(request.POST, request.FILES)
             if form.is_valid():
                 u = request.FILES.get('utm')
-                
+
                 a = Cleared.objects.get(name_rk=name_rk)
                 a.utm = u
                 a.save()
                 data['utm_name'] = u
-                
+
         data['form'] = UtmForm()
         data['utm'] = Cleared.objects.get(name_rk=name_rk)
         return render(request, 'utm.html', data)
     else:
         return redirect('exel:login')
-   
+
 def materials(request, name_rk):
     if request.user.is_authenticated:
         a = Feed.objects.filter(name_rk=name_rk)[::-1]
@@ -1250,7 +1263,7 @@ def materials(request, name_rk):
         return render(request, 'materials.html', data)
     else:
         return redirect('exel:login')
-   
+
 def complete(request, name_rk):
     if request.user.is_authenticated:
         username = request.user.username
@@ -1268,4 +1281,3 @@ def complete(request, name_rk):
         return main(request)
     else:
         return redirect('exel:login')
-    

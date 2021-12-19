@@ -105,8 +105,8 @@ border-right: none;
 
 div.tab {
     padding: 5px;
-    max-width: 70%; 
-    overflow-x: hidden; 
+    max-width: 70%;
+    overflow-x: hidden;
     margin-bottom: 20px;
     box-shadow: 2px 2px 4px 2px rgba(0,0,0,.2)
 }
@@ -128,7 +128,7 @@ div.tab {
     border: 1px solid #333; /* Параметры рамки */
    }
 
-input[type="checkbox"]:checked + 
+input[type="checkbox"]:checked +
 
 .xpandable-block {
     max-height: 3000px;
@@ -146,7 +146,7 @@ input[type="checkbox"] {
     display: none;
 }
 
-input[type="checkbox"]:checked + 
+input[type="checkbox"]:checked +
 
 .xpandable-block_m {
     max-height: 3000px;
@@ -223,8 +223,8 @@ p#field {
     font-family: 'Krona One', sans-serif;
     writing-mode: tb-rl;
     transform: rotate(180deg);
-    
-    
+
+
 }
 
 
@@ -245,7 +245,7 @@ h3 {
       font-weight: bold;
       font-family: Libre Baskerville, serif;
       font-size: 14px;
-      
+
       text-transform: uppercase;
       text-align: center;
       letter-spacing: 1px;
@@ -255,7 +255,7 @@ h3 {
       box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
       transition: .3s;
       }
-      
+
 .button:hover {
       background: #e52e2e;
       box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
@@ -264,25 +264,25 @@ h3 {
 }
 
 .input#down {
-	
+
 	// needs to be relative so the :focus span is positioned correctly
 	position:relative;
-	
+
 	// bigger font size for demo purposes
 	font-size: 1.5em;
-	
+
 	// the border gradient
 	background: linear-gradient(21deg, #10abff, #1beabd);
-	
+
 	// the width of the input border
 	padding: 3px;
-	
+
 	// we want inline fields by default
 	display: inline-block;
-	
+
 	// we want rounded corners no matter the size of the field
 	border-radius: 9999em;
-	
+
 	// style of the actual input field
 	*:not(span) {
 		position: relative;
@@ -293,21 +293,21 @@ h3 {
 		outline: none;
 		padding: 0 .325em;
 		z-index: 1; // needs to be above the :focus span
-		
+
 		// summon fancy shadow styles when focussed
 		&:focus + span {
 			opacity: 1;
 			transform: scale(1);
 		}
 	}
-	
+
 	// we don't animate box-shadow directly as that can't be done on the GPU, only animate opacity and transform for high performance animations.
 	span {
-		
+
 		transform: scale(.993, .94); // scale it down just a little bit
 		transition: transform .5s, opacity .25s;
 		opacity: 0; // is hidden by default
-		
+
 		position:absolute;
 		z-index: 0; // needs to be below the field (would block input otherwise)
 		margin:4px; // a bit bigger than .input padding, this prevents background color pixels shining through
@@ -317,14 +317,14 @@ h3 {
 		bottom:0;
 		border-radius: inherit;
 		pointer-events: none; // this allows the user to click through this element, as the shadow is rather wide it might overlap with other fields and we don't want to block those.
-		
+
 		// fancy shadow styles
 		box-shadow: inset 0 0 0 3px #fff,
 			0 0 0 4px #fff,
-			3px -3px 30px #1beabd, 
+			3px -3px 30px #1beabd,
 			-3px 3px 30px #10abff;
 	}
-	
+
 }
 
 input#down {
@@ -378,7 +378,7 @@ input.mp {
     font-weight: bold;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
-      
+
     text-transform: uppercase;
     text-align: center;
     letter-spacing: 1px;
@@ -555,7 +555,7 @@ input.download {
       font-weight: bold;
       font-family: Libre Baskerville, serif;
       font-size: 14px;
-      
+
       text-transform: uppercase;
       text-align: center;
       letter-spacing: 1px;
@@ -565,7 +565,7 @@ input.download {
       box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
       transition: .3s;
       }
-      
+
 .button1:hover {
       background: #e52e2e;
       box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
@@ -585,7 +585,7 @@ input.download {
       font-weight: bold;
       font-family: Libre Baskerville, serif;
       font-size: 14px;
-      
+
       text-transform: uppercase;
       text-align: center;
       letter-spacing: 1px;
@@ -595,7 +595,7 @@ input.download {
       box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
       transition: .3s;
       }
-      
+
 .button3:hover {
       background: #e52e2e;
       box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
@@ -616,7 +616,7 @@ input.download {
       font-weight: bold;
       font-family: Libre Baskerville, serif;
       font-size: 14px;
-      
+
       text-transform: uppercase;
       text-align: center;
       letter-spacing: 1px;
@@ -626,7 +626,7 @@ input.download {
       box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
       transition: .3s;
       }
-      
+
 .button2:hover {
       background: #e52e2e;
       box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
@@ -643,6 +643,12 @@ p#rk {
 }
 
 /*  materials.html */
+
+.button#back {
+  position: relative;
+  top: 60px;
+  left: 70px;
+}
 
 .materials {
    color: #000000;
@@ -690,7 +696,7 @@ input.mat {
     font-weight: bold;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
-      
+
     text-transform: uppercase;
     text-align: center;
     letter-spacing: 1px;
@@ -701,7 +707,7 @@ input.mat {
     transition: .3s;
 }
 
-      
+
 input.mat:hover {
       background: #e52e2e;
       box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
@@ -716,7 +722,7 @@ input.mat:hover {
     top: 150px;
     left: 50%;
     transform: translate(-50%, -50%);
-    
+
 }
 
 .s13 {
@@ -750,4 +756,3 @@ input.mat:hover {
    background: #95a5a6;
    opacity: .35;
 }
-
