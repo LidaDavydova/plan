@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from pathlib import Path
 from .resources import ByingResource
 from tablib import Dataset
 from django.core.exceptions import MultipleObjectsReturned
@@ -47,6 +48,29 @@ def main(request, super_us = False):
             data['body'] = 'on'
             return render(request, 'base.html', data)
         data['body'] = 'off'
+
+        hol = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+        if not os.path.exists(os.path.join(hol, f"media/clients/{username}")):
+            os.mkdir(os.path.join(hol, f"media/clients/{username}"))
+
+            r = Report.objects.all()[0]
+            report_common = r.file.name
+
+            wb = openpyxl.load_workbook(filename=os.path.join(hol, f"media/{report_common}"))
+
+            w = wb.worksheets[0]
+            sheet = wb.active
+            wb.save(os.path.join(hol, f"media/clients/{username}/report.xlsx").replace('\\', '/'))
+            try:
+                try:
+                    f = Profile.objects.get(bying_username=username)
+                except ObjectDoesNotExist:
+                    f = Profile.objects.get(manager_username=username)
+                f.report_common = f"media/clients/{username}/report.xlsx"
+                f.save()
+            except:
+                Profile.objects.create(bying_username=username, manager_username=username, report_common=f"media/clients/{username}/report.xlsx")
     else:
         return redirect('exel:login')
     return render(request, 'base.html', data)
@@ -68,12 +92,15 @@ class Login(LoginView):
     form_class  = AuthenticationForm
     template_name = 'registration/login.html'
 
-    def get_success_url(self):
-        return redirect('exel:main')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         return dict(list(context.items()))
+    def dispatch(self, request, *args, **kwargs):
+        data = {
+
+            }
+        return main()
 
 class Send_email(TemplateView):
     template_name = "registration/send_email.html"
@@ -172,12 +199,13 @@ class Prepare_calc(TemplateView):
                     except Location.MultipleObjectsReturned:
                         pass
 
+
                 datet = brif.duploaded_at.strftime('%x').replace('/', '.')
                 # In the down def to create a file DMP.xlsx
                 for i in Dmp.objects.all():
                     n = i.file.url[1:]
                 hol = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                p = pd.read_excel(os.path.join(hol, n),
+                p = pd.read_excel(os.path.join(hol, n), engine='openpyxl',
                                      header=5)
                 e = openpyxl.load_workbook(filename=os.path.join(hol, n), data_only=True)
                 a = p["Категория Клиента"].tolist()
@@ -285,6 +313,7 @@ class Prepare_calc(TemplateView):
 
                     if len(d)==0:
                         dataclass['er'] = 'нет данных по пункту - Задача, kpi'
+                        dataclass['er'] = hol
                         return render(request, self.template_name, dataclass)
                     for i in range(len(d[0])):
                         m = []
@@ -292,7 +321,6 @@ class Prepare_calc(TemplateView):
                             m.append(d[j][i])
                         data[(p.columns.ravel())[i]] = m
                     s = pd.DataFrame(data)
-
 
 
                     if not os.path.exists(os.path.join(hol, f"media/clients/{username}")):
@@ -303,8 +331,11 @@ class Prepare_calc(TemplateView):
                     s.to_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"), startrow=1, index=False)
 
                 ''' This is create brief file for clients'''
+
                 for i in Brief_pattern.objects.all():
                     n = f'media/{i.file.name}'
+                dataclass['t'] = [hol, n, str(os.path.join(hol, str(n)))]
+                #return render(request, self.template_name, dataclass)
                 wb = openpyxl.load_workbook(filename=os.path.join(hol, n), data_only=True)
                 ws = wb.worksheets[0]
                 sheet = wb.active
@@ -422,18 +453,25 @@ class Prepare_calc(TemplateView):
                 '''
 
                 '''This is create mp'''
-                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"),
+                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"), engine='openpyxl',
                                   header=None, skiprows=2, usecols = [1, 2, 3, 4, 5, 6,
                                                                     8, 9, 11, 12, 13,
                                                                     14, 15, 16, 17,
                                                                     18, 19, 20, 21, 22,
                                                                     23, 24, 25, 26, 27, 29, 30, 31])
-                frequency = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"),
+                frequency = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"), engine='openpyxl',
                                           header=None, skiprows=2, usecols = [37, 39, 41])
-                for i in Report_common.objects.all():
-                    report_common = i.file.name
-                report = pd.read_excel(os.path.join(hol, f"media/{report_common}"),
-                                  header=None, skiprows=6, usecols = [1, 3, 6, 8, 9, 34, 36, 54, 44, 45, 46, 59, 60, 61, 62])
+
+                try:
+                    f = Profile.objects.get(bying_username=username)
+                except ObjectDoesNotExist:
+                    f = Profile.objects.get(manager_username=username)
+                report_link = f.report_common
+
+                report = pd.read_excel(os.path.join(hol, f"{report_link}"), engine='openpyxl',
+                                  header=None, skiprows=6)
+
+
                 fr = frequency.to_dict(orient='list')
                 b = p.to_dict(orient='list')
                 report = report.to_dict(orient='list')
@@ -443,10 +481,18 @@ class Prepare_calc(TemplateView):
                 lids = [''] * height
                 try:
                     for i in range(0, len(b[21])):
-                        for k in range(len(report[6])-1, 0, -1):
-                            if report[6][k]==b[21][i] and report[1][k]==client:
-                                lids[i]=report[54][k]
-                                break
+                        if client in report[1][::-1]:
+                            step = len(report[1])+1
+                            for j in range(len(report[1])):
+                                if client in report[1][step-1::-1]:
+                                    count_find = height - list(report[1])[step-1::-1].index(client)
+                                    if report[3][count_find] == b[21][i]: #Site
+                                        lids[i]=report[7][count_find]
+                                        break
+                                    else:
+                                        step = list(report[1])[step-1::-1].index(client) #indect the last enterring client
+                                else:
+                                    break
                 except:
                     pass
 
@@ -455,24 +501,45 @@ class Prepare_calc(TemplateView):
                 ctr = [''] * height
                 try:
                     for i in range(0, len(b[21])):
-                        for j in range(len(report[6])-1, 0, -1):
-                            if report[1][j]==client and report[6][j]==b[21][i]:
-                                ctr[i]=report[36][j]
-                                break
-                            elif report[3][j]==b[1][i] and report[6][j]==b[21][i]:
-                                ctr[i]=report[36][j]*88/100
-                                break
-                            elif report[6][j]==b[21][i]:
-                                try:
-                                    ctr[i]=float(report[36][j]*0.85)
+                        if client in report[1][::-1]:
+                            step = len(report[1])+1
+                            for j in range(len(report[1])):
+                                if client in report[1][step-1::-1]:
+                                    count_find = height - list(report[1])[step-1::-1].index(client)
+                                    if report[3][count_find] == b[21][i]: #Site
+                                        ctr[i]=report[6][count_find]
+                                    else:
+                                        step = list(report[1])[step-1::-1].index(client) #indect the last enterring client
+                                else:
                                     break
+                        elif b[1][i] in report[2][::-1]:
+                            step = len(report[1])+1
+                            for j in range(len(report[1])):
+                                if b[1][i] in report[2][step-1::-1]:
+                                    count_find = height - list(report[2])[step-1::-1].index(b[1][i]) #категория клиента
+                                    if report[3][count_find]==b[21][i]: # Site
+                                        try:
+                                            ctr[i]=float(report[6][count_find]*0.88)
+                                        except TypeError:
+                                            pass
+                                    else:
+                                        step = list(report[2])[step-1::-1].index(b[1][i])
+                                else:
+                                    break
+                        elif b[21][i] in report[3][::-1]: #Site
+                            if b[21][i] in report[3][step-1::-1]:
+                                count_find = height - list(report[3])[step-1::-1].index(b[21][i])
+                                try:
+                                    ctr[i]=float(report[6][count_find]*0.85)
                                 except TypeError:
                                     pass
-                        if ctr[i] == '':
-                            for w in range(height):
-                                if b[1][w]==b[1][i] and b[21][w]==b[21][i] and i!=w:
-                                    ctr[i]=fr[41][j]*90/100
-                                    break
+                            else:
+                                break
+                    if ctr[i] == '':
+                        for w in range(height):
+                            if b[1][w]==b[1][i] and b[21][w]==b[21][i] and i!=w:
+                                ctr[i]=fr[41][j]*90/100
+                                break
                 except:
                     pass
 
@@ -528,28 +595,71 @@ class Prepare_calc(TemplateView):
                         w.append(r)
                 else:
                     for during in g:
-                        b[25] = [during]*height
+                        b[25] = [during]*height      # the lasting of video(use in the format)
                         '''vtr'''
                         vtr = [''] * height
                         for i in range(0, len(b[21])):
-                            for k in range(len(report[6])-1, 0, -1):
-                                if report[1][k]==client and report[6][k]==b[21][i] and during==report[9][k]:
-                                    vrt[i]=report[30][k]
-                                    break
-                                elif report[1][k]==client and during==report[9][k]:
-                                    vrt[i]=report[30][k]*90/100
-                                    break
-                                elif report[3][k]==b[1][i] and report[6][k]==b[21][i] and during==report[9][k]:
-                                    vrt[i]=report[30][k]*88/100
-                                    break
-                                elif report[6][k]==b[21][i] and during==report[9][k]:
-                                    vrt[i]=report[30][k]*85/100
-                                    break
-                            if vtr[i] == '':
-                                for j in range(height):
-                                    if report[3][k]==b[1][i] and report[6][k]==b[21][i] and during==report[9][k] and i!=j:
-                                        vrt[i]=fr[39][k]*90/100
+                            if client in report[1][::-1]:
+                                step = len(report[1])+1
+                                for j in range(len(report[1])):
+                                    if client in report[1][step-1::-1]:
+                                        count_find = height - list(report[1])[step-1::-1].index(client)
+                                        if report[3][count_find] == b[21][i] and during in report[4][count_find]: #Site and lasting
+                                            vtr[i]=report[5][count_find]
+                                            break
+                                        else:
+                                            step = list(report[1])[step-1::-1].index(client)
+                                    else:
                                         break
+                            if client in report[1][::-1] and vtr[i] == '':
+                                step = len(report[1])+1
+                                for j in range(len(report[1])):
+                                    if client in report[1][step-1::-1]:
+                                        count_find = height - list(report[1])[step-1::-1].index(client)
+                                        if during in report[4][count_find]: #lasting
+                                            try:
+                                                vtr[i]=float(report[5][count_find]*0.9)
+                                            except TypeError:
+                                                pass
+                                        else:
+                                            step = list(report[1])[step-1::-1].index(client)
+                                    else:
+                                        break
+                            elif b[1][i] in report[2][::-1] and vtr[i] == '': #категория клиента
+                                step = len(report[1])+1
+                                for j in range(len(report[1])):
+                                    if b[1][i] in report[2][step-1::-1]:
+                                        count_find = height - list(report[2])[step-1::-1].index(b[1][i]) #категория клиента
+                                        if report[3][count_find]==b[21][i]: # Site
+                                            try:
+                                                vtr[i]=float(report[5][count_find]*0.88)
+                                            except TypeError:
+                                                pass
+                                        else:
+                                            step = list(report[2])[step-1::-1].index(b[1][i])
+                                    else:
+                                        break
+                            if b[21][i] in report[3][::-1] and vtr[i] == '': #Site
+                                step = len(report[1])+1
+                                for j in range(len(report[1])):
+                                    if b[21][i] in report[3][step-1::-1]:
+                                        count_find = height - list(report[3])[step-1::-1].index(b[21][i])
+                                        if report[3][count_find]==b[21][i] and during in report[4][count_find]:
+                                            try:
+                                                vtr[i]=float(report[5][count_find]*0.85)
+                                            except TypeError:
+                                                pass
+                                        else:
+                                            step = list(report[2])[step-1::-1].index(b[1][i])
+                                    else:
+                                        break
+                            if vtr[i] == '':
+                                for w in range(height):
+                                    if b[1][w]==b[1][i] and b[21][w]==b[21][i] and during==b[23][i] and i!=w:
+                                        vtr[i]=fr[39][j]*90/100
+                                        break
+
+
                         b[43] = vtr
                         u=pd.DataFrame(b)
                         for r in dataframe_to_rows(u, index=None, header=None):
@@ -652,7 +762,7 @@ class Prepare_calc(TemplateView):
                     sheet.row_dimensions[i].height = 70
 
                 ''' Сезонники и тайминг '''
-                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"),
+                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"), engine='openpyxl',
                                      header=1)
                 season = p['Сезонники'].tolist()
                 season2 = {}
@@ -709,7 +819,7 @@ class Prepare_calc(TemplateView):
                 wb2 = openpyxl.load_workbook(filename=os.path.join(hol, f"media/pattern/buying.xlsx"))
                 w2 = wb2.worksheets[0]
                 sheet2 = wb2.active
-                f = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/mp_{client}_{datet}.xlsx"),
+                f = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/mp_{client}_{datet}.xlsx"), engine='openpyxl',
                                      header=None, skiprows=12, usecols=(18, 23, 27, 28, 29, 30))
 
                 price_b_s = []
@@ -740,7 +850,7 @@ class Prepare_calc(TemplateView):
                 bu.to_excel(os.path.join(hol, f"media/pattern/buying.xlsx"), header=None, index=None)
 
                 dataset = Dataset()
-                f = pd.read_excel(os.path.join(hol, f"media/pattern/buying.xlsx"),
+                f = pd.read_excel(os.path.join(hol, f"media/pattern/buying.xlsx"), engine='openpyxl',
                                      header=None)
                 import_data = dataset.load(pd.DataFrame(f))
                 for k in import_data:
@@ -968,7 +1078,7 @@ class Dmp_buying(TemplateView):
             for i in Dmp.objects.all():
                 n = i.file.url[1:]
             hol = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            p = pd.read_excel(os.path.join(hol, n),
+            p = pd.read_excel(os.path.join(hol, n), engine='openpyxl',
                                      header=5)
             seller = p["Категория Клиента"].tolist()
 
@@ -1188,24 +1298,115 @@ def cleared(request, name_rk):
                     a.save()
                     n = f'media/{a.report.name}'
                     hol = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                    p = pd.read_excel(os.path.join(hol, n).replace('\\', '/'),
-                                         header=None, skiprows=6)
-                    b = p.to_dict(orient='list')
-                    for i in Report_common.objects.all():
-                        report_common = i.file.name
-                    wb = openpyxl.load_workbook(filename=os.path.join(hol, f"media/{report_common}"))
+                    report_xl = pd.read_excel(os.path.join(hol, n).replace('\\', '/'), engine='openpyxl',
+                                         header=None)
+                    client = report_xl[0][0]
+                    categ_cl = report[0][1]
+                    count_site = ''
+                    count_format = ''
+                    count_ctr = ''
+                    count_vtr = ''
+                    count_lid = ''
+                    for y in range(len(report_xl.values)):
+                        if 'VTR,%' in report_xl.values[y] or 'VTR' in report_xl.values[y]:
+                            count_head = y
+                            for i in report_xl.values[y]: #i - string
+                                if 'CTR' in i:
+                                    for i in range(count_ctr, count_ctr+3):
+                                        if 'Факт' in report_xl[i]:
+                                            count_ctr = i+1
+                                        if '%' in report_xl[i]:
+                                            count_ctr = i
+                                if 'VTR' in i:
+                                    for i in range(count_vtr, count_vtr+3):
+                                        if 'Факт' in report_xl[i]:
+                                            count_vtr = i+1
+                                        if '%' in report_xl[i]:
+                                            count_vtr = i
+                                if 'Площадка' in i or 'площадка' in i or 'Site' in i or 'Сайт' in i or 'Рекламная площадка' in i:
+                                    count_site = i
+                                if 'формат' in i or 'Format' in i or 'Формат рекламных материалов' in i or 'Формат' in i or 'Размер (в пикселях) / Формат' in i:
+                                    count_format = i
+                                if 'Звонки' in i or 'звонки' in i or 'CPL' in i or 'Заявки' in i or 'заявки' in i or 'Лиды/постклики' in i:
+                                    count_lid = i
+                        elif 'Площадка' in report_xl.values[y] or 'площадка' in report_xl.values[y] or 'Site' in report_xl.values[y] or 'Рекламная площадка' in report_xl.values[y]:
+                            count_head = y
+                            for i in report_xl.values[y]:
+                                if 'CTR' in i:
+                                    for i in range(count_ctr, count_ctr+3):
+                                        if 'Факт' in report_xl[i]:
+                                            count_ctr = i+1
+                                        if '%' in report_xl[i]:
+                                            count_ctr = i
+                                if 'VTR' in i:
+                                    for i in range(count_vtr, count_vtr+3):
+                                        if 'Факт' in report_xl[i]:
+                                            count_vtr = i+1
+                                        if '%' in report_xl[i]:
+                                            count_vtr = i
+                                if 'Площадка' in i or 'площадка' in i or 'Site' in i or 'Сайт' in i or 'Рекламная площадка' in i:
+                                    count_site = i
+                                if 'формат' in i or 'Format' in i or 'Формат рекламных материалов' in i or 'Формат' in i or 'Размер (в пикселях) / Формат' in i:
+                                    count_format = i
+                                if 'Звонки' in i or 'звонки' in i or 'CPL' in i or 'Заявки' in i or 'заявки' in i or 'Лиды/постклики' in i:
+                                    count_lid = i
+                        elif 'формат' in report_xl.values[y] or 'Format' in report_xl.values[y] or 'Формат рекламных материалов' in report_xl.values[y] or 'Формат' in report_xl.values[y]:
+                            count_head = y
+                            for i in report_xl.values[y]:
+                                if 'CTR' in i:
+                                    for i in range(count_ctr, count_ctr+3):
+                                        if 'Факт' in report_xl[i]:
+                                            count_ctr = i+1
+                                        if '%' in report_xl[i]:
+                                            count_ctr = i
+                                if 'VTR' in i:
+                                    for i in range(count_vtr, count_vtr+3):
+                                        if 'Факт' in report_xl[i]:
+                                            count_vtr = i+1
+                                        if '%' in report_xl[i]:
+                                            count_vtr = i
+                                if 'Площадка' in i or 'площадка' in i or 'Site' in i or 'Сайт' in i or 'Рекламная площадка' in i:
+                                    count_site = i
+                                if 'формат' in i or 'Format' in i or 'Формат рекламных материалов' in i or 'Формат' in i or 'Размер (в пикселях) / Формат' in i:
+                                    count_format = i
+                                if 'Звонки' in i or 'звонки' in i or 'CPL' in i or 'Заявки' in i or 'заявки' in i or 'Лиды/постклики' in i:
+                                    count_lid = i
+                        if count_site != '' or count_format != '' or count_ctr != '' or count_vtr != '' or count_lid != '':
+                            break
 
-                    w = wb.worksheets[0]
-                    sheet = wb.active
-                    for r in dataframe_to_rows(pd.DataFrame(p), index=None, header=None):
-                        w.append(r)
-                    wb.save(os.path.join(hol, f"media/clients/{username}/report.xlsx"))
-                    try:
-                        f = Profile.objects.get(bying_username=username)
-                    except ObjectDoesNotExist:
-                        f = Profile.objects.get(manager_username=username)
-                    f.report_common = f"media/clients/{username}/report.xlsx"
-                    f.save()
+                    report_xl = pd.read_excel(os.path.join(hol, n).replace('\\', '/'), engine='openpyxl',
+                                         header=None, skiprows=count_head)
+                    if count_site!='':
+                        len_list = len(report_xl[count_site])
+                    elif count_format!='':
+                        len_list = len(report_xl[count_format])
+                    elif count_vtr!='':
+                        len_list = len(report_xl[count_vtr])
+                    elif count_ctr!='':
+                        len_list = len(report_xl[count_ctr])
+                    else:
+                        len_list = 0
+                    if len_list != 0:
+                        try:
+                            if count_vtr == '' and count_ctr != '' and count_lid != '':
+                                p = pd.DataFrame([client]*len_list+[categ_cl]*len_list+report_xl[count_site]+report_xl[count_format]+['']*len_list+report_xl[count_ctr]+
+                                    report_xl[count_lid])
+                            elif count_ctr == '' and count_vtr != '' and count_lid != '':
+                                p = pd.DataFrame([client]*len_list+[categ_cl]*len_list+report_xl[count_site]+report_xl[count_format]+report_xl[count_vtr]+['']*len_list+
+                                    report_xl[count_lid])
+                            else:
+                                p = pd.DataFrame([client]*len_list+[categ_cl]*len_list+report_xl[count_site]+report_xl[count_format]+report_xl[count_vtr]+
+                                    report_xl[count_vtr]+['']*len_list)
+
+                            wb = openpyxl.load_workbook(filename=os.path.join(hol, f"media/clients/{username}/report.xlsx"))
+
+                            w = wb.worksheets[0]
+                            sheet = wb.active
+                            for r in dataframe_to_rows(p, index=None, header=None):
+                                w.append(r)
+                            wb.save()
+                        except:
+                            pass
             return render(request, 'but_cleared.html', data)
         except MultipleObjectsReturned:
             pass

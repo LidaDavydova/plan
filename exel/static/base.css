@@ -1,7 +1,13 @@
 /* base.html */
-body, html {
-    width: 99%;
-    height: 100%;
+body.base{
+    height: 2000px;
+    /*background: url(./background/myself.png) center 70px / 55%, linear-gradient(120deg, #eb01a5, #d13531) 10% 20% / 100px 500px;
+    background-position: top 70px center;
+    background-size: 60%;
+    background-repeat: no-repeat;
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 0 100%);*/
+    background: radial-gradient(#CAA7A7, #A9A7CA) 70% 0 / 100% 800px, radial-gradient(#CAA7A7, #A9A7CA) 70% 800px / 100% 800px;
+    background-repeat: no-repeat;
 }
 
 
@@ -145,7 +151,6 @@ div.tab {
     padding: 5px;
     max-width: 70%;
     overflow-x: scroll;
-    /*overflow-x: hidden; */
     margin-bottom: 20px;
     box-shadow: 2px 2px 4px 2px rgba(0,0,0,.2)
 }
@@ -315,6 +320,13 @@ div#base {
 }
 
 
+div#form1 {
+  top: 50px;
+}
+
+#but_show{
+}
+
 #end {
     position: relative;
     top: 5vh;
@@ -362,13 +374,41 @@ div#base {
       transform: translateY(1px);
 }
 
-p#base {
+div.row{
+  margin: 50px 0 0 0;
+}
+
+@media (min-width: 10px){
+  p#base {
+      position: relative;
+      text-align: center;
+      top: 5vh;
+      left: -30px;
+      font-family: 'Bitter', serif;
+      writing-mode: tb-rl;
+      transform: rotate(180deg);
+  }
+}
+
+@media (min-width: 993px){
+  p#base {
+      position: relative;
+      text-align: center;
+      top: 5vh;
+      left: 10px;
+      font-family: 'Bitter', serif;
+      writing-mode: tb-rl;
+      transform: rotate(180deg);
+  }
+}
+
+p#not_cl {
     position: relative;
     text-align: center;
-    top: 20vh;
-    left: -10px;
-    font-family: 'Bitter', serif;
+    top: 5vh;
+    left: 10px;
     writing-mode: tb-rl;
+    font-family: 'Bitter', serif;
     transform: rotate(180deg);
 }
 
@@ -387,7 +427,6 @@ p#base {
   border-radius: 6px;
   padding: 5px 0;
 
-  /* Разместите всплывающую подсказку */
   position: absolute;
   z-index: 0;
 }
@@ -397,14 +436,7 @@ p#base {
 }
 
 
-p#not_cl {
-    position: relative;
-    text-align: center;
-    top: 70px;
-    left: -10px;
-    writing-mode: tb-rl;font-family: 'Krona One', sans-serif;
-    transform: rotate(180deg);
-}
+
 
 
 
@@ -443,14 +475,9 @@ p#not_cl {
 
 /* prepare.html */
 
-div#prepare {
-    width: 90vw;
-    min-height: 100vh;
-    position: relative;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
+form.form {
+  position: relative;
+  top: 100px;
 }
 
 div#p {
@@ -464,9 +491,10 @@ div#p {
     transform: translate(-50%, -50%);
 }
 
+
 .question {
     position: relative;
-    top: -400px;
+    top: 0;
     right: 180px;
 }
 
@@ -474,18 +502,30 @@ div#p {
     display:inline;
 }
 
-
-
-.title div#dop{
-    border: 10px solid transparent;
-    border-image: 10 repeating-linear-gradient(45deg, #A7CECC, #A7CECC 10px, transparent 10px, transparent 20px, #F8463F 20px, #F8463F 30px,transparent 30px, transparent 40px);
-    padding: 15px 15px;
-    position: relative;
-    width: 250px;
-    left: 550px;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: bold;
+@media (min-width: 10px){
+  div#dop{
+      border: 10px solid transparent;
+      padding: 15px 15px;
+      position: relative;
+      width: 250px;
+      left: 300px;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: bold;
+  }
 }
+
+@media (min-width: 900px){
+  div#dop{
+      border: 10px solid transparent;
+      padding: 15px 15px;
+      position: relative;
+      width: 250px;
+      left: 0px;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: bold;
+  }
+}
+
 
 .title h3{
     position: relative;

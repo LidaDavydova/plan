@@ -4,37 +4,25 @@
 
 {% block title %}Подготовить расчет{% endblock %}
 
-{% block content %}
-<body>
-    <div class="preloader">
-    <div class="preloader__row">
-      <div class="preloader__item"></div>
-      <div class="preloader__item"></div>
-    </div>
-  </div>
-    <div id="p">
-    </div>
-    <div id="prepare">
-    <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <a href="{% url 'exel:main' %}" class="button">Главная</a>
-    
-    <div class="title">
-    {{g}}
-    <p id="t">Общие вопросы для брифа</p>
-    <h3>Заполнить, если новый клиент(необязательно)</h3>
-    <div id="dop">
-        <p>коэф. скидки от 1 (min стоимость плана)<br>до 3 (max стоимость плана)</p>
-        <input name="discount" value="3"/>
-        <p>АК, %</p> 
-            <input name="AK" value="10%"/>
-        <p>DCM, руб.</p> 
-            <input name="DCM" value="1,5р."/>
-        <br><br>
 
-        {{form}}
+
+{% block content %}
+
+
+    <div >
     </div>
-    
+    <!--<div class="prepare">-->
+    <form method="post" enctype="multipart/form-data" class="form">
+    {% csrf_token %}
+
+    <h3>Общие вопросы для брифа</h3>
+    <!--<div class="title">-->
+      <div class="row">
+        <div class="col-sm-6">
+          {{g}}
+
+
+
 	<div class="question">
 	<p>{{er}}</p>
     <table id="table">
@@ -84,7 +72,7 @@
                 <input type="text" name="description">
             </td>
         </tr>
-        <tr>    
+        <tr>
             <td>
             </td>
             <td>Конкуренты бренда/продукта</td>
@@ -212,9 +200,9 @@
             <td></td>
             <td>* Период</td>
             <td>
-                <h4>с: </h4>
+                <p>начало: </p>
                 <input name="period_c" type="date"/><br><br>
-                <h4>по: </h4>
+                <p>конец: </p>
                 <input name="period_p" type="date" />
             </td>
     	</tr>
@@ -237,7 +225,7 @@
                 <option>конверсии</option>
                 <option>охват/конверсии</option>
                 <option>другое - указать</option>
-                
+
                 </datalist>
             </td>
     	</tr>
@@ -254,7 +242,7 @@
                 </datalist>
             </td>
     	</tr>
-       
+
         <tr>
             <td>
             </td>
@@ -268,14 +256,37 @@
                 <option>другое - указать</option>
                 </datalist>
         	</td>
-        </tr>  
+        </tr>
     </table>
-	
+
 	<input id="i" type="submit" value="РАССЧИТАТЬ">
 	</div>
     </div>
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-4" id="dop">
+      <h3>Заполнить, если новый клиент(необязательно)</h3>
+      <div>
+          <p>коэф. скидки от 1 (min стоимость плана)<br>до 3 (max стоимость плана)</p>
+          <input name="discount" value="3"/>
+          <p>АК, %</p>
+              <input name="AK" value="10%"/>
+          <p>DCM, руб.</p>
+              <input name="DCM" value="1,5р."/>
+          <br><br>
+
+          {{form}}
+      </div>
+    </div>
+</div>
+
+
 	</form>
-	</div>
+
+
+
+
+
 	<script>
     window.onload = function () {
       document.body.classList.add('loaded_hiding');
@@ -285,5 +296,4 @@
       }, 500);
     }
   </script>
-	</body>
 {% endblock %}
