@@ -23,42 +23,32 @@
 </div>
 
 <div class="container">
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Панель навигации</a>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light" >
+    <a class="navbar-brand" href="#">
+    <img src="/docs/4.1/assets/brand/bootstrap-solid.svg" width="30" height="30" alt="">
+    Bootstrap
+  </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключатель навигации">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" href="{% url 'exel:main' %}">Главная <span class="sr-only">(текущая)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'exel:prepare' %}">ПОДГОТОВИТЬ РАСЧЕТ</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'exel:download_calc' %}">ЗАГРУЗИТЬ РАСЧЕТ</a>
-      </li>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav mx-auto">
+      <a class="nav-item nav-link active" href="{% url 'exel:main' %}">Главная <span class="sr-only">(current)</span></a>
+      <a class="nav-item nav-link" href="{% url 'exel:prepare' %}">Подготовить расчет</a>
+      <a class="nav-item nav-link" href="{% url 'exel:download_calc' %}">Загрузить расчет</a>
 
-        {% if body == 'on' %}
-            {% autoescape on %}
-              <li class="nav-item">
-                <a class="nav-link disabled" href="{% url 'exel:buying' %}">БАИНГ</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link disabled" href="{% url 'exel:dmp' %}" name="button_dmp">Баинговые приоритеты</a>
-              </li>
-            {% endautoescape %}
-        {% endif %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'exel:logout' %}">ВЫЙТИ</a>
-        </li>
-        {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#">Пользователь:</br>{{ user.username }}</a>
-          </li>
-        {% endif %}
-    </ul>
+      {% if body == 'on' %}
+          {% autoescape on %}
+            <a class="nav-item nav-link disabled" href="{% url 'exel:buying' %}">Баинг</a>
+            <a class="nav-item nav-link disabled" href="{% url 'exel:dmp' %}" name="button_dmp">Баинговые приоритеты</a>
+          {% endautoescape %}
+      {% endif %}
+      {% if user.is_authenticated %}
+          <span class="navbar-text">
+            Пользователь:</br>{{ user.username }}
+          </span>
+      {% endif %}
+    </div>
   </div>
   </nav>
 
@@ -67,7 +57,7 @@
 
 
 
-
+{{t}}
 
 
 <!--
@@ -91,6 +81,8 @@
           {% endif %}
 
         -->
+
+
           <form method="post" class="cleared">
 
             <div class="row">
@@ -155,17 +147,15 @@
                 </tbody>
               </table>
           </div>
-
-
-
+          </div>
 </div>
 </div>
 
 <div class="row">
-  <div class="col-10">
-  </div>
   <div class="col-2">
-    <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+  </div>
+  <div class="col-10">
+    <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" style="background: #5A1EB8;border-radius: 20px;">
       ПОКАЗАТЬ/CКРЫТЬ
     </button>
   </div>
@@ -174,20 +164,6 @@
 </form>
 
 
-<div class="row">
-  <div class="col-3">
-    <p>fdrgrgthtrFFFFFFFFFFFFFFf</P>
-  </div>
-  <div class="col-3">
-    <p>fdrgrgthtFFFFFFFFFFFrf</P>
-  </div>
-  <div class="col-3">
-    <p>fdrgrgthFFFFFtrf</P>
-  </div>
-  <div class="col-3">
-    <p>fdrgrgthtrf</P>
-  </div>
-</div>
 
       <form method="post">
           {% csrf_token %}
@@ -262,54 +238,104 @@
     </tbody>
 </table>
 </div>
-
-
-
 </div>
-
+</div>
 </div>
 
 <div class="row">
-  <div class="col-10">
-
+  <div class="col-2">
   </div>
-  <div class="col-2" id="but_show">
-    <a class="btn btn-primary btn-sm" data-toggle="collapse" href="#collapseNotClear" role="button" aria-expanded="false" aria-controls="collapseNotClear">ПОКАЗАТЬ/CКРЫТЬ</a>
+  <div class="col-10">
+    <a class="btn btn-primary btn-sm" data-toggle="collapse" href="#collapseNotClear" role="button" aria-expanded="false" aria-controls="collapseNotClear"style="background: #5A1EB8;border-radius: 20px;">ПОКАЗАТЬ/CКРЫТЬ</a>
   </div>
 </div>
+
 
     	</form>
 
 
+
+      <form method="post">
+          {% csrf_token %}
+
+        <div class="row">
+          <div class="col" id="form1">
+            <div class="table-responsive">
+
+            <table class="table table-condensed" style="background-color: #d6dafb">
+                  <tbody>
+                  		<tr scope="row" class="name">
+                          	<td>Клиент</td>
+                          	<td>Название РК</td>
+                          	<td>Бюджет</td>
+                          	<td>Период</td>
+                          	<td>Карточка проекта</td>
+                          </tr>
+              			{% for name in complete %}
+                      {% if forloop.counter < 5 %}
+                      	<tr scope="row">
+                          <td width="15%">{{name.client}}</td>
+                          <td width="15%">{{name.name_rk}}</td>
+                          <td width="20%">{{name.budget}}</td>
+                          <td width="25%">{{name.period_c}} - {{name.period_p}}</td>
+                            <td width="25%">
+                                <a class="s3" href="{% url 'exel:but_cleared' name.name_rk %}">Карточка проекта</a>
+                            </td>
+                  		  </tr>
+                      {% endif %}
+                  	{% endfor %}
+                  </tbody>
+                </table>
+
+            </div>
+
+
+      <div class="collapse multi-collapse" id="collapseEnd">
+      <div class="table-responsive">
+      <table class="table table-condensed" style="background-color: #d6dafb">
+        <tbody>
+
+          {% for name in complete %}
+            {% if forloop.counter >= 4 %}
+              <tr scope="row">
+                  <td width="15%">{{name.client}}</td>
+                  <td width="15%">{{name.name_rk}}</td>
+                  <td width="20%">{{name.budget}}</td>
+                  <td width="25%">{{name.period_c}} - {{name.period_p}}</td>
+                    <td width="25%">
+                        <a class="s3" href="{% url 'exel:but_cleared' name.name_rk %}">Карточка проекта</a>
+                    </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+      </tbody>
+      </table>
+      </div>
+      </div>
+      </div>
+      </div>
+
+      <div class="row">
+      <div class="col-1">
+      </div>
+      <div class="col-11">
+      <a class="btn btn-primary btn-sm" data-toggle="collapse" href="#collapseEnd" role="button" aria-expanded="false" aria-controls="collapseEnd" style="background: #5A1EB8;border-radius: 20px;">ПОКАЗАТЬ/CКРЫТЬ</a>
+      </div>
+      </div>
+
+
+      </form>
+
+
+
+      <div class="row">
+      </div>
+
       <!--
 
-        	<div class="formtable">
-        	<input type="checkbox" id="button1">
-            <div class="xpandable-block">
-            <div class="tab">
-            	<table class="table_blur">
-            		<tbody>
-            			{% for name in files %}
-                    	<tr>
-                        	<td><a class="s1" href="{% url 'exel:but_not_cleared' name.name_rk %}">{{name.client}}</a></td>
-                        	<td>/ отправлен {{name.duploaded_at}}</td>
-                        	<td>
-                        	<div class="tooltip">этапы проекта
-                              <span class="tooltiptext">{{name.comments}}</span>
-                            </div>
-                        	</td>
-                            <td>
-                                <a href="{{ name.calculation.url }}">Выгрузить</a>
-                            </td>
-                		</tr>
-                	{% endfor %}
-            	</tbody>
-            </table>
-        </div>
-        </div>
-        <label class="labeltable" for="button1">ПОКАЗАТЬ/CКРЫТЬ</label>
-        </div>
-	</form>
+
+
+
 
 	<p id="end">Завершенные проекты</p>
 

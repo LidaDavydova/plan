@@ -9,16 +9,19 @@
 {% block content %}
 
 
-    <div >
-    </div>
+
     <!--<div class="prepare">-->
     <form method="post" enctype="multipart/form-data" class="form">
     {% csrf_token %}
 
+    <div class="row">
+      <div class="col">
+      </div>
+    </div>
     <h3>Общие вопросы для брифа</h3>
     <!--<div class="title">-->
       <div class="row">
-        <div class="col-sm-6">
+        <div class="col-6">
           {{g}}
 
 
@@ -259,12 +262,12 @@
         </tr>
     </table>
 
-	<input id="i" type="submit" value="РАССЧИТАТЬ">
+
 	</div>
     </div>
-    <div class="col-sm-2">
+    <div class="col-2">
     </div>
-    <div class="col-sm-4" id="dop">
+    <div class="col-4" id="dop">
       <h3>Заполнить, если новый клиент(необязательно)</h3>
       <div>
           <p>коэф. скидки от 1 (min стоимость плана)<br>до 3 (max стоимость плана)</p>
@@ -283,7 +286,15 @@
 
 	</form>
 
-
+  <div class="row">
+    <div class="col">
+        <input type="submit" class="button" value="РАССЧИТАТЬ">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+    </div>
+  </div>
 
 
 

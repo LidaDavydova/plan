@@ -273,22 +273,6 @@ border-right: none;
   text-shadow: none;
 }
 
-.label {
-    border: none;
-	color: white;
-    background: #5A1EB8;
-	font-size: 14px;
-	cursor: pointer;
-	text-align: center;
-	margin: 20px auto;
-	display: block;
-	width: 150px;
-	height: 20px;
-	font: justify;
-	 padding: 10px 10px;
-	 border-radius: 17px;
-
-}
 
 tr.name{
    background: #C8CCF4;
@@ -324,8 +308,6 @@ div#form1 {
   top: 50px;
 }
 
-#but_show{
-}
 
 #end {
     position: relative;
@@ -477,7 +459,35 @@ p#not_cl {
 
 form.form {
   position: relative;
-  top: 100px;
+}
+
+.button {
+      position: relative;
+      text-decoration: none;
+      cursor: pointer;
+      padding: 7px 20px;
+      width: 150px;
+      height: 50px;
+      border-radius: 45px;
+      font-weight: bold;
+      font-family: Libre Baskerville, serif;
+      font-size: 14px;
+      border: none;
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 1px;
+      line-height: 35px;
+      color: white;
+      background: #5A1EB8;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
+      transition: .3s;
+      }
+
+.button:hover {
+      background: #e52e2e;
+      box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
+      color: #461bd2000048;
+      transform: translateY(1px);
 }
 
 div#p {

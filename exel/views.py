@@ -770,15 +770,23 @@ class Prepare_calc(TemplateView):
                     if sheet.cell(row=10, column=i).value!=None:
                         season2[sheet.cell(row=10, column=i).value] = i
 
+
+
                 for i in range(13, len(season)+13):
+                    '''
                     if season[i-13]=='проверить' or season[i-13]=='нет':
                         for s in range(48, 108):
                             sheet.cell(row=i, column=s).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
                     else:
-                        for h in list(season[i-13][1:-1].replace("'", "").split(', ')):
-                            f = season2[h]
-                            for k in range(5):
-                                sheet.cell(row=i, column=f+k).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
+                    for h in list(season[i-13][1:-1].replace("'", "").split(', ')):
+                        f = season2[h]
+                        for k in range(5):
+                            sheet.cell(row=i, column=f+k).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
+                    '''
+                    for h in list(season[i-13][1:-1].replace("'", "").split(', ')):
+                        f = season2[h]
+                        for k in range(5):
+                            sheet.cell(row=i, column=f+k).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
                     if period1[0]<period2[0] and period1[1]==period2[1]:
                         for s in range(48, 108):
                             sheet.cell(row=i, column=s).value = 1
