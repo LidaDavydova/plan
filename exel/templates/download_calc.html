@@ -14,31 +14,31 @@
     {% csrf_token %}
         <div id="form1">
         <h3>Название клиента</h3>
-        
+
         <p>
         	<span class="input">
         		<input id="down" name="name_client" list="name" />
-        		<span></span>	
+        		<span></span>
         	</span>
         </p>
 
-        
+
         <datalist id="name">
             {% for select in name_client %}
                 <option id="list">{{select.client}}</option>
             {% endfor %}
         </datalist>
-        
-        
+
+
         <h3>Название РК</h3>
-        
+
         <p>
         	<span class="input">
         		<input id="down" name="title_rk" list="l" />
-        		<span></span>	
+        		<span></span>
         	</span>
         </p>
-        
+
         <datalist id="l">
             {% for select in list_RK %}
                 <option>{{ select.name_rk }}</option>
@@ -48,7 +48,7 @@
         <br>
 
             {{ form }}
-        
+
         <button type="submit" id="down_calc">Загрузить раcчет</button>
 
             </div>
@@ -65,7 +65,7 @@
             	<tbody>
                 	{% for name in files %}
                     	<tr>
-                        	<td><a href="{% url 'exel:but_not_cleared' name.name_rk %}">{{name.client}}</a>
+                        	<td><a href="{% url 'exel:but_not_cleared' name.id %}">{{name.client}}</a>
                         	</td>
                         	<td>/ отправлен {{name.duploaded_at}}</td>
                         	<td>

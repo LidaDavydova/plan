@@ -9,6 +9,7 @@ from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
+from django.contrib.auth import logout, login
 from django.contrib.auth.views import LoginView, LogoutView
 from .models import *
 from django.urls import reverse
@@ -34,6 +35,14 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.utils.dataframe import dataframe_to_rows
 from django.core.mail import send_mail
 from tablib import Dataset
+from transliterate.decorators import transliterate_function
+import http.client
+import subprocess
+from openpyxl.utils.cell import get_column_letter
+
+@transliterate_function(language_code='ru', reversed=True)
+def translit(text):
+    return text
 
 
 def main(request, super_us = False):
@@ -51,8 +60,8 @@ def main(request, super_us = False):
 
         hol = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-        if not os.path.exists(os.path.join(hol, f"media/clients/{username}")):
-            os.mkdir(os.path.join(hol, f"media/clients/{username}"))
+        if not os.path.exists(os.path.join(hol, f"media/clients/{translit(username)}")):
+            os.mkdir(os.path.join(hol, f"media/clients/{translit(username)}"))
 
             r = Report.objects.all()[0]
             report_common = r.file.name
@@ -61,16 +70,16 @@ def main(request, super_us = False):
 
             w = wb.worksheets[0]
             sheet = wb.active
-            wb.save(os.path.join(hol, f"media/clients/{username}/report.xlsx").replace('\\', '/'))
+            wb.save(os.path.join(hol, f"media/clients/{translit(username)}/report.xlsx").replace('\\', '/'))
             try:
                 try:
                     f = Profile.objects.get(bying_username=username)
                 except ObjectDoesNotExist:
                     f = Profile.objects.get(manager_username=username)
-                f.report_common = f"media/clients/{username}/report.xlsx"
+                f.report_common = f"media/clients/{translit(username)}/report.xlsx"
                 f.save()
             except:
-                Profile.objects.create(bying_username=username, manager_username=username, report_common=f"media/clients/{username}/report.xlsx")
+                Profile.objects.create(bying_username=username, manager_username=username, report_common=f"media/clients/{translit(username)}/report.xlsx")
     else:
         return redirect('exel:login')
     return render(request, 'base.html', data)
@@ -94,6 +103,7 @@ class Login(LoginView):
 
 
     def get_context_data(self, *, object_list=None, **kwargs):
+        subprocess.Popen('C:\\Windows\\System32\\cmd.exe')
         context = super().get_context_data(**kwargs)
         return dict(list(context.items()))
     def dispatch(self, request, *args, **kwargs):
@@ -114,9 +124,9 @@ class Change(TemplateView):
             }
         return redirect('exel:login')
 
-class Logout(LogoutView):
-    def dispatch(self, request, *args, **kwargs):
-        return redirect('exel:login')
+def Logout(request):
+    logout(request)
+    return redirect('exel:login')
 
 
 
@@ -126,6 +136,8 @@ class Prepare_calc(TemplateView):
         if request.user.is_authenticated:
             username = request.user.username
             dataclass = {
+                'cl': set(Brief.objects.all().values_list('client', flat=True)),
+                'n_rk' : set(Brief.objects.all().values_list('name_rk', flat=True)),
                 'client': Brief.objects.filter(username=username)[::-1],
                 'form': BriefForm,
                 #'now' : Brief.objects.filter(username=username),
@@ -141,24 +153,25 @@ class Prepare_calc(TemplateView):
                 posad = request.POST.get('posad')
                 type_act = request.POST.get('type_act')
                 country = request.POST.get('country')
-                region = request.POST.get('region')
-                gender = request.POST.get('gender')
-                age = request.POST.get('age')
-                interes = request.POST.get('interes')
-                income = request.POST.get('income')
-                rek = request.POST.get('rek')
+                ca = request.POST.get('ca')
+                #region = request.POST.get('region')
+                #gender = request.POST.get('gender')
+                #age = request.POST.get('age')
+                #interes = request.POST.get('interes')
+                #income = request.POST.get('income')
+                #rek = request.POST.get('rek')
                 materials = request.POST.get('materials')
-                duration1 = request.POST.get('duration1')
-                duration2 = request.POST.get('duration2')
-                duration3 = request.POST.get('duration3')
+                #duration1 = request.POST.get('duration1')
+                #duration2 = request.POST.get('duration2')
+                #duration3 = request.POST.get('duration3')
                 period_c = request.POST.get('period_c')
                 period_p = request.POST.get('period_p')
-                budget = request.POST.get('budget')
+                #budget = request.POST.get('budget')
                 KPI = request.POST.get('KPI')
-                plan = request.POST.get('plan')
-                description = request.POST.get('description')
-                competitors = request.POST.get('competitors')
-                who_prep_materials = request.POST.get('who_prep_materials')
+                #plan = request.POST.get('plan')
+                #description = request.POST.get('description')
+                #competitors = request.POST.get('competitors')
+                #who_prep_materials = request.POST.get('who_prep_materials')
 
                 form = BriefForm(request.POST, request.FILES)
 
@@ -167,34 +180,18 @@ class Prepare_calc(TemplateView):
                     try:
                         brif = Brief.objects.create(username=username, client=client, product=product,
                                          name_rk=name_rk, posad=posad,
-                                         type_act=type_act, country=country,
-                                         region=region, gender=gender,
-                                         age=age, interes=interes, income=income,
-                                         rek=rek, materials=materials,
-                                         duration1=duration1, duration2=duration2,
-                                         duration3=duration3,
+                                         type_act=type_act, country=country, ca=ca, materials=materials,
                                          period_c=period_c, period_p=period_p,
-                                         KPI=KPI, plan=plan, budget=budget,
-                                         description=description,
-                                         competitors=competitors,
-                                         who_prep_materials=who_prep_materials, img=ex,
+                                         KPI=KPI, img=ex,
                                          discount=discount, AK=AK, DCM=DCM)
                     except (NameError, AttributeError):
                         s = Brief.objects.filter(username=username, client=client)[::-1][0]
                         k = s.img.name
                         brif = Brief.objects.create(username=username, client=client, product=product,
                                          name_rk=name_rk, posad=posad,
-                                         type_act=type_act, country=country,
-                                         region=region, gender=gender,
-                                         age=age, interes=interes, income=income,
-                                         rek=rek, materials=materials,
-                                         duration1=duration1, duration2=duration2,
-                                         duration3=duration3,
+                                         type_act=type_act, country=country, ca=ca, materials=materials,
                                          period_c=period_c, period_p=period_p,
-                                         KPI=KPI, plan=plan, budget=budget,
-                                         description=description,
-                                         competitors=competitors,
-                                         who_prep_materials=who_prep_materials, img=k,
+                                         KPI=KPI, img=k,
                                          discount=discount, AK=AK, DCM=DCM)
                     except Location.MultipleObjectsReturned:
                         pass
@@ -219,10 +216,19 @@ class Prepare_calc(TemplateView):
                 for i in range(1, len(a)+1):
                     if (a[i-1] == 'Все' or a[i-1] == type_act) and (str(KPI) in str(b[i-1])) and (u[i-1]=='1-3' or u[i-1] == discount):
                         if materials in "Видео (указать длительность снизу)":
-                            if ('Виде' in str(video[i-1])) or ('виде' in str(video[i-1])) or ('роли' in str(video[i-1])) or ('Роли' in str(video[i-1])) or ('vide' in str(video[i-1])) or ('Vide' in str(video[i-1])):
+                            if ('Виде' in str(video[i-1])) or ('виде' in str(video[i-1])) or ('роли' in str(video[i-1])) or ('Роли' in str(video[i-1])) or ('vide' in str(video[i-1])) or ('Vide' in str(video[i-1])) or ('сек' in str(video[i-1])):
                                 k.append(6+i)
                         elif materials in "Баннеры":
-                            if ('Виде' not in str(video[i-1])) and ('виде' not in str(video[i-1])) and ('роли' not in str(video[i-1])) and ('Роли' not in str(video[i-1])) and ('Vide' not in str(video[i-1])) and ('vide' not in str(video[i-1])):
+                            if ('Виде' not in str(video[i-1])) and ('виде' not in str(video[i-1])) and ('роли' not in str(video[i-1])) and ('Роли' not in str(video[i-1])) and ('Vide' not in str(video[i-1])) and ('vide' not in str(video[i-1])) and ('сек' not in str(video[i-1])):
+                                k.append(6+i)
+                        else:
+                            k.append(6+i)
+                    elif (a[i-1] == 'Все' or a[i-1] == type_act) and (str(KPI) in str(b[i-1])) and (u[i-1]=='1-3' or u[i-1] == discount):
+                        if materials in "Видео (указать длительность снизу)":
+                            if ('Виде' in str(video[i-1])) or ('виде' in str(video[i-1])) or ('роли' in str(video[i-1])) or ('Роли' in str(video[i-1])) or ('vide' in str(video[i-1])) or ('Vide' in str(video[i-1])) or ('сек' in str(video[i-1])):
+                                k.append(6+i)
+                        elif materials in "Баннеры":
+                            if ('Виде' not in str(video[i-1])) and ('виде' not in str(video[i-1])) and ('роли' not in str(video[i-1])) and ('Роли' not in str(video[i-1])) and ('Vide' not in str(video[i-1])) and ('vide' not in str(video[i-1])) and ('сек' not in str(video[i-1])):
                                 k.append(6+i)
                         else:
                             k.append(6+i)
@@ -270,11 +276,11 @@ class Prepare_calc(TemplateView):
                         data[i] = line
                     s = pd.DataFrame(data)
 
-                    if not os.path.exists(os.path.join(hol, f"media/clients/{username}")):
-                        os.mkdir(os.path.join(hol, f"media/clients/{username}"))
-                    if not os.path.exists(os.path.join(hol, f"media/clients/{username}/{client}")):
-                        os.mkdir(os.path.join(hol, f"media/clients/{username}/{client}"))
-                    s.to_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"), startrow=1, index=False)
+                    if not os.path.exists(os.path.join(hol, f"media/clients/{translit(username)}")):
+                        os.mkdir(os.path.join(hol, f"media/clients/{translit(username)}"))
+                    if not os.path.exists(os.path.join(hol, f"media/clients/{translit(username)}/{translit(client)}")):
+                        os.mkdir(os.path.join(hol, f"media/clients/{translit(username)}/{translit(client)}"))
+                    s.to_excel(os.path.join(hol, f"media/clients/{translit(username)}/{translit(client)}/DMP_{translit(client)}_{datet}.xlsx"), startrow=1, index=False)
                 else:
                     if int(period2[1])<int(period1[1]):
                         period2[1] = int(period2[1])+12
@@ -313,7 +319,6 @@ class Prepare_calc(TemplateView):
 
                     if len(d)==0:
                         dataclass['er'] = 'нет данных по пункту - Задача, kpi'
-                        dataclass['er'] = hol
                         return render(request, self.template_name, dataclass)
                     for i in range(len(d[0])):
                         m = []
@@ -323,18 +328,18 @@ class Prepare_calc(TemplateView):
                     s = pd.DataFrame(data)
 
 
-                    if not os.path.exists(os.path.join(hol, f"media/clients/{username}")):
-                        os.mkdir(os.path.join(hol, f"media/clients/{username}"))
-                    if not os.path.exists(os.path.join(hol, f"media/clients/{username}/{client}")):
-                        os.mkdir(os.path.join(hol, f"media/clients/{username}/{client}"))
+                    if not os.path.exists(os.path.join(hol, f"media/clients/{translit(username)}")):
+                        os.mkdir(os.path.join(hol, f"media/clients/{translit(username)}"))
+                    if not os.path.exists(os.path.join(hol, f"media/clients/{translit(username)}/{translit(client)}")):
+                        os.mkdir(os.path.join(hol, f"media/clients/{translit(username)}/{translit(client)}"))
 
-                    s.to_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"), startrow=1, index=False)
+                    s.to_excel(os.path.join(hol, f"media/clients/{translit(username)}/{translit(client)}/DMP_{translit(client)}_{datet}.xlsx"), startrow=1, index=False)
 
                 ''' This is create brief file for clients'''
 
                 for i in Brief_pattern.objects.all():
                     n = f'media/{i.file.name}'
-                dataclass['t'] = [hol, n, str(os.path.join(hol, str(n)))]
+                #dataclass['t'] = [hol, n, str(os.path.join(hol, str(n)))]
                 #return render(request, self.template_name, dataclass)
                 wb = openpyxl.load_workbook(filename=os.path.join(hol, n), data_only=True)
                 ws = wb.worksheets[0]
@@ -355,7 +360,7 @@ class Prepare_calc(TemplateView):
                 sheet['C16'] = bd.interes
                 sheet['C17'] = bd.income
                 sheet['C18'] = bd.rek
-                sheet['C20'] = bd.materials + " " + bd.duration1 + " " + bd.duration2 + ", " + bd.duration3
+                sheet['C20'] = bd.materials
                 sheet['C21'] = str(bd.period_c) + " - " + str(bd.period_p)
                 sheet['C22'] = bd.budget
                 sheet['C23'] = bd.KPI
@@ -375,8 +380,8 @@ class Prepare_calc(TemplateView):
                 for row in sheet.iter_rows():
                     for cell in row:
                         cell.alignment = Alignment(wrap_text=True,vertical='top')
-                wb.save(os.path.join(hol, f"media/clients/{username}/{client}/brief_{client}_{datet}.xlsx"))
-                path2 = join('clients', username, client, f"brief_{client}_{datet}.xlsx")
+                wb.save(os.path.join(hol, f"media/clients/{translit(username)}/{translit(client)}/brief_{translit(client)}_{datet}.xlsx"))
+                path2 = join('clients', translit(username), translit(client), f"brief_{translit(client)}_{datet}.xlsx")
 
                 '''This is correction DMP'''
                 '''
@@ -453,13 +458,13 @@ class Prepare_calc(TemplateView):
                 '''
 
                 '''This is create mp'''
-                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"), engine='openpyxl',
+                p = pd.read_excel(os.path.join(hol, f"media/clients/{translit(username)}/{translit(client)}/DMP_{translit(client)}_{datet}.xlsx"), engine='openpyxl',
                                   header=None, skiprows=2, usecols = [1, 2, 3, 4, 5, 6,
                                                                     8, 9, 11, 12, 13,
                                                                     14, 15, 16, 17,
                                                                     18, 19, 20, 21, 22,
                                                                     23, 24, 25, 26, 27, 29, 30, 31])
-                frequency = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"), engine='openpyxl',
+                frequency = pd.read_excel(os.path.join(hol, f"media/clients/{translit(username)}/{translit(client)}/DMP_{translit(client)}_{datet}.xlsx"), engine='openpyxl',
                                           header=None, skiprows=2, usecols = [37, 39, 41])
 
                 try:
@@ -475,6 +480,7 @@ class Prepare_calc(TemplateView):
                 fr = frequency.to_dict(orient='list')
                 b = p.to_dict(orient='list')
                 report = report.to_dict(orient='list')
+
                 height = len(b[4])
                 h1 = height
                 '''лиды'''
@@ -506,10 +512,11 @@ class Prepare_calc(TemplateView):
                             for j in range(len(report[1])):
                                 if client in report[1][step-1::-1]:
                                     count_find = height - list(report[1])[step-1::-1].index(client)
-                                    if report[3][count_find] == b[21][i]: #Site
-                                        ctr[i]=report[6][count_find]
-                                    else:
-                                        step = list(report[1])[step-1::-1].index(client) #indect the last enterring client
+                                    if report[3][count_find] == b[21][i]: #Site and Format
+                                        if b[23][i] in report[4][count_find]:
+                                            ctr[i]=report[6][count_find]
+                                        else:
+                                            step = list(report[1])[step-1::-1].index(client) #indect the last enterring client
                                 else:
                                     break
                         elif b[1][i] in report[2][::-1]:
@@ -535,14 +542,15 @@ class Prepare_calc(TemplateView):
                                     pass
                             else:
                                 break
-                    if ctr[i] == '':
-                        for w in range(height):
-                            if b[1][w]==b[1][i] and b[21][w]==b[21][i] and i!=w:
-                                ctr[i]=fr[41][j]*90/100
-                                break
                 except:
                     pass
-
+                if '' in ctr:
+                    for i in range(0, len(b[21])):
+                        if ctr[i] == '':
+                            for w in range(height):
+                                if b[1][w]==b[1][i] and b[21][w]==b[21][i] and i!=w:
+                                    ctr[i]=fr[41][w]*90/100
+                                    break
                 b[35] = b.pop(11)
 
                 b[20] = [i for i in range(1, height+1)]
@@ -586,85 +594,95 @@ class Prepare_calc(TemplateView):
                 wb = openpyxl.load_workbook(filename=os.path.join(hol, f"media/{media_plan}"))
                 w = wb.worksheets[0]
                 sheet = wb.active
+                for r in dataframe_to_rows(u, index=None, header=None):
+                    w.append(r)
+
                 g = []
+                '''
                 for i in [bd.duration1, bd.duration2, bd.duration3]:
                     if i!='':
                         g.append(i)
                 if len(g)==0:
                     for r in dataframe_to_rows(u, index=None, header=None):
                         w.append(r)
+
                 else:
                     for during in g:
                         b[25] = [during]*height      # the lasting of video(use in the format)
-                        '''vtr'''
+
                         vtr = [''] * height
-                        for i in range(0, len(b[21])):
-                            if client in report[1][::-1]:
-                                step = len(report[1])+1
-                                for j in range(len(report[1])):
-                                    if client in report[1][step-1::-1]:
-                                        count_find = height - list(report[1])[step-1::-1].index(client)
-                                        if report[3][count_find] == b[21][i] and during in report[4][count_find]: #Site and lasting
-                                            vtr[i]=report[5][count_find]
+                        try:
+                            for i in range(0, len(b[21])):
+                                if client in report[1][::-1]:
+                                    step = len(report[1])+1
+                                    for j in range(len(report[1])):
+                                        if client in report[1][step-1::-1]:
+                                            count_find = height - list(report[1])[step-1::-1].index(client)
+                                            if report[3][count_find] == b[21][i] and during in report[4][count_find]: #Site and lasting
+                                                vtr[i]=report[5][count_find]
+                                                break
+                                            else:
+                                                step = list(report[1])[step-1::-1].index(client)
+                                        else:
                                             break
+                                if client in report[1][::-1] and vtr[i] == '':
+                                    step = len(report[1])+1
+                                    for j in range(len(report[1])):
+                                        if client in report[1][step-1::-1]:
+                                            count_find = height - list(report[1])[step-1::-1].index(client)
+                                            if during in report[4][count_find]: #lasting
+                                                try:
+                                                    vtr[i]=float(report[5][count_find]*0.9)
+                                                except TypeError:
+                                                    pass
+                                            else:
+                                                step = list(report[1])[step-1::-1].index(client)
                                         else:
-                                            step = list(report[1])[step-1::-1].index(client)
-                                    else:
-                                        break
-                            if client in report[1][::-1] and vtr[i] == '':
-                                step = len(report[1])+1
-                                for j in range(len(report[1])):
-                                    if client in report[1][step-1::-1]:
-                                        count_find = height - list(report[1])[step-1::-1].index(client)
-                                        if during in report[4][count_find]: #lasting
-                                            try:
-                                                vtr[i]=float(report[5][count_find]*0.9)
-                                            except TypeError:
-                                                pass
+                                            break
+                                elif b[1][i] in report[2][::-1] and vtr[i] == '': #категория клиента
+                                    step = len(report[1])+1
+                                    for j in range(len(report[1])):
+                                        if b[1][i] in report[2][step-1::-1]:
+                                            count_find = height - list(report[2])[step-1::-1].index(b[1][i]) #категория клиента
+                                            if report[3][count_find]==b[21][i]: # Site
+                                                try:
+                                                    vtr[i]=float(report[5][count_find]*0.88)
+                                                except TypeError:
+                                                    pass
+                                            else:
+                                                step = list(report[2])[step-1::-1].index(b[1][i])
                                         else:
-                                            step = list(report[1])[step-1::-1].index(client)
-                                    else:
-                                        break
-                            elif b[1][i] in report[2][::-1] and vtr[i] == '': #категория клиента
-                                step = len(report[1])+1
-                                for j in range(len(report[1])):
-                                    if b[1][i] in report[2][step-1::-1]:
-                                        count_find = height - list(report[2])[step-1::-1].index(b[1][i]) #категория клиента
-                                        if report[3][count_find]==b[21][i]: # Site
-                                            try:
-                                                vtr[i]=float(report[5][count_find]*0.88)
-                                            except TypeError:
-                                                pass
+                                            break
+                                if b[21][i] in report[3][::-1] and vtr[i] == '': #Site
+                                    step = len(report[1])+1
+                                    for j in range(len(report[1])):
+                                        if b[21][i] in report[3][step-1::-1]:
+                                            count_find = height - list(report[3])[step-1::-1].index(b[21][i])
+                                            if report[3][count_find]==b[21][i] and during in report[4][count_find]:
+                                                try:
+                                                    vtr[i]=float(report[5][count_find]*0.85)
+                                                except TypeError:
+                                                    pass
+                                            else:
+                                                step = list(report[2])[step-1::-1].index(b[1][i])
                                         else:
-                                            step = list(report[2])[step-1::-1].index(b[1][i])
-                                    else:
-                                        break
-                            if b[21][i] in report[3][::-1] and vtr[i] == '': #Site
-                                step = len(report[1])+1
-                                for j in range(len(report[1])):
-                                    if b[21][i] in report[3][step-1::-1]:
-                                        count_find = height - list(report[3])[step-1::-1].index(b[21][i])
-                                        if report[3][count_find]==b[21][i] and during in report[4][count_find]:
-                                            try:
-                                                vtr[i]=float(report[5][count_find]*0.85)
-                                            except TypeError:
-                                                pass
-                                        else:
-                                            step = list(report[2])[step-1::-1].index(b[1][i])
-                                    else:
-                                        break
-                            if vtr[i] == '':
-                                for w in range(height):
-                                    if b[1][w]==b[1][i] and b[21][w]==b[21][i] and during==b[23][i] and i!=w:
-                                        vtr[i]=fr[39][j]*90/100
-                                        break
+                                            break
+                        except:
+                            pass
+                        if '' in vtr:
+                            for i in range(0, len(b[21])):
+                                if vtr[i] == '':
+                                    for j in range(height):
+                                        if b[1][j]==b[1][i] and b[21][j]==b[21][i] and during==b[23][i] and i!=j:
+                                            vtr[i]=fr[39][j]*90/100
+                                            break
 
 
                         b[43] = vtr
                         u=pd.DataFrame(b)
                         for r in dataframe_to_rows(u, index=None, header=None):
                             w.append(r)
-
+                        '''
 
                 formula = '1000 показов, клики, пакет, просмотры, engagement, вовлечение, неделя, месяц, единица, единиц, день'
                 dv = DataValidation(type='list', formula1='"{}"'.format(formula), allow_blank=True)
@@ -689,8 +707,7 @@ class Prepare_calc(TemplateView):
                             right = Side(border_style='thin', color='FF000000'),
                             bottom = Side(border_style='thin', color='FF000000'),
                             left = Side(border_style='thin', color='FF000000'))
-                if len(g)!=0:
-                    height*=len(g)
+
                 sheet[f'AE{height+13}'] = 'Итого:'
                 sheet[f'AF{height+13}'] = f'=SUMIF(AI13:AI{height+12},">0",AG13:AG{height+12})/AI{height+13}*1000'
                 sheet[f'AG{height+13}'] = f'=SUM(AG13:AG{height+12})'
@@ -709,7 +726,7 @@ class Prepare_calc(TemplateView):
                 sheet[f'AT{height+13}'] = f'=SUM(AT13:AM{height+12})'
                 sheet[f'AU{height+13}'] = f'=SUMIF(AT13:AT{height+12},">0",AG13:AG{height+12})/AT{height+13}'
                 sheet[f'AV{height+13}'] = f'=SUMIF(AU13:AU{height+12},">0",AG13:AG{height+12})/AU{height+13}'
-                sheet[f'AC{height+14}'] = 'Сервис DCM'
+                sheet[f'AC{height+14}'] = 'Tracker'
                 sheet[f'AC{height+15}'] = 'Итого медиа бюджет'
                 sheet[f'AC{height+16}'] = 'АК'
                 sheet[f'AC{height+17}'] = 'НДС'
@@ -721,7 +738,7 @@ class Prepare_calc(TemplateView):
                 sheet[f'AG{height+14}'] = f'=(AI{height+13}*2.5)*1.5/1000'
                 sheet[f'AG{height+15}'] = f'=SUM(AG{height+13}:AG{height+14})'
                 sheet[f'AG{height+16}'] = f'=AG{height+15}*AF{height+16}'
-                sheet[f'AG{height+17}'] = f'=((AG{height+15})+AG{height+16})*AF{height+17}'
+                sheet[f'AG{height+17}'] = f'=((AG{height+15})+AG{height+16})*AF{height+17}+AC{height+14}'
                 sheet[f'AG{height+18}'] = '0.00р'
                 sheet[f'AG{height+19}'] = f'=SUM(AG{height+15}:AG{height+18})'
 
@@ -740,6 +757,10 @@ class Prepare_calc(TemplateView):
                         cell.border = Border(
                             left = Side(border_style='thin', color='FF000000'))
 
+                sheet[f'AC{height+19}'].border = Border(top = Side(border_style='thin', color='FF000000'),
+                    bottom = Side(border_style='thin', color='FF000000'),
+                    left = Side(border_style='thin', color='FF000000'))
+
                 for row in sheet[f'AG{height+14}':f'AG{height+19}']:
                     for cell in row:
                         cell.border = Border(top = Side(border_style='thin', color='FF000000'),
@@ -749,10 +770,17 @@ class Prepare_calc(TemplateView):
                 for row in list(sheet[f'AG13':f'AG{height+19}']+sheet[f'AC13':f'AC{height+13}']
                                 +sheet[f'AH13':f'AH{height+13}']+sheet[f'AP13':f'AP{height+13}']
                                 +sheet[f'AQ13':f'AQ{height+13}']+sheet[f'AR13':f'AR{height+13}']
-                                +sheet[f'AS13':f'AS{height+13}']+sheet[f'AU13':f'AU{height+13}']):
+                                +sheet[f'AS13':f'AS{height+13}']+sheet[f'AU13':f'AU{height+13}']
+                                +sheet[f'AF13':f'AF{height+13}']):
                     for cell in row:
-                        cell.number_format = '###0,00"р."'
-                for row in list(sheet[f'AL13':f'AL{height+19}']+sheet[f'AN13':f'AN{height+13}']):
+                        cell.number_format = '"$"#,##0.00_);("$"#,##0.00)'
+                for row in list(sheet[f'AA13':f'AA{height+19}']+sheet[f'AB13':f'AB{height+13}']
+                                +sheet[f'AI13':f'AI{height+13}']+sheet[f'AK13':f'AK{height+13}']
+                                +sheet[f'AM13':f'AM{height+13}']+sheet[f'AO13':f'AO{height+13}']):
+                    for cell in row:
+                        cell.number_format = '#,##0_);(#,##0)'
+                for row in list(sheet[f'AL13':f'AL{height+19}']+sheet[f'AN13':f'AN{height+13}']
+                                +sheet[f'AE13':f'AE{height+13}']):
                     for cell in row:
                         cell.number_format = '0.00%'
                 for row in list(sheet.iter_rows())[12:]:
@@ -762,15 +790,19 @@ class Prepare_calc(TemplateView):
                     sheet.row_dimensions[i].height = 70
 
                 ''' Сезонники и тайминг '''
-                p = pd.read_excel(os.path.join(hol, f"media/clients/{username}/{client}/DMP_{client}_{datet}.xlsx"), engine='openpyxl',
+                p = pd.read_excel(os.path.join(hol, f"media/clients/{translit(username)}/{translit(client)}/DMP_{translit(client)}_{datet}.xlsx"), engine='openpyxl',
                                      header=1)
                 season = p['Сезонники'].tolist()
                 season2 = {}
                 for i in range(48, 104):
+                    sheet.column_dimensions[get_column_letter(i)].width = 0.01
                     if sheet.cell(row=10, column=i).value!=None:
                         season2[sheet.cell(row=10, column=i).value] = i
 
+                for i in range(104, 108):
+                    sheet.column_dimensions[get_column_letter(i)].width = 0.01
 
+                #sheet.column_dimensions['V'].width = 0.01
 
                 for i in range(13, len(season)+13):
                     '''
@@ -783,32 +815,43 @@ class Prepare_calc(TemplateView):
                         for k in range(5):
                             sheet.cell(row=i, column=f+k).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
                     '''
-                    for h in list(season[i-13][1:-1].replace("'", "").split(', ')):
-                        f = season2[h]
-                        for k in range(5):
-                            sheet.cell(row=i, column=f+k).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
+                    """если год"""
                     if period1[0]<period2[0] and period1[1]==period2[1]:
                         for s in range(48, 108):
                             sheet.cell(row=i, column=s).value = 1
+                            sheet.cell(row=i, column=s).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
                             """если 2 месяца"""
                     elif int(period2[1])-int(period1[1])==1:
                         for a in range(math.ceil(int(period1[2])/7)-1, 5):
                             sheet.cell(row=i, column=season2[month[0]]+a).value = 1
+                            sheet.cell(row=i, column=season2[month[0]]+a).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
+                            sheet.column_dimensions[get_column_letter(season2[month[0]]+a)].width = 8
                         for a in range(math.ceil(int(period2[2])/7)):
                             sheet.cell(row=i, column=season2[month[1]]+a).value = 1
+                            sheet.cell(row=i, column=season2[month[1]]+a).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
+                            sheet.column_dimensions[get_column_letter(season2[month[1]]+a)].width = 8
                             """если больше 2 месяцев"""
                     elif int(period2[1])-int(period1[1])>1:
                         for a in range(math.ceil(int(period1[2])/7)-1, 5):
                             sheet.cell(row=i, column=season2[month[0]]+a).value = 1
+                            sheet.cell(row=i, column=season2[month[0]]+a).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
+                            sheet.column_dimensions[get_column_letter(season2[month[0]]+a)].width = 8
                         for g in month[1:-1]:
                             for a in range(5):
                                 sheet.cell(row=i, column=season2[g]+a).value = 1
+                                sheet.cell(row=i, column=season2[g]+a).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
+                                sheet.column_dimensions[get_column_letter(season2[g]+a)].width = 8
                         for a in range(math.ceil(int(period2[2])/7)):
                             sheet.cell(row=i, column=season2[month[-1]]+a).value = 1
+                            sheet.cell(row=i, column=season2[month[-1]]+a).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
+                            sheet.column_dimensions[get_column_letter(season2[month[-1]]+a)].width = 8
                             """если 1 месяц"""
                     else:
                         for a in range(math.ceil(int(period1[2])/7)-1, math.ceil(int(period2[2])/7)):
                             sheet.cell(row=i, column=season2[month[0]]+a).value = 1
+                            sheet.cell(row=i, column=season2[month[0]]+a).fill = PatternFill(start_color='00b050', end_color='00b050', fill_type='solid')
+                            sheet.column_dimensions[get_column_letter(season2[month[0]]+a)].width = 8
+
 
                 try:
                     for j in range(13, height+13):
@@ -822,8 +865,8 @@ class Prepare_calc(TemplateView):
                 except:
                     pass
 
-                wb.save(os.path.join(hol, f"media/clients/{username}/{client}/mp_{client}_{datet}.xlsx"))
-
+                wb.save(os.path.join(hol, f"media/clients/{translit(username)}/{translit(client)}/mp_{translit(client)}_{datet}.xlsx"))
+                '''
                 wb2 = openpyxl.load_workbook(filename=os.path.join(hol, f"media/pattern/buying.xlsx"))
                 w2 = wb2.worksheets[0]
                 sheet2 = wb2.active
@@ -869,9 +912,9 @@ class Prepare_calc(TemplateView):
                     except ObjectDoesNotExist:
                         value = Bying(None, k[0], k[1], None, k[2])
                         value.save()
-
-                path = join('clients', username, client, f"DMP_{client}_{datet}.xlsx")
-                path3 = join('clients', username, client, f"mp_{client}_{datet}.xlsx")
+                        '''
+                path = join('clients', translit(username), translit(client), f"DMP_{translit(client)}_{datet}.xlsx")
+                path3 = join('clients', translit(username), translit(client), f"mp_{translit(client)}_{datet}.xlsx")
 
                 count = All_file.objects.create(username=username, client=client,
                                       name_rk=name_rk, dmp=path, brief=path2,
@@ -1158,17 +1201,17 @@ class Download_calc(TemplateView):
 
 
 
-def not_cleared(request, name_rk):
+def not_cleared(request, pk):
     if request.user.is_authenticated:
         username = request.user.username
         try:
-            m = get_object_or_404(All_file, name_rk=name_rk)
+            m = get_object_or_404(All_file, pk=pk)
             data = {
                 'client': m.client,
                 'mp': m.mp,
                 'brief': m.brief,
                 'form': CommentForm(initial={
-                    'name_rk': name_rk,
+                    'name_rk': m.name_rk,
                     'comments': m.comments,
                         }),
                 }
@@ -1179,18 +1222,18 @@ def not_cleared(request, name_rk):
                     mp = request.FILES.get('mp')
                     comment = request.POST.get('comments')
                     rk = request.POST.get('name_rk')
-                    if name_rk!=rk:
+                    if m.name_rk!=rk:
                         Client.objects.filter(username=username,
-                                                  name_rk=name_rk).update(name_rk=rk)
+                                                  name_rk=m.name_rk).update(name_rk=rk)
                         Complete.objects.filter(username=username,
-                                                  name_rk=name_rk).update(name_rk=rk)
+                                                  name_rk=m.name_rk).update(name_rk=rk)
                         Brief.objects.filter(username=username,
-                                                  name_rk=name_rk).update(name_rk=rk)
+                                                  name_rk=m.name_rk).update(name_rk=rk)
                         All_file.objects.filter(username=username,
-                                                  name_rk=name_rk).update(name_rk=rk)
+                                                  name_rk=m.name_rk).update(name_rk=rk)
                         Cleared.objects.filter(username=username,
-                                                  name_rk=name_rk).update(name_rk=rk)
-                        Feed.objects.filter(name_rk=name_rk).update(name_rk=rk)
+                                                  name_rk=m.name_rk).update(name_rk=rk)
+                        Feed.objects.filter(name_rk=m.name_rk).update(name_rk=rk)
                     if ex==None and mp!=None:
                         try:
                             d = Cleared.objects.get(username=username, name_rk=rk,
@@ -1201,10 +1244,10 @@ def not_cleared(request, name_rk):
                             d.mp = mp
                             d.save()
                             h = Cleared.objects.filter(username=username,
-                                                  name_rk=name_rk)
+                                                  name_rk=m.name_rk)
                             h.update(mp=mp)
                             h = All_file.objects.filter(username=username,
-                                                      name_rk=name_rk)
+                                                      name_rk=m.name_rk)
                             h.update(mp=mp)
                         except:
                             data['error'] = 'Заполните все поля'
@@ -1241,7 +1284,7 @@ def not_cleared(request, name_rk):
         return redirect('exel:login')
 
 
-def cleared(request, name_rk):
+def cleared(request, pk):
     if request.user.is_authenticated:
         username = request.user.username
         try:
@@ -1406,7 +1449,7 @@ def cleared(request, name_rk):
                                 p = pd.DataFrame([client]*len_list+[categ_cl]*len_list+report_xl[count_site]+report_xl[count_format]+report_xl[count_vtr]+
                                     report_xl[count_vtr]+['']*len_list)
 
-                            wb = openpyxl.load_workbook(filename=os.path.join(hol, f"media/clients/{username}/report.xlsx"))
+                            wb = openpyxl.load_workbook(filename=os.path.join(hol, f"media/clients/{translit(username)}/report.xlsx"))
 
                             w = wb.worksheets[0]
                             sheet = wb.active
@@ -1423,7 +1466,7 @@ def cleared(request, name_rk):
 
 
 
-def utm(request, name_rk):
+def utm(request, pk):
     if request.user.is_authenticated:
         username = request.user.username
         data = {
@@ -1447,7 +1490,7 @@ def utm(request, name_rk):
     else:
         return redirect('exel:login')
 
-def materials(request, name_rk):
+def materials(request, pk):
     if request.user.is_authenticated:
         a = Feed.objects.filter(name_rk=name_rk)[::-1]
         data = {
@@ -1473,7 +1516,7 @@ def materials(request, name_rk):
     else:
         return redirect('exel:login')
 
-def complete(request, name_rk):
+def complete(request, pk):
     if request.user.is_authenticated:
         username = request.user.username
         f = Brief.objects.filter(username=username,

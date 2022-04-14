@@ -22,17 +22,20 @@
 </div>
 </div>
 
+{% block content %}
 <div class="container">
   <nav class="navbar navbar-expand-lg navbar-light bg-light" >
     <a class="navbar-brand" href="#">
-    <img src="/docs/4.1/assets/brand/bootstrap-solid.svg" width="30" height="30" alt="">
-    Bootstrap
+    <img src="./static/background/pattern.png" width="30" height="30" alt="">
+    Company
   </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключатель навигации">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-    <div class="navbar-nav mx-auto">
+
+
+    <div class="navbar-nav mx-auto" style="font-family: 'Lobster';font-size: 18px;">
       <a class="nav-item nav-link active" href="{% url 'exel:main' %}">Главная <span class="sr-only">(current)</span></a>
       <a class="nav-item nav-link" href="{% url 'exel:prepare' %}">Подготовить расчет</a>
       <a class="nav-item nav-link" href="{% url 'exel:download_calc' %}">Загрузить расчет</a>
@@ -43,6 +46,7 @@
             <a class="nav-item nav-link disabled" href="{% url 'exel:dmp' %}" name="button_dmp">Баинговые приоритеты</a>
           {% endautoescape %}
       {% endif %}
+      <a class="nav-item nav-link" href="{% url 'exel:logout' %}" class="button">Выйти</a>
       {% if user.is_authenticated %}
           <span class="navbar-text">
             Пользователь:</br>{{ user.username }}
@@ -52,7 +56,7 @@
   </div>
   </nav>
 
-      {% block content %}
+
 
 
 
@@ -97,7 +101,7 @@
                 	{% for name in cleared %}
                     {% if forloop.counter < 4 %}
                       <tr scope="row">
-                        <td><a href="{% url 'exel:but_cleared' name.name_rk %}">{{name.client}}</a>
+                        <td><a href="{% url 'exel:but_cleared' name.id %}" class="s1">{{name.client}}</a>
                         </td>
                         <td>
                         <div>
@@ -126,7 +130,7 @@
                   {% for name in cleared %}
                       {% if forloop.counter >= 4 %}
                         <tr>
-                          <td><a href="{% url 'exel:but_cleared' name.name_rk %}">{{name.client}}</a>
+                          <td><a href="{% url 'exel:but_cleared' name.id %}">{{name.client}}</a>
                           </td>
                           <td>
                           <div>
@@ -181,7 +185,7 @@
                 {% for name in files %}
                   {% if forloop.counter < 4 %}
                     <tr scope="row">
-                      <td><a href="{% url 'exel:but_not_cleared' name.name_rk %}">{{name.client}}</a>
+                      <td><a href="{% url 'exel:but_not_cleared' name.id %}">{{name.client}}</a>
                       </td>
                       <td>
                       <div>
@@ -215,7 +219,7 @@
           {% for name in files %}
             {% if forloop.counter >= 4 %}
               <tr scope="row">
-                <td><a href="{% url 'exel:but_not_cleared' name.name_rk %}">{{name.client}}</a>
+                <td><a href="{% url 'exel:but_not_cleared' name.id %}">{{name.client}}</a>
                 </td>
                 <td>
                 <div>
@@ -267,19 +271,17 @@
                   		<tr scope="row" class="name">
                           	<td>Клиент</td>
                           	<td>Название РК</td>
-                          	<td>Бюджет</td>
                           	<td>Период</td>
                           	<td>Карточка проекта</td>
                           </tr>
               			{% for name in complete %}
                       {% if forloop.counter < 5 %}
                       	<tr scope="row">
-                          <td width="15%">{{name.client}}</td>
-                          <td width="15%">{{name.name_rk}}</td>
-                          <td width="20%">{{name.budget}}</td>
+                          <td width="25%">{{name.client}}</td>
+                          <td width="25%">{{name.name_rk}}</td>
                           <td width="25%">{{name.period_c}} - {{name.period_p}}</td>
                             <td width="25%">
-                                <a class="s3" href="{% url 'exel:but_cleared' name.name_rk %}">Карточка проекта</a>
+                                <a class="s3" href="{% url 'exel:but_cleared' name.id %}">Карточка проекта</a>
                             </td>
                   		  </tr>
                       {% endif %}
@@ -298,12 +300,11 @@
           {% for name in complete %}
             {% if forloop.counter >= 4 %}
               <tr scope="row">
-                  <td width="15%">{{name.client}}</td>
-                  <td width="15%">{{name.name_rk}}</td>
-                  <td width="20%">{{name.budget}}</td>
+                  <td width="25%">{{name.client}}</td>
+                  <td width="25%">{{name.name_rk}}</td>
                   <td width="25%">{{name.period_c}} - {{name.period_p}}</td>
                     <td width="25%">
-                        <a class="s3" href="{% url 'exel:but_cleared' name.name_rk %}">Карточка проекта</a>
+                        <a class="s3" href="{% url 'exel:but_cleared' name.id %}">Карточка проекта</a>
                     </td>
               </tr>
             {% endif %}
@@ -361,7 +362,7 @@
                         	<td>{{name.budget}}</td>
                         	<td>{{name.period_c}} - {{name.period_p}}</td>
                             <td>
-                                <a class="s3" href="{% url 'exel:but_cleared' name.name_rk %}">Карточка проекта</a>
+                                <a class="s3" href="{% url 'exel:but_cleared' name.id %}">Карточка проекта</a>
                             </td>
                 		</tr>
                 	{% endfor %}
@@ -423,7 +424,7 @@ function clickMe() {
 
 
   </script>
-
-  </body>
 {% endblock %}
+  </body>
+
 </html>

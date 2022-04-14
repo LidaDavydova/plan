@@ -80,7 +80,7 @@ class Report_common(models.Model):
 
     def __str__(self):
         return self.file.name
-    
+
     def save(self, *args, **kwargs):
         if self.pk is not None:
             old_self = Report_common.objects.get(pk=self.pk)
@@ -97,7 +97,7 @@ class Media_plan(models.Model):
 
     def __str__(self):
         return self.file.name
-    
+
     def save(self, *args, **kwargs):
         if self.pk is not None:
             old_self = Media_plan.objects.get(pk=self.pk)
@@ -114,7 +114,7 @@ class Report(models.Model):
 
     def __str__(self):
         return self.file.name
-    
+
     def save(self, *args, **kwargs):
         if self.pk is not None:
             old_self = Report.objects.get(pk=self.pk)
@@ -125,7 +125,7 @@ class Report(models.Model):
     def delete(self, *args, **kwargs):
         self.file.delete()
         super().delete(*args, **kwargs)
-        
+
 class Brief_pattern(models.Model):
     file = models.FileField(upload_to ='pattern')
 
@@ -142,7 +142,7 @@ class Brief_pattern(models.Model):
     def delete(self, *args, **kwargs):
         self.file.delete()
         super().delete(*args, **kwargs)
-        
+
 
 class Dmp(models.Model):
     agency = models.CharField(max_length = 100, null=True)
@@ -150,7 +150,7 @@ class Dmp(models.Model):
 
     def __str__(self):
         return self.file.name
-    
+
     def save(self, *args, **kwargs):
         if self.pk is not None:
             old_self = Dmp.objects.get(pk=self.pk)
@@ -169,47 +169,48 @@ class Dmp(models.Model):
             excelWriter.save()
         else:
             dataframe.to_csv(self.file.path, index=False)
-        
 
-    
+
+
 
 def content(instance, img):
     return '/'.join(['clients', 'img', instance.username, img])
-    
+
 class Brief(models.Model):
     agency = models.CharField(max_length = 100, null=True)
     duploaded_at = models.DateTimeField(auto_now_add=True, null=True)
     username = models.CharField(max_length = 60)
     client = models.CharField(max_length = 100)
-    product = models.CharField(max_length = 100)
-    name_rk = models.CharField(max_length = 200)
-    posad = models.CharField(max_length = 300)
-    description = models.CharField(max_length = 500)
-    competitors = models.CharField(max_length = 500)
-    type_act = models.CharField(max_length = 60)
-    country = models.CharField(max_length = 60)
-    region = models.CharField(max_length = 100)
-    gender = models.CharField(max_length = 20)
-    age = models.CharField(max_length = 10)
-    interes = models.TextField()
-    income = models.CharField(max_length = 30)
-    rek = models.TextField()
-    materials = models.CharField(max_length = 60)
+    product = models.CharField(max_length = 100, null=True)
+    name_rk = models.CharField(max_length = 200, null=True)
+    posad = models.CharField(max_length = 300, null=True)
+    description = models.CharField(max_length = 500, null=True)
+    competitors = models.CharField(max_length = 500, null=True)
+    type_act = models.CharField(max_length = 60, null=True)
+    country = models.CharField(max_length = 60, null=True)
+    region = models.CharField(max_length = 100, null=True)
+    ca = models.CharField(max_length = 150, null=True)
+    gender = models.CharField(max_length = 20, null=True)
+    age = models.CharField(max_length = 10, null=True)
+    interes = models.TextField(null=True)
+    income = models.CharField(max_length = 30, null=True)
+    rek = models.TextField(null=True)
+    materials = models.CharField(max_length = 60, null=True)
     duration1 = models.CharField(max_length = 30, null=True)
     duration2 = models.CharField(max_length = 30, null=True)
     duration3 = models.CharField(max_length = 30, null=True)
     period_c = models.CharField(max_length = 10)
     period_p = models.CharField(max_length = 10)
-    KPI = models.CharField(max_length = 60)
-    plan = models.TextField()
-    budget = models.CharField(max_length = 30)
-    who_prep_materials = models.CharField(max_length = 300)
+    KPI = models.CharField(max_length = 60, null=True)
+    plan = models.TextField(null=True)
+    budget = models.CharField(max_length = 30, null=True)
+    who_prep_materials = models.CharField(max_length = 300, null=True)
     discount = models.CharField(max_length = 10, null=True)
     AK = models.CharField(max_length = 20, null=True)
     DCM = models.CharField(max_length = 20, null=True)
     img = models.ImageField('Логотип', upload_to=content)
-    
-    
+
+
 class Bying(models.Model):
     agency = models.CharField(max_length = 100, null=True)
     sell = models.CharField(max_length = 100, null=True)
@@ -217,11 +218,9 @@ class Bying(models.Model):
     plan = models.CharField(max_length = 100, null=True)
     phact = models.CharField(max_length = 100, null=True)
     procent = models.CharField(max_length = 10, null=True)
-    
+
 
 class Dmp_priority(models.Model):
     agency = models.CharField(max_length = 100, null=True)
     sell = models.CharField(max_length = 100, null=True)
     site = models.CharField(max_length = 100, null=True)
-
-
