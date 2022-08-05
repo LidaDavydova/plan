@@ -51,7 +51,7 @@ def Logout(request):
 
 def profile(request):
     if request.user.is_authenticated:
-        path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         if not os.path.isdir(os.path.join(path, 'sites', request.user.username)):
             os.mkdir(os.path.join(path, 'sites', request.user.username))
         fs = FileSystemStorage(location=os.path.join(path, 'sites', request.user.username), base_url=path)

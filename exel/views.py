@@ -139,7 +139,7 @@ class Prepare_calc(TemplateView):
         if request.user.is_authenticated:
             username = request.user.username
             # In the down def to create a file DMP.xlsx
-            path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             data = []
             for user in User.objects.all():
                 try:
