@@ -1,0 +1,143 @@
+:root{
+  --ruler: 16px;
+  --color-red: #AE1100;
+  --color-bg: #EBECF0;
+  --color-shadow: #BABECC;
+  --color-white: #FFF;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #eceffc;
+}
+
+
+
+h1 {
+    margin: 0 auto;
+    margin-bottom: 50px;
+    width: 100px;
+}
+
+body, p, input, select, textarea, button {
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: -0.2px;
+    font-size: var(--ruler);
+}
+
+div, p {
+  color: var(--color-shadow);
+  text-shadow: 1px 1px 1px var(--color-white);
+}
+
+
+form {
+  padding: var(--ruler);
+  width: var(--ruler)*20;
+  margin: 0 auto;
+}
+
+.segment {
+  padding: var(--ruler)*2 0;
+  text-align: center;
+}
+
+#button, #input {
+  border: 0;
+  outline: 0;
+  font-size: var(--ruler);
+  border-radius: var(--ruler)*20;
+  padding: var(--ruler);
+  background-color:var(--color-bg);
+  text-shadow: 1px 1px 0 var(--color-white);
+}
+
+#button {
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 30px;
+
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  margin-top: 15px;
+  width: 100%;
+}
+
+#input {
+  margin-right: var(--ruler)/2;
+  box-shadow:  inset 2px 2px 5px var(--color-shadow), inset -5px -5px 10px var(--color-white);
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
+  appearance: none;
+  -webkit-appearance: none;
+
+  &:focus {
+    box-shadow:  inset 1px 1px 2px var(--color-shadow), inset -1px -1px 2px var(--color-white);
+  }
+}
+
+#button {
+  color:#61677C;
+  font-weight: bold;
+  box-shadow: -5px -5px 20px var(--color-white),  5px 5px 20px var(--color-shadow);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  font-weight: 600;
+
+  &:hover {
+    box-shadow: -2px -2px 5px var(--color-white), 2px 2px 5px var(--color-shadow);
+  }
+
+  &:active {
+    box-shadow: inset 1px 1px 2px var(--color-shadow), inset -1px -1px 2px var(--color-white);
+  }
+
+  .icon {
+    margin-right: var(--ruler)/2;
+  }
+
+  &.unit {
+    border-radius: var(--ruler)/2;
+    line-height: 0;
+    width: var(--ruler)*3;
+    height: var(--ruler)r*3;
+    display:inline-flex;
+    justify-content: center;
+    align-items:center;
+    margin: 0 var(--ruler)/2;
+    font-size: var(--ruler)*1.2;
+
+    .icon {
+      margin-right: 0;
+    }
+  }
+
+  &.red {
+    display: block;
+    width: 100%;
+    color:var(--color-red);
+  }
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  label {
+    margin: 0;
+    flex: 1;
+  }
+}
+
+div.error {
+  position: absolute;
+  top: 20%;
+}

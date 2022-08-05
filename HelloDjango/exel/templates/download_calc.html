@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Загрузка расчета{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'download_calc.css' %}" type="text/css">
+</head>
+<body>
+    {% block content %}
+    <div class="content">
+    <a href="{% url 'exel:main' %}" class="button">Главная</a>
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+        <div id="form1">
+        <h3>Название клиента</h3>
+
+        <p>
+        	<span class="input">
+        		<input id="down" name="name_client" list="name" />
+        		<span></span>
+        	</span>
+        </p>
+
+
+        <datalist id="name">
+            {% for select in name_client %}
+                <option id="list">{{select.client}}</option>
+            {% endfor %}
+        </datalist>
+
+
+        <h3>Название РК</h3>
+
+        <p>
+        	<span class="input">
+        		<input id="down" name="title_rk" list="l" />
+        		<span></span>
+        	</span>
+        </p>
+
+        <datalist id="l">
+            {% for select in list_RK %}
+                <option>{{ select.name_rk }}</option>
+            {% endfor %}
+        </datalist>
+        <br>
+        <br>
+
+            {{ form }}
+
+        <button type="submit" id="down_calc">Загрузить раcчет</button>
+
+            </div>
+        </form>
+        <form method="post">
+        {% csrf_token %}
+        <p id="field">НЕ СОГЛАГОВАННЫЕ<br>ПЛАНЫ/СТАТУС</p>
+            <div class="formtable">
+            <input type="checkbox" id="b">
+            <div class="xpandable-block">
+            <div class="tab">
+
+            <table class="table_blur">
+            	<tbody>
+                	{% for name in files %}
+                    	<tr>
+                        	<td><a href="{% url 'exel:but_not_cleared' name.id %}">{{name.client}}</a>
+                        	</td>
+                        	<td>/ отправлен {{name.duploaded_at}}</td>
+                        	<td>
+                        	<div class="tooltip">этапы проекта
+                              <span class="tooltiptext">{{name.comments}}</span>
+                            </div>
+                        	</td>
+                            <td>
+                                <a href="{{ name.calculation.url }}">Выгрузить</a>
+                            </td>
+                		</tr>
+                	{% endfor %}
+            	</tbody>
+            </table>
+        </div>
+        </div>
+        <label class="labeltable" for="b">ПОКАЗАТЬ/CКРЫТЬ</label>
+        </div>
+        </form>
+    </div>
+    {% endblock %}
+</body>
+</html>

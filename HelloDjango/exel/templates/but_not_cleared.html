@@ -1,0 +1,71 @@
+{% extends 'download_calc.html' %}
+
+{% load static %}
+
+{% block title %}Клиент {{client}}{% endblock %}
+
+
+{% block content %}
+    <div class="preloader">
+    <div class="preloader__row">
+      <div class="preloader__item"></div>
+      <div class="preloader__item"></div>
+    </div>
+  </div>
+
+    <div class="all">
+    <a href="{% url 'exel:main' %}" class="button">Главная</a>
+	<form method="post" 
+	 enctype="multipart/form-data" id="not_cl">
+	{% csrf_token %}
+    	<div class="bk">
+		<hr class="r">
+		<h3>Название клиента</h3>
+        <h3>{{client}}</h3>
+		<div id="fields" class="not_cl">
+    		<h3>Название PK</h3>
+    		<div id="form">
+            	{{form.name_rk}}
+            </div>
+    		<hr>
+    		<h3>Бриф (файл)</h3>
+    		<div id="form">
+            <a href="{{ brief.url }}" id="href">Выгрузить</a>
+            </div>
+    		<hr>
+    		<h3>Медиаплан (файл)</h3>
+    		
+    		<div id="form">
+    		<a href="{{ mp.url }}" id="href">Выгрузить</a>
+    		{{form.mp}}
+    		</div>
+    		<hr>
+    		<h3>Презентация (файл)</h3>
+    		<div id="form">
+    		{{form.presentation}}
+    		</div>
+    		<hr>
+    		<h3>Комментарии</h3>
+    		<div id="form">
+    		{{form.comments}}
+    		</div>
+    		<hr>
+    	</div>
+    	</div>
+    	
+    	{{error}}
+    	<input type="submit" name="approved" value="МП СОГЛАСОВАН" class="mp">
+	</form>
+	</div>
+
+    <script>
+    window.onload = function () {
+      document.body.classList.add('loaded_hiding');
+      window.setTimeout(function () {
+        document.body.classList.add('loaded');
+        document.body.classList.remove('loaded_hiding');
+      }, 500);
+    }
+  </script>
+{% endblock %}
+

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Расчет{% endblock %}
+
+{% block content %}
+    <div class="preloader">
+    <div class="preloader__row">
+      <div class="preloader__item"></div>
+      <div class="preloader__item"></div>
+    </div>
+  </div>
+    <a href="{% url 'exel:prepare' %}" class="button">Главная</a>
+    <a href="{{file.mp.url}}" class="button">Просмотреть медиаплан</a>
+    <script>
+    window.onload = function () {
+      document.body.classList.add('loaded_hiding');
+      window.setTimeout(function () {
+        document.body.classList.add('loaded');
+        document.body.classList.remove('loaded_hiding');
+      }, 500);
+    }
+  </script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'download_calc.html' %}
+
+{% load static %}
+
+{% block title %}Utm{% endblock %}
+
+{% block content %}
+
+    <a href="{% url 'exel:but_cleared' file%}" class="button">Назад</a>
+    
+    <form  method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+        <div class="utm_form">
+        {{form}}
+        <input type="submit" class="mat" value="Загрузить UTM">
+        </div>
+	{% if utm.utm != '' %}
+        <a href="{{utm.utm.url}}" class="s13">{{utm_name}}</a>
+    {% endif %}
+    </form>
+
+{% endblock %}

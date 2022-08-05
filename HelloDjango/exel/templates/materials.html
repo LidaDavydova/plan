@@ -1,0 +1,42 @@
+{% extends 'download_calc.html' %}
+
+{% load static %}
+
+{% block title %}Материалы{% endblock %}
+
+{% block content %}
+
+    <a href="{% url 'exel:but_cleared' name_rk %}" class="button" id="back">Назад</a>
+
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+        <div class="form_materials">
+        {{ form }}
+        <input type="submit" class="mat" value="загрузить"/>
+        </div>
+
+        <div class="formtable1">
+        	<input type="checkbox" id="button1">
+            <div class="xpandable-block_m">
+            <div class="tab">
+            	<table class="table_blur">
+                    {% for i in files %}
+                        {% for k in i %}
+                            <tr>
+                            <td>
+                                <a href={{k.file.url}} class="materials">{{k.file.name}}</a>
+                            </td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                <tbody>
+            </table>
+        </div>
+        </div>
+        <label class="labeltable" for="button1">Показатать/Cкрыть</label>
+        </div>
+    </form>
+
+
+
+{% endblock %}

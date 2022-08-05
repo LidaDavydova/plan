@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Баинг{% endblock %}
+
+{% block content %}
+
+<head>
+<meta http-equiv="Cache-Control" content="no-cache">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="b">
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <a href="{% url 'exel:main' %}" class="button">Главная</a>
+<!--
+    <a href="#" id="main">
+      <div id="okno">
+      <input type="button" value="Выделить все(даже список из 2 колонки)" onclick="check();">
+        <input type="button" value="Удалить все(даже список из 2 колонки)" onclick="uncheck();">
+        {%for s in seller%}
+        <div class="checkdiv">
+            <input type="checkbox" class="check" id="{{s}}" name="name" value="{{s}}" {% if s in checked_name %} checked {% endif %}/>{{s}}<br />
+        </div>
+        {%endfor%}
+        <input type="submit" class="ok" name="form1" value="OK" />
+      </div>
+    </a>
+    <a href="#main" class="sort_sell">Сортировать<br>по селлеру</a>
+
+
+    <a href="#" id="main1">
+      <div id="okno1">
+        {%for si in site%}
+            <div class="checkdiv">
+                <input type="checkbox" class="chec" id="{{si}}" name="na" value="{{si}}" {% if si in checked_na %} checked {% endif %}/>{{si}}<br />
+            </div>
+        {%endfor%}
+        <input type="submit" class="ok" name="form3" value="OK" />
+
+    </div>
+    </a>
+    <a href="#main1" class="sort_site">Сортировать<br>по сайту</a>
+    -->
+    <input id="sub" type="submit" name="form4" value="Выгрузить в Excel">
+
+    <datalist id="byi">
+        {% for i in bying %}
+            <option>{{i}}</option>
+        {% endfor %}
+    </datalist>
+    <div class="b1">
+      <!--
+    <input type="text" name="plan_sum1" class="bying_dict" value="{{plan_sum}}" />
+    <input type="text" name="phact_sum1" class="bying_dict" value="{{phact_sum}}" />
+    -->
+    <table id="myTable">
+      <thead>
+        <tr id="myTable">
+            <th>Селлер</th>
+            <th>Сайт</th>
+            <th>План, до НДС/рубли</th>
+            <th>Факт, клиентские<br>суммы, до НДС/рубли</th>
+            <th>%</th>
+        </tr>
+    </thead>
+      {%for i in bying%}
+
+          <tr id="myTable">
+          {%for j in count%}
+              <td id="myTable"><input name="{{j}}_{{i.id}}" id="bu" value="{% cycle i.sell i.site i.plan i.phact i.procent %}"></td>
+          {% endfor %}
+          </tr>
+
+      {% endfor %}
+    </table>
+
+    <input id="sub1" type="submit" name="form2" value="Обновить">
+
+    <table id="myTable1">
+        <tr id="compl">
+            <td></td>
+            <td>Итого:</td>
+            <td>{{plan_sum}}</td>
+            <td>{{phact_sum}}</td>
+            <td></td>
+        </tr>
+    </table>
+    </div>
+    </form>
+    </div>
+<script>
+
+function preventDef(event) {
+  event.preventDefault();
+}
+
+function check()
+{
+ var check=document.getElementsByTagName('input');
+ for(var i=0;i<check.length;i++)
+ {
+  if(check[i].type=='checkbox')
+  {
+   check[i].checked=true;
+  }
+ }
+}
+
+function uncheck()
+{
+ var uncheck=document.getElementsByTagName('input');
+ for(var i=0;i<uncheck.length;i++)
+ {
+  if(uncheck[i].type=='checkbox')
+  {
+   uncheck[i].checked=false;
+  }
+ }
+}
+
+</script>
+    <script>
+  function triggerPost(idnum) {
+
+    $('#hostform').on("submit", function () {
+      localStorage.input = $("#"+idnum).checked;
+    });
+    $('#hostform').submit()
+  };
+</script>
+ <!--
+<script>
+
+
+function first() {
+document.getElementById("second_hide").setAttribute("style", "opacity:1; transition: 1s; height: 100%;");
+document.getElementById("first").setAttribute("style", "display: none");
+document.getElementById("first_yelloy").setAttribute("style", "display: block");
+}
+function first_yelloy() {
+document.getElementById("second_hide").setAttribute("style", "display: none");
+document.getElementById("first_yelloy").setAttribute("style", "display: none");
+document.getElementById("first").setAttribute("style", "display: block");
+}
+
+
+function second() {
+document.getElementById("second_hide2").setAttribute("style", "opacity:1; transition: 1s; height: 100%;");
+document.getElementById("second").setAttribute("style", "display: none");
+document.getElementById("second_yelloy").setAttribute("style", "display: block");
+}
+function second_yelloy() {
+document.getElementById("second_hide2").setAttribute("style", "display: none");
+document.getElementById("second_yelloy").setAttribute("style", "display: none");
+document.getElementById("second").setAttribute("style", "display: block");
+}
+
+
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("myTable");
+  switching = true;
+  //Set the sorting direction to ascending:
+  dir = "asc";
+  /*Make a loop that will continue until
+  no switching has been done:*/
+  while (switching) {
+    //start by saying: no switching is done:
+    switching = false;
+    rows = table.getElementsByTagName("TR");
+    /*Loop through all table rows (except the
+    first, which contains table headers):*/
+    for (i = 1; i < (rows.length - 1); i++) {
+      //start by saying there should be no switching:
+      shouldSwitch = false;
+      /*Get the two elements you want to compare,
+      one from current row and one from the next:*/
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      /*check if the two rows should switch place,
+      based on the direction, asc or desc:*/
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch= true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /*If a switch has been marked, make the switch
+      and mark that a switch has been done:*/
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      //Each time a switch is done, increase this count by 1:
+      switchcount ++;
+    } else {
+      /*If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again.*/
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+
+class Stogage {
+    constructor(name){
+      // конструктор. создает в localStorage
+      // именованное хранилище
+
+      // запоминаем название именованного хранилища
+      name = name;
+
+      // создаем ассоциативный массив в котором для
+      // быстрого доступа будут кэшироваться объекты
+      // сохраняемые в именованном хранилище
+      this.hash = {};
+
+      // если в localStorage уже есть данные
+      // сохраненые под ключем с именем this.name
+      // то считываем их в this.hash
+      let text = localStorage.getItem(this.name);
+      if(text)
+        this.hash = JSON.parse(text);
+
+      // сохраняем ассоциативный массив this.hash в
+      // localStorage под именем this.name
+      this.save();
+    }
+
+    get(id){
+      // получить значение по его id из именованного хранилища
+      // с именем this.name
+      return this.item.find(item=>item.id===id)
+    }
+
+    add(id, data){
+      // сохранить значение по его id в именованном хранилище
+      // с именем this.name
+      this.hash[id] = data;
+      this.save();
+    }
+
+    del(id){
+      // удалить значение по его id в именованном хранилище
+      // с именем this.name
+      delete this.hash[id];
+      this.save();
+    }
+
+    save(){
+      // преобразуем ассоциативный массив this.hash в массив list
+      this.list = Object.values(this.hash);
+
+      // преобразуем массив list в строку text
+      const text = JSON.stringify(this.hash);
+
+      // сохраняем строку text в localStorage под
+      // именем this.name
+      localStorage.setItem(this.name, text);
+    }
+
+}
+
+
+
+
+// создаем объект класса Stogage для хранения данных о состоянии checkbox-в в localStorage
+const checkbox_store = new Stogage('checkbox_store');
+
+
+// восстанавливает состояния checkbox-в сохраненные в localstorage checkbox_store
+checkbox_store.list.forEach(item=>{
+  // если есть такой элемент, выставляем ему запомненное состояние
+  if( item.state === "on" )
+     return $('#' + item.id).prop('checked', item.state);
+  checkbox_store.del(item.id);
+});
+
+
+// устанавливаем обработчик для фиксации изменения состояния checkbox-в с классом check
+$('body').on('change', '.check', function(event){
+  let id = $(this).attr('id');
+  let state = event.currentTarget.checked?"on":undefined;
+  checkbox_store.add(id, {
+    id: id,
+    state: state
+  });
+});
+
+
+
+</script>
+-->
+</body>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Баинговые приоритеты{% endblock %}
+
+{% block content %}
+
+<head>
+</head>
+
+<body>
+
+    {%for i in bying%}
+        <table>
+            <tr>
+                <td><input type="text" name="priority"/></td>
+                <td>{{i.site}}</td>
+                <td>{{i.sell}}</td>
+            </tr>
+        </table>
+    {%endfor%}
+
+</body>
+{% endblock %}

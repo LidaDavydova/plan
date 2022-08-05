@@ -1,0 +1,759 @@
+body{
+}
+
+div.content {
+    position: relative;
+    left: 50px;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Разместите всплывающую подсказку */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+div#form1{
+    position: relative;
+    top: 50px;
+    left: 40px;
+}
+
+.formtable {
+    position: relative;
+    top: 15vh;
+    left: 140px;
+}
+
+.formtable1 {
+    position: relative;
+    top: 30px;
+    left: 140px;
+}
+
+.table_blur table {
+font-size: 14px;
+border-radius: 3px;
+border-spacing: 0;
+text-align: center;
+}
+
+.table_blur th, .table_blur td {
+border-style: solid;
+border-width: 0 1px 1px 0;
+border-color: white;
+}
+
+.table_blur th {
+text-align:center;
+}
+
+.table_blur th:first-child {
+border-top-left-radius: 0px;
+}
+
+.table_blur th:last-child {
+border-top-right-radius: 0px;
+border-right: none;
+}
+
+.table_blur td {
+padding: 8px 15px;
+background: white;
+}
+
+.table_blur tr:last-child td:first-child {
+border-radius: 0 0 0 10px;
+}
+
+.table_blur tr:last-child td:last-child {
+border-radius: 0 0 10px 0;
+}
+
+.table_blur tr td:last-child {
+border-right: none;
+}
+
+.table_blur {
+  background: #C8CCF4;
+  text-align: center;
+  max-width: 100%;
+  width: 100%
+}
+
+.table_blur tbody:hover tr:hover td {
+  color: #444444;
+  text-shadow: none;
+}
+
+div.tab {
+    padding: 5px;
+    max-width: 70%;
+    overflow-x: hidden;
+    margin-bottom: 20px;
+    box-shadow: 2px 2px 4px 2px rgba(0,0,0,.2)
+}
+
+.com {
+    display: inline-block; /* Строчно-блочный элемент */
+    position: relative; /* Относительное позиционирование */
+   }
+
+.com:hover::after {
+    content: attr(data-title); /* Выводим текст */
+    position: absolute; /* Абсолютное позиционирование */
+    left: 80%; top: 90%; /* Положение подсказки */
+    z-index: 1; /* Отображаем подсказку поверх других элементов */
+    background: rgba(255,255,230,0.9); /* Полупрозрачный цвет фона */
+    font-family: Arial, sans-serif; /* Гарнитура шрифта */
+    font-size: 11px; /* Размер текста подсказки */
+    padding: 5px 10px; /* Поля */
+    border: 1px solid #333; /* Параметры рамки */
+   }
+
+input[type="checkbox"]:checked +
+
+.xpandable-block {
+    max-height: 3000px;
+}
+
+.xpandable-block {
+    max-height: 192px;
+    overflow: hidden;
+    order: 0;
+    -webkit-transition: max-height 1s;
+    transition: max-height 1s;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"]:checked +
+
+.xpandable-block_m {
+    max-height: 3000px;
+}
+
+.xpandable-block_m {
+    max-height: 364px;
+    overflow: hidden;
+    order: 0;
+    -webkit-transition: max-height 1s;
+    transition: max-height 1s;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+
+.labeltable {
+	color: white;
+      background: #5A1EB8;
+	font-size: 14px;
+	cursor: pointer;
+	text-align: center;
+	margin: 20px auto;
+	display: block;
+	width: 150px;
+	height: 20px;
+	font: justify;
+	 padding: 10px 10px;
+	 border-radius: 17px;
+
+}
+
+
+button#down_calc {
+    position: relative;
+    left: -80px;
+    top: -170px;
+    width: 180px;
+    height: 54px;
+    font-size: 20px;
+    border-radius: 17px;
+    color: white;
+      background: #5A1EB8;
+    font: justify;
+    padding: 5px 10px;
+    font-family: lucida console, sans-serif;
+}
+
+
+select {
+    position: relative;
+    top: -15px;
+    background: #ffa00042;
+    width: 180px;
+    height: 30px;
+    font-size: 20px;
+}
+
+select option#list {
+    width: 180px;
+    height: 30px;
+    font-size: 20px;
+    background: #ffa00042;
+    color: black;
+}
+
+p#field {
+    position: absolute;
+    text-align: center;
+    top: 55vh;
+    left: -10px;
+    font-family: 'Krona One', sans-serif;
+    writing-mode: tb-rl;
+    transform: rotate(180deg);
+
+
+}
+
+
+h3 {
+    font-family: SEGOE SCRIPT, sans-serif;
+}
+
+.button {
+      position: relative;
+      top: 30px;
+      padding: 15px 20px;
+      text-decoration: none;
+      margin: 8px 10px;
+      cursor: pointer;
+      width: 200px;
+      height: 35px;
+      border-radius: 45px;
+      font-weight: bold;
+      font-family: Libre Baskerville, serif;
+      font-size: 14px;
+
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 1px;
+      line-height: 35px;
+      color: white;
+      background: #5A1EB8;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
+      transition: .3s;
+      }
+
+.button:hover {
+      background: #e52e2e;
+      box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
+      color: #461bd2000048;
+      transform: translateY(1px);
+}
+
+.input#down {
+
+	// needs to be relative so the :focus span is positioned correctly
+	position:relative;
+
+	// bigger font size for demo purposes
+	font-size: 1.5em;
+
+	// the border gradient
+	background: linear-gradient(21deg, #10abff, #1beabd);
+
+	// the width of the input border
+	padding: 3px;
+
+	// we want inline fields by default
+	display: inline-block;
+
+	// we want rounded corners no matter the size of the field
+	border-radius: 9999em;
+
+	// style of the actual input field
+	*:not(span) {
+		position: relative;
+		display: inherit;
+		border-radius: inherit;
+		margin: 0;
+		border: none;
+		outline: none;
+		padding: 0 .325em;
+		z-index: 1; // needs to be above the :focus span
+
+		// summon fancy shadow styles when focussed
+		&:focus + span {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	// we don't animate box-shadow directly as that can't be done on the GPU, only animate opacity and transform for high performance animations.
+	span {
+
+		transform: scale(.993, .94); // scale it down just a little bit
+		transition: transform .5s, opacity .25s;
+		opacity: 0; // is hidden by default
+
+		position:absolute;
+		z-index: 0; // needs to be below the field (would block input otherwise)
+		margin:4px; // a bit bigger than .input padding, this prevents background color pixels shining through
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		border-radius: inherit;
+		pointer-events: none; // this allows the user to click through this element, as the shadow is rather wide it might overlap with other fields and we don't want to block those.
+
+		// fancy shadow styles
+		box-shadow: inset 0 0 0 3px #fff,
+			0 0 0 4px #fff,
+			3px -3px 30px #1beabd,
+			-3px 3px 30px #10abff;
+	}
+
+}
+
+input#down {
+	font-family: inherit;
+	line-height:inherit;
+	color:#2e3750;
+	min-width:12em;
+}
+
+
+::placeholder {
+	color:#cbd0d5;
+}
+
+html::after {
+	content:'';
+	background: linear-gradient(21deg, #10abff, #1beabd);
+	height:3px;
+	width:100%;
+	position:absolute;
+	left:0;
+	top:0;
+}
+
+/* not_cleared.html */
+
+div.all {
+    position: absolute;
+    margin-left: 70px;
+}
+
+form#not_cl {
+    margin-top: 70px;
+}
+
+.not_cl {
+    margin-left: 270px;
+    position: relative;
+    top: -79px;
+}
+
+input.mp {
+    position: relative;
+    left: 30%;
+    padding: 7px, 10px, 7px, 10px;
+    text-decoration: none;
+    margin-bottom: 80px;
+    cursor: pointer;
+    width: 200px;
+    height: 40px;
+    border-radius: 45px;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 1px;
+    line-height: 35px;
+    color: white;
+    background: #5A1EB8;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
+    transition: .3s;
+}
+
+hr.r {
+    height: 2px;
+    width: 740px;
+    background: red;
+    position: relative;
+    top: 10px;
+    margin-top: 10px;
+}
+
+div#form{
+    padding: 20px;
+}
+
+div.not_cl hr {
+    height: 2px;
+    width: 470px;
+    background: red;
+    position: relative;
+    margin-top: 10px;
+}
+
+div.bk h3 {
+    position: relative;
+    top: 20px;
+    left: 30px;
+}
+
+
+
+/* cleared.html */
+
+.clear {
+    position: absolute;
+    left: 70px;
+    top: 30px;
+}
+
+form#cl {
+    position: relative;
+    margin-top: 70px;
+}
+
+.hr1 {
+    height: 2px;
+    width: 710px;
+    background: red;
+    position: relative;
+    top: 10px;
+    margin-top: 10px;
+    left: -5px;
+}
+
+div.cl hr {
+    height: 2px;
+    width: 500px;
+    background: red;
+    position: relative;
+    top: 10px;
+    margin-top: 10px;
+    left: -15px;
+}
+
+.s131 {
+   color: #34495e;
+   line-height: 1.2;
+   position: relative;
+   padding: 0 14px;
+   text-transform: uppercase;
+   text-decoration: none;
+   display: inline-block;
+   letter-spacing: 1px;
+   margin: 20px 0px;
+   font-size: 14px;
+   font-family: 'Fredoka One', cursive;
+   transition: .3s ease-in-out;
+}
+.s131:after {
+   content: "";
+   height: 100%;
+   min-width: 4px;
+   background: #34495e;
+   position: absolute;
+   left: 0;
+   bottom: 0;
+   transition: .5s;
+}
+.s131:hover:after {
+   min-width: 100%;
+   background: #95a5a6;
+   opacity: .35;
+}
+
+a.five {
+   border-radius: 10px;
+   color: #40382D;
+   box-shadow: inset 0 -5px 0 #C8CCF4;
+   display: inline-block;
+   text-decoration: none;
+   text-transform: uppercase;
+   letter-spacing: 1px;
+   margin: 0px 0px 0px 10px;
+   padding: 10px 15px;
+   font-size: 14px;
+   font-weight: bold;
+   font-family: 'Montserrat', sans-serif;
+   transition: 0.4s ease-in-out;
+}
+a.five:hover {
+   box-shadow: inset 0 -60px 0 #5A1EB8, 2px 2px 3px rgba(0, 0, 0, 0.3);
+   color: white;
+}
+
+a.four {
+   border-radius: 10px;
+   color: #598428;
+   background: -webkit-linear-gradient(70deg, #C3D600, #C3D600 50%, #A5B400 50%);
+   background: -o-linear-gradient(20deg, #C3D600, #C3D600 50%, #A5B400 50%);
+   background: linear-gradient(20deg, #C3D600, #C3D600 50%, #A5B400 50%);
+   box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.3);
+   display: inline-block;
+   text-decoration: none;
+   text-transform: uppercase;
+   letter-spacing: 1px;
+   margin: 0px 0px 0px 56px;
+   padding: 7px 15px;
+   font-size: 14px;
+   font-weight: bold;
+   font-family: 'Montserrat', sans-serif;
+   transition: 0.4s ease-in-out;
+}
+a.four:hover {
+   background: -webkit-linear-gradient(-110deg, #C3D600, #C3D600 50%, #A5B400 50%);
+   background: -o-linear-gradient(-160deg, #C3D600, #C3D600 50%, #A5B400 50%);
+   background: linear-gradient(-160deg, #C3D600, #C3D600 50%, #A5B400 50%);
+}
+
+.cl {
+    position: relative;
+    margin-left: 220px;
+    margin-top: -90px;
+}
+
+input.download {
+    position: relative;
+    left: 50px;
+}
+
+#complete {
+    position: relative;
+    left: 60%;
+}
+
+.button1 {
+      position: relative;
+      top: 30px;
+      left: 50%;
+      border: none;
+      text-decoration: none;
+      margin: 8px 10px;
+      cursor: pointer;
+      width: 240px;
+      height: 50px;
+      border-radius: 45px;
+      font-weight: bold;
+      font-family: Libre Baskerville, serif;
+      font-size: 14px;
+
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 1px;
+      line-height: 35px;
+      color: white;
+      background: #5A1EB8;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
+      transition: .3s;
+      }
+
+.button1:hover {
+      background: #e52e2e;
+      box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
+      color: #461bd2000048;
+      transform: translateY(1px);
+}
+
+.button3 {
+      position: relative;
+      border: none;
+      text-decoration: none;
+      margin: 10px 40px 50px 0px;
+      cursor: pointer;
+      width: 180px;
+      height: 40px;
+      border-radius: 45px;
+      font-weight: bold;
+      font-family: Libre Baskerville, serif;
+      font-size: 14px;
+
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 1px;
+      line-height: 35px;
+      color: white;
+      background: #5A1EB8;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
+      transition: .3s;
+      }
+
+.button3:hover {
+      background: #e52e2e;
+      box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
+      color: #461bd2000048;
+      transform: translateY(1px);
+}
+
+
+.button2 {
+      position: relative;
+      margin: -50px 0px 0px 40px;
+      text-decoration: none;
+      cursor: pointer;
+      padding: 15px 20px;
+      width: 220px;
+      height: 50px;
+      border-radius: 45px;
+      font-weight: bold;
+      font-family: Libre Baskerville, serif;
+      font-size: 14px;
+
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 1px;
+      line-height: 35px;
+      color: white;
+      background: #5A1EB8;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
+      transition: .3s;
+      }
+
+.button2:hover {
+      background: #e52e2e;
+      box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
+      color: #461bd2000048;
+      transform: translateY(1px);
+}
+
+p#rk {
+    margin: 60px 0px 0px 56px;
+   padding: 7px 15px;
+   font-size: 19px;
+   font-weight: bold;
+   font-family: 'Montserrat', sans-serif;
+}
+
+/*  materials.html */
+
+.button#back {
+  position: relative;
+  top: 60px;
+  left: 70px;
+}
+
+.materials {
+   color: #000000;
+   position: relative;
+   text-decoration: none;
+   display: inline-block;
+   padding: 5px 10px;
+   letter-spacing: 1px;
+   margin: 0 20px;
+   font-size: 14px;
+   font-family: 'Fredoka One', cursive;
+   transition: .9s ease-in-out;
+}
+.materials:after {
+   content: "";
+   display: block;
+   position: relative;
+   width: 100%;
+   margin: auto;
+   border-bottom: 3px dashed #5A1EB8;
+   bottom: -5px;
+   transition: .9s ease-in-out;
+}
+.materials:hover:after {
+   width: 0;
+}
+
+.form_materials {
+    position: relative;
+    margin-left: 50%;
+    margin-top: 5%;
+    transform: translate(-50%, -50%);
+}
+
+input.mat {
+    position: relative;
+    left: 5px;
+    padding: 7px, 10px, 7px, 10px;
+    text-decoration: none;
+    cursor: pointer;
+    width: 150px;
+    height: 35px;
+    border: none;
+    border-radius: 45px;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 1px;
+    line-height: 35px;
+    color: white;
+      background: #5A1EB8;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
+    transition: .3s;
+}
+
+
+input.mat:hover {
+      background: #e52e2e;
+      box-shadow: 0 15px 20px rgba(226 229 46 / 40%);
+      color: #461bd2000048;
+      transform: translateY(1px);
+}
+
+/* utm.html */
+
+.utm_form {
+    position: absolute;
+    top: 150px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+}
+
+.s13 {
+   color: #34495e;
+   line-height: 1.2;
+   position: relative;
+   top: 30vh;
+   left: 40vw;
+   padding: 0 14px;
+   text-transform: uppercase;
+   text-decoration: none;
+   display: inline-block;
+   letter-spacing: 1px;
+   margin: 20px 0px;
+   font-size: 14px;
+   font-family: 'Fredoka One', cursive;
+   transition: .3s ease-in-out;
+}
+.s13:after {
+   content: "";
+   height: 100%;
+   min-width: 4px;
+   background: #34495e;
+   position: absolute;
+   left: 0;
+   bottom: 0;
+   transition: .5s;
+}
+.s13:hover:after {
+   min-width: 100%;
+   background: #95a5a6;
+   opacity: .35;
+}
