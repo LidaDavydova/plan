@@ -1,0 +1,43 @@
+
+#myTable th, td, input {
+    font-size: 13px;
+    text-align:center;
+}
+
+#myTable th {
+    border: 1px solid black;
+    color: white;
+    background: #1bc440;
+}
+
+#input_name {
+    border: none;
+    overflow: auto;
+    word-break: break-word;
+    outline: none;
+	-moz-appearance: none;
+    
+  }
+
+#AdRiver label {
+    padding: 10px;
+}
+
+#myTable td, textarea {
+    font-size: 13px;
+    text-align:center;
+    border: 1px;
+    border-color:#aab5ad;
+    border-style: outset;
+}
+
+#example_rows {
+    background: #d5e3d8;
+}
+
+#text_exsample{
+    transform: rotate(-90deg);
+    text-align:center;
+    position: absolute;
+    margin-top: 260px;
+}

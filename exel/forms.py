@@ -89,4 +89,4 @@ class RegisterUserForm(UserCreationForm):
         form.save()
 
         # Вызываем метод базового класса
-        return super(RegisterFormView, self).form_valid(form)
+        return super(RegisterUserForm, self).form_valid(form)

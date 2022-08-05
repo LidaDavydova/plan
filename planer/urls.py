@@ -7,7 +7,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('django.contrib.auth.urls')),
-    path('', include('exel.urls')),
+    path('office/', include('exel.urls')),
+    path('', include('client.urls')),
 ]
 
 if settings.DEBUG:

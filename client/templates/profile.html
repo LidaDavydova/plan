@@ -1,0 +1,517 @@
+<!doctype html>
+{% load static %}
+<html lang="ru">
+<head>
+  <title>{% block title %}Profile{% endblock %}</title>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.esm.min.js" integrity="sha384-sKZy8g2KJhBTFCD6cIg8d4EifJxaa8c/iYIERdeKorHWhAgZgQOfqOKMe3xBqye1" crossorigin="anonymous"></script>
+    <!-- Required meta tags  -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'profile.css' %}" type="text/css">
+    
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="row">
+            <div class="col s2 offset-s9">
+                <a class="waves-effect waves-light red btn" href="{% url 'client:logout' %}" style="margin-top: 50px;"><i class="material-icons right">exit_to_app</i>Выйти</a>
+            </div>
+        </div>
+
+        
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col s3 offset-s2">
+                    <h6>Медиакит</h6>
+                </div>
+                <div class="col s3">
+                    <div class="file-field input-field">
+                    <div class="btn">
+                        <span>File</span>
+                        <input type="file" name="mediakit">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text" value="{{profile.mediakit}}">
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 offset-s2">
+                    <h6>Прайс</h6>
+                </div>
+                <div class="col s3">
+                        <div class="file-field input-field">
+                        <div class="btn">
+                            <span>File</span>
+                            <input type="file" name="price">
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" value="{{profile.price}}">
+                        </div>
+                        </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 offset-s2">
+                    <h6>Пример размещения</h6>
+                </div>
+                <div class="col s3">
+                        <div class="file-field input-field">
+                        <div class="btn">
+                            <span>File</span>
+                            <input type="file" name="example">
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" value="{{profile.example}}">
+                        </div>
+                        </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 offset-s2">
+                    <h6>ТТ</h6>
+                </div>
+                <div class="col s3">
+                        <div class="file-field input-field">
+                        <div class="btn">
+                            <span>File</span>
+                            <input type="file" name="TT">
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" value="{{profile.TT}}">
+                        </div>
+                        </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 offset-s2">
+                    <h6>Контакты</h6>
+                </div>
+                <div class="col s6">
+                    <textarea id="textarea2" class="materialize-textarea" data-length="100" name="contacts">{{profile.contacts}}</textarea>
+                </div>
+            </div>
+            <div class="row" id="AdRiver">
+                <div class="col s3 offset-s2">
+                    <h6>AdRiver (пиксель или кликовая)</h6>
+                </div>
+                <div class="col s4" id="checkbox">
+                        <label>
+                            <input id="yes" type="checkbox" name="checkbox1" value="Да"/>
+                            <span>Да</span>
+                        </label>
+                        <label>
+                            <input id="no" type="checkbox" name="checkbox2" value="Нет"/>
+                            <span>Нет</span>
+                        </label>
+                        </br>
+                        </br>
+                        
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col s3 offset-s2">
+                    <h6>Запуск (нюансы)</h6>
+                </div>
+                <div class="col s6">
+                    <textarea id="textarea2" class="materialize-textarea" data-length="100" name="launch">{{profile.launch}}</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 offset-s2">
+                    <h6>Сезонники</h6>
+                </div>
+                <div class="col s6">
+                    <textarea id="textarea2" class="materialize-textarea" data-length="100" name="seasons">{{profile.seasons}}</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 offset-s2">
+                    <h6>Доп.аналитика/
+                        комментарии</h6>
+                </div>
+                <div class="col s6">
+                    <textarea id="textarea2" class="materialize-textarea" data-length="100" name="dop_comments">{{profile.dop_comments}}</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 offset-s2">
+                    <h6>Предоплата</h6>
+                </div>
+                <div class="col s6">
+                    <textarea id="textarea2" class="materialize-textarea" data-length="100" name="prepayment">{{profile.prepayment}}</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 offset-s2">
+                    <h6>Входной бюджет/мин объем</h6>
+                </div>
+                <div class="col s6">
+                    <textarea id="textarea2" class="materialize-textarea" data-length="100" name="budget">{{profile.budget}}</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 offset-s2">
+                    <h6>Минусы</h6>
+                </div>
+                <div class="col s6">
+                    <textarea id="textarea2" class="materialize-textarea" data-length="100" name="minuses">{{profile.minuses}}</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s3 offset-s2">
+                    <h6>Преимущества</h6>
+                </div>
+                <div class="col s6">
+                    <textarea id="textarea2" class="materialize-textarea" data-length="100" name="advantages">{{profile.minuses}}</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s2 offset-s5">
+                    <button type="submit" class="btn-floating btn-large waves-effect waves-light red" name="form_add" value="add"><i class="material-icons">check</i></button>
+                </div>
+            </div>
+        </form>
+        
+        <div class="row">
+
+        <div class="col s1">
+            <h6 id="text_exsample">Пример заполнения</h6>
+        </div>
+            <div class="col s11 offset-s1">
+                <a href="javascript://" onclick="addRow('myTable');return false;" class="waves-effect waves-light btn" style="margin-bottom: 15px;"><i class="material-icons left">add_box</i>Добавить строку</a>
+ 
+                <form method="post" enctype="multipart/form-data" id="form">
+                    {% csrf_token %}
+            
+                <table id="myTable" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Сайт</th>
+                            <th>Место размещения на сайте и таргетинги</th>
+                            <th>Размер (в пикселях) / Формат</th>
+                            <th>Тип размещения</th>
+                            <th>Единица покупки</th>
+                            <th>Общее количество единиц</th>
+                            <th>Цена 
+                                (за единицу покупки), руб.
+                                </th>
+                            <th>Наценки / Доп. Скидки</th>
+                            <th>Скидка, %</th>
+                            <th>CPM с учетом скидки</th>
+                            <th>Стоимость размещения после скидки, руб.</th>
+                            <th>Стоимость размещения после скидки, с НДС, руб.</th>
+                            <th>Количество показов</th>
+                            <th>Частота</th>
+                            <th>VTR,%</th>
+                            <th>CTR,%</th>
+                            <th>Ёмкость в месяц</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="example_rows">
+                            <td>СетьХ/название площадки</td>
+                            <td>Видеоплеер на страницах сайтов сетевое размещение  (Desktop+Mobile), гео РФ, таргетинг на интерес недвижимость</td>
+                            <td>"Видео
+                                In-ролл (до 20 секунд)"</td>
+                            <td>Динамика</td>
+                            <td>1000 показов</td>
+                            <td>500</td>
+                            <td>550,00р.</td>
+                            <td>0,75</td>
+                            <td>15%</td>
+                            <td>350,63р.</td>
+                            <td>175 312,50р.</td>
+                            <td>210 375,00р.</td>
+                            <td>500 000</td>
+                            <td>4</td>
+                            <td>65,00%</td>
+                            <td>0,40%</td>
+                            <td>30000000</td>
+                        </tr>
+                        {% for key, val in data.items %}
+                            <tr>
+                                {% for j in val %}
+                                <td>
+                                    <textarea id="input_name" name="{{key}}_{{forloop.counter}}">{{j}}</textarea>
+                                {%endfor%}
+                            </tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
+                <div class="row" style="margin-top: 10px; margin-bottom: 70px;">
+                    <div class="col s2 offset-s7">
+                        <button type="submit" class="btn-floating btn-large waves-effect waves-light red" name="form" value="Обновить" style="color:crimson"><i class="material-icons">autorenew</i></button>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+        
+        {% if request.user.is_authenticated %}
+        {%else%}
+        <div class="row">
+        <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Modal</a>
+        </div>
+        
+        <div id="modal1" class="modal" style="width: 400px;">
+            <div class="modal-content">
+                <div class="row">
+                    <div class="col s2 offset-s4">
+                        <h3>LogIn</h3>
+                    </div>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="input-field col s8 offset-s2">
+                            <input placeholder="" id="username" name="username" type="text" class="validate">
+                            <label for="username">Username</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s8 offset-s2">
+                            <input placeholder="" id="password" name="password" type="password" class="validate">
+                            <label for="password">Password</label>
+                        </div>
+                    </div>
+                <div class="row">
+                    <div class="col s2 offset-s5">
+                        <button type="submit" class="btn-floating btn-large waves-effect waves-light red" name="form_login" value="add"><i class="material-icons">check</i></button>
+                    </div>
+                </div>
+            </form>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+    <script>
+        window.onload = function () {
+            {% if 'Да' in profile.AdRiver %}
+                document.getElementById('yes').checked = true;
+
+                var form = document.getElementById('checkbox');
+                var label = document.createElement("label");
+                var inp = document.createElement("input");
+                var span = document.createElement("span");
+                inp.setAttribute("type", "checkbox");
+                inp.setAttribute("id", "click+");
+                inp.setAttribute("name", "checkbox3");
+                inp.setAttribute("value", "показ(+клик)");
+                span.innerText = "показ(+клик)";
+                label.appendChild(inp);
+                label.appendChild(span);
+                form.appendChild(label);
+                var label2 = document.createElement("label");
+                var inp2 = document.createElement("input");
+                var span2 = document.createElement("span");
+                inp2.setAttribute("type", "checkbox");
+                inp2.setAttribute("id", "click");
+                inp2.setAttribute("name", "checkbox4");
+                inp2.setAttribute("value", "клик");
+                span2.innerText = "клик";
+                label2.appendChild(inp2);
+                label2.appendChild(span2);
+                form.appendChild(label2);
+
+                {% if "'клик'" in profile.AdRiver%}
+                    document.getElementById('click').checked = true;
+                {% endif %}
+                {% if 'показ(+клик)' in profile.AdRiver %}
+                    document.getElementById('click+').checked = true;
+                {% endif %}
+            {% endif %}
+            {% if 'Нет' in profile.AdRiver %}
+                document.getElementById('no').checked = true;
+            {% endif %}
+
+
+        };
+
+            document.getElementById('no').addEventListener ("click",  function (){
+                if (document.getElementById('no').checked == true){
+                    document.getElementById('yes').checked = false;
+                    if (document.getElementById('click')) {
+                        var elem = document.getElementById('checkbox');
+                        document.getElementById('checkbox').removeChild(elem.lastElementChild);
+                        document.getElementById('checkbox').removeChild(elem.lastElementChild);
+                    }
+                    
+                }
+            }, false);
+
+        document.getElementById('yes').addEventListener ("click",  function (){
+            if (document.getElementById('yes').checked == true){
+                document.getElementById('no').checked = false;
+                var form = document.getElementById('checkbox');
+                var label = document.createElement("label");
+                var inp = document.createElement("input");
+                var span = document.createElement("span");
+                inp.setAttribute("type", "checkbox");
+                inp.setAttribute("name", "checkbox3");
+                inp.setAttribute("value", "показ(+клик)");
+                span.innerText = "показ(+клик)";
+                label.appendChild(inp);
+                label.appendChild(span);
+                form.appendChild(label);
+                var label2 = document.createElement("label");
+                var inp2 = document.createElement("input");
+                var span2 = document.createElement("span");
+                inp2.setAttribute("type", "checkbox");
+                inp2.setAttribute("id", "click");
+                inp.setAttribute("name", "checkbox4");
+                inp.setAttribute("value", "клик");
+                span2.innerText = "клик";
+                label2.appendChild(inp2);
+                label2.appendChild(span2);
+                form.appendChild(label2);
+                
+            }
+            else {
+                var elem = document.getElementById('checkbox');
+                document.getElementById('checkbox').removeChild(elem.lastElementChild);
+                document.getElementById('checkbox').removeChild(elem.lastElementChild);
+            }
+        }, false);
+        
+
+        $(function () {
+            var Modalelem = document.querySelector('.modal');
+            var instance = M.Modal.init(Modalelem);
+            instance.open();
+        });
+
+
+        
+        function addRow(id){
+        var tbody = document.getElementById(id).getElementsByTagName("tbody")[0];
+        var row = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var g = document.createElement("textarea");
+        g.setAttribute("id", "input_name");
+        g.setAttribute("name", "new_input");
+        td1.appendChild(g);
+        var td2 = document.createElement("td");
+        var g2 = document.createElement("textarea");
+        g2.setAttribute("id", "input_name");
+        g2.setAttribute("name", "new_input");
+        td2.appendChild (g2);
+        var td3 = document.createElement("td");
+        var g3 = document.createElement("textarea");
+        g3.setAttribute("id", "input_name");
+        g3.setAttribute("name", "new_input");
+        td3.appendChild (g3);
+        var td4 = document.createElement("td");
+        var g4 = document.createElement("textarea");
+        g4.setAttribute("id", "input_name");
+        g4.setAttribute("name", "new_input");
+        td4.appendChild (g4);
+        var td5 = document.createElement("td");
+        var g5 = document.createElement("textarea");
+        g5.setAttribute("id", "input_name");
+        g5.setAttribute("name", "new_input");
+        td5.appendChild (g5);
+        var td6 = document.createElement("td");
+        var g6 = document.createElement("textarea");
+        g6.setAttribute("id", "input_name");
+        g6.setAttribute("name", "new_input");
+        td6.appendChild (g6);
+        var td7 = document.createElement("td");
+        var g7 = document.createElement("textarea");
+        g7.setAttribute("id", "input_name");
+        g7.setAttribute("name", "new_input");
+        td7.appendChild (g7);
+        var td8 = document.createElement("td");
+        var g8 = document.createElement("textarea");
+        g8.setAttribute("id", "input_name");
+        g8.setAttribute("name", "new_input");
+        td8.appendChild (g8);
+        var td9 = document.createElement("td");
+        var g9 = document.createElement("textarea");
+        g9.setAttribute("id", "input_name");
+        g9.setAttribute("name", "new_input");
+        td9.appendChild (g9);
+        var td10 = document.createElement("td");
+        var g10 = document.createElement("textarea");
+        g10.setAttribute("id", "input_name");
+        g10.setAttribute("name", "new_input");
+        td10.appendChild (g10);
+        var td11 = document.createElement("td");
+        var g11 = document.createElement("textarea");
+        g11.setAttribute("id", "input_name");
+        g11.setAttribute("name", "new_input");
+        td11.appendChild (g11);
+        var td12 = document.createElement("td");
+        var g12 = document.createElement("textarea");
+        g12.setAttribute("id", "input_name");
+        g12.setAttribute("name", "new_input");
+        td12.appendChild (g12);
+        var td13 = document.createElement("td");
+        var g13 = document.createElement("textarea");
+        g13.setAttribute("id", "input_name");
+        g13.setAttribute("name", "new_input");
+        td13.appendChild (g13);
+        var td14 = document.createElement("td");
+        var g14 = document.createElement("textarea");
+        g14.setAttribute("id", "input_name");
+        g14.setAttribute("name", "new_input");
+        td14.appendChild (g14);
+        var td15 = document.createElement("td");
+        var g15 = document.createElement("textarea");
+        g15.setAttribute("id", "input_name");
+        g15.setAttribute("name", "new_input");
+        td15.appendChild (g15);
+        var td16 = document.createElement("td");
+        var g16 = document.createElement("textarea");
+        g16.setAttribute("id", "input_name");
+        g16.setAttribute("name", "new_input");
+        td16.appendChild (g16);
+        var td17 = document.createElement("td");
+        var g17 = document.createElement("textarea");
+        g17.setAttribute("id", "input_name");
+        g17.setAttribute("name", "new_input");
+        td17.appendChild (g17);
+
+        row.appendChild(td1);
+        row.appendChild(td2);
+        row.appendChild(td3);
+        row.appendChild(td4);
+        row.appendChild(td5);
+        row.appendChild(td6);
+        row.appendChild(td7);
+        row.appendChild(td8);
+        row.appendChild(td9);
+        row.appendChild(td10);
+        row.appendChild(td11);
+        row.appendChild(td12);
+        row.appendChild(td13);
+        row.appendChild(td14);
+        row.appendChild(td15);
+        row.appendChild(td16);
+        row.appendChild(td17);
+        tbody.appendChild(row);
+        }
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+from undetected_chromedriver import Chrome
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import os
+import pandas as pd
+
+import time
+
+wb = pd.read_excel(r'D:\davyd\Downloads\Новая таблица.xlsx', header=None)
+w = pd.DataFrame(wb, index=None)
+for i in wb.values:
+    print(i)
+
+
+
+class ProductWB:
+    def __init__(self, url):
+        self.success_post_count = 0
+        self.all_post_count = 0
+        self.url = url
+
+
+
+    def parse_product(self, page=0):
+        try:
+            driver.get(self.url)
+            WebDriverWait(driver, timeout=100).until(EC.presence_of_element_located((By.ID, "input_name")))
+            elements = driver.find_elements_by_id("input_name")
+            for i in elements:
+                element = i.get_attribute("value")
+                print(element)
+        except:
+            print('nooo')
+
+
+
+
+
+if __name__ != "__main__":
+    url = f"http://127.0.0.1:8000/profile#!"
+    s = Service(ChromeDriverManager().install())
+    driver = Chrome(service=s)
+    driver.get(url)
+    #WebDriverWait(driver, timeout=30).until(EC.presence_of_element_located((By.CLASS_NAME, "product-card__main.j-card-link")))
+    product_class_object = ProductWB(url=url)
+    print(product_class_object.parse_product())

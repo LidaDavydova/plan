@@ -1,0 +1,61 @@
+<!doctype html>
+{% load static %}
+<html lang="ru">
+<head>
+  <title>{% block title %}Registration{% endblock %}</title>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.esm.min.js" integrity="sha384-sKZy8g2KJhBTFCD6cIg8d4EifJxaa8c/iYIERdeKorHWhAgZgQOfqOKMe3xBqye1" crossorigin="anonymous"></script>
+    <!-- Required meta tags  <link rel="stylesheet" href="{% static 'base.css' %}" type="text/css">-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+            
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <h1>Регистрация</h1>
+            <form method="post" class="col s6">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="input-field col s6">
+                        {{form.username}}
+                        <label for="username">{{form.username.label}}</label>
+                    </div>
+                    <label>{{ form.username.errors }}</label>
+                </div>
+                <div class="row">
+                    <div class="input-field col s6">
+                        {{form.password1}}
+                        <label for="password1">{{form.password1.label}}</label>
+                    </div>
+                    <label>{{ form.password1.errors }}</label>
+                </div>
+                <div class="row">
+                    <div class="input-field col s6">
+                        {{form.password2}}
+                        <label for="password2">{{ form.password2.label }}</label>
+                    </div>
+                    <label>{{ form.password2.errors }}</label>
+                </div>
+            
+        </div>
+        <div class="row">
+            <div class="col s9 offset-s3">
+                <button type="submit" class="btn-floating btn-large waves-effect waves-light red" name="form" value="add"><i class="material-icons">add</i></button>
+            </div>
+        </div>
+    </form>
+    </div>
+    
+</body>
+</html>

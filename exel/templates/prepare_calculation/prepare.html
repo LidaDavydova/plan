@@ -1,49 +1,36 @@
-{% extends 'base.html' %}
-
 {% load static %}
 
-{% block title %}Подготовить расчет{% endblock %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <title>{% block title %}Подготовить расчет{% endblock %}</title>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.esm.min.js" integrity="sha384-sKZy8g2KJhBTFCD6cIg8d4EifJxaa8c/iYIERdeKorHWhAgZgQOfqOKMe3xBqye1" crossorigin="anonymous"></script>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="{% static 'base.css' %}" type="text/css">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+
+</head>
+<body>
+<div class="preloader">
+<div class="preloader__row">
+<div class="preloader__item"></div>
+<div class="preloader__item"></div>
+</div>
+</div>
+
+
 
 
 
 {% block content %}
 
 <div class="container">
-
-  <nav class="navbar navbar-expand-lg navbar-light bg-light" >
-    <a class="navbar-brand" href="#">
-    <img src="../static/background/pattern.png" width="30" height="30" alt="">
-    Company
-  </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-
-
-    <div class="navbar-nav mx-auto" style="font-family: 'Lobster';font-size: 18px;">
-      <!--
-      <a class="nav-item nav-link" href="{% url 'exel:main' %}">Главная <span class="sr-only">(current)</span></a>
-      -->
-      <a class="nav-item nav-link active" href="{% url 'exel:prepare' %}">Подготовить расчет</a>
-      <!--
-      <a class="nav-item nav-link" href="{% url 'exel:download_calc' %}">Загрузить расчет</a>
-
-      {% if request.user.is_superuser == 1 %}
-          {% autoescape on %}
-            <a class="nav-item nav-link disabled" href="{% url 'exel:buying' %}">Баинг</a>
-            <a class="nav-item nav-link disabled" href="{% url 'exel:dmp' %}" name="button_dmp">Баинговые приоритеты</a>
-          {% endautoescape %}
-      {% endif %}-->
-      <a class="nav-item nav-link" href="{% url 'exel:logout' %}" class="button">Выйти</a>
-      {% if user.is_authenticated %}
-          <span class="navbar-text">
-            Пользователь:</br>{{ user.username }}
-          </span>
-      {% endif %}
-    </div>
-  </div>
-  </nav>
 
     <!--<div class="prepare">-->
     <form method="post" enctype="multipart/form-data" class="form">
@@ -173,7 +160,7 @@
                 </datalist>
             </td>
       </tr>
-     -->
+
     	<tr>
             <td></td>
             <td>
@@ -197,6 +184,7 @@
                 <input name="duration3"/>секунд<br>
             </td>
     	</tr>
+      -->
     	<tr>
             <td></td>
             <td>* Период</td>
@@ -276,3 +264,5 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 
 {% endblock %}
+</body>
+</html>
