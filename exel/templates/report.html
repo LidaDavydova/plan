@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Отчеты{% endblock %}
+
+{% block content %}
+
+<body>
+    <div class="container">
+
+        <div class="row">
+            <div class="col s2 offset-s2">
+                <a class="waves-effect waves-light red btn" href="{% url 'exel:main' %}" style="margin-top: 50px;"><i class="material-icons right">launch</i>Офис</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s6 offset-s2">
+                <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                    <div class="form_report">
+                    {{ form }}
+                    
+                    <button type="submit" class="btn-floating btn-large waves-effect waves-light red" name="form_report" value="загрузить" style="color:crimson"><i class="material-icons">file_download</i></button>
+                   
+                    </div>
+
+                    <div class="formtable1">
+                        <input type="checkbox" id="button1">
+                        <div class="xpandable-block_m">
+                        <div class="tab">
+                            <table class="table_blur">
+                                {% for i in files %}
+                                    <tr>
+                                    <td>
+                                        <a href={{i.file.url}}>{{i.file.name}}</a>
+                                    </td>
+                                    </tr>
+                                {% endfor %}
+                            <tbody>
+                        </table>
+                    </div>
+                    </div>
+                    <label class="labeltable" for="button1">Показатать/Cкрыть</label>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+{% endblock %}

@@ -6,80 +6,41 @@
 
 {% block content %}
 
-<head>
-<meta http-equiv="Cache-Control" content="no-cache">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-</head>
-
-<body>
-    <div class="b">
-    <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <a href="{% url 'exel:main' %}" class="button">Главная</a>
-<!--
-    <a href="#" id="main">
-      <div id="okno">
-      <input type="button" value="Выделить все(даже список из 2 колонки)" onclick="check();">
-        <input type="button" value="Удалить все(даже список из 2 колонки)" onclick="uncheck();">
-        {%for s in seller%}
-        <div class="checkdiv">
-            <input type="checkbox" class="check" id="{{s}}" name="name" value="{{s}}" {% if s in checked_name %} checked {% endif %}/>{{s}}<br />
-        </div>
-        {%endfor%}
-        <input type="submit" class="ok" name="form1" value="OK" />
+  <div class="container">
+    <div class="row">
+      <div class="col s2 offset-s2">
+        <a href="{% url 'exel:main' %}" class="button">Главная</a>
       </div>
-    </a>
-    <a href="#main" class="sort_sell">Сортировать<br>по селлеру</a>
-
-
-    <a href="#" id="main1">
-      <div id="okno1">
-        {%for si in site%}
-            <div class="checkdiv">
-                <input type="checkbox" class="chec" id="{{si}}" name="na" value="{{si}}" {% if si in checked_na %} checked {% endif %}/>{{si}}<br />
-            </div>
-        {%endfor%}
-        <input type="submit" class="ok" name="form3" value="OK" />
-
     </div>
-    </a>
-    <a href="#main1" class="sort_site">Сортировать<br>по сайту</a>
-    -->
-    <input id="sub" type="submit" name="form4" value="Выгрузить в Excel">
-
-    <datalist id="byi">
-        {% for i in bying %}
-            <option>{{i}}</option>
-        {% endfor %}
-    </datalist>
-    <div class="b1">
-      <!--
-    <input type="text" name="plan_sum1" class="bying_dict" value="{{plan_sum}}" />
-    <input type="text" name="phact_sum1" class="bying_dict" value="{{phact_sum}}" />
-    -->
+    <div class="row">
+        <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
     <table id="myTable">
       <thead>
         <tr id="myTable">
             <th>Селлер</th>
-            <th>Сайт</th>
-            <th>План, до НДС/рубли</th>
-            <th>Факт, клиентские<br>суммы, до НДС/рубли</th>
-            <th>%</th>
+            <th>Площадка</th>
+            <th>Скидка аг-ва</th>
+            <th>Баинговые приоритеты</th>
         </tr>
     </thead>
-      {%for i in bying%}
 
-          <tr id="myTable">
-          {%for j in count%}
-              <td id="myTable"><input name="{{j}}_{{i.id}}" id="bu" value="{% cycle i.sell i.site i.plan i.phact i.procent %}"></td>
-          {% endfor %}
-          </tr>
-
-      {% endfor %}
+          {% for buyingBD in data %}
+            <tr>
+              <td>
+                <input name="seller" value="{{buyingBD.seller}}" readonly>
+              </td>
+              <td>
+                <input name="site" value="{{buyingBD.site}}" readonly>
+              </td>
+              <td><textarea id="input_name" name="sell">{{buyingBD.sell}}</textarea></td>
+              <td><textarea id="input_name" name="buying_priority">{{buyingBD.buying_priority}}</textarea></td>
+            </tr>
+          {%endfor%}
     </table>
 
-    <input id="sub1" type="submit" name="form2" value="Обновить">
-
+    <input id="sub1" type="submit" name="form_update" value="Обновить">
+    <!--
     <table id="myTable1">
         <tr id="compl">
             <td></td>
@@ -89,9 +50,10 @@
             <td></td>
         </tr>
     </table>
+    -->
+        </form>
     </div>
-    </form>
-    </div>
+  </div>
 <script>
 
 function preventDef(event) {
@@ -304,5 +266,4 @@ $('body').on('change', '.check', function(event){
 
 </script>
 -->
-</body>
 {% endblock %}

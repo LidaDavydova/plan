@@ -60,6 +60,14 @@ class DmpForm(forms.ModelForm):
         model = Dmp
         fields = ['file',]
 
+class ReportForm(forms.ModelForm):
+    class Meta:
+        model = ReportFile
+        fields = ['file',]
+        widgets = {
+            'file': ClearableFileInput(attrs={'multiple': True}),
+        }
+
 class RegisterUserForm(UserCreationForm):
     
     username = forms.CharField(label='Логин', 

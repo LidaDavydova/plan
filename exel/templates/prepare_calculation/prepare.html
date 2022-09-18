@@ -4,12 +4,22 @@
 <html lang="ru">
 <head>
   <title>{% block title %}Подготовить расчет{% endblock %}</title>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.esm.min.js" integrity="sha384-sKZy8g2KJhBTFCD6cIg8d4EifJxaa8c/iYIERdeKorHWhAgZgQOfqOKMe3xBqye1" crossorigin="anonymous"></script>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet" href="{% static 'base.css' %}" type="text/css">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -17,21 +27,11 @@
 
 </head>
 <body>
-<div class="preloader">
-<div class="preloader__row">
-<div class="preloader__item"></div>
-<div class="preloader__item"></div>
-</div>
-</div>
-
-
-
-
 
 {% block content %}
 
 <div class="container">
-
+  
     <!--<div class="prepare">-->
     <form method="post" enctype="multipart/form-data" class="form">
     {% csrf_token %}
@@ -40,203 +40,202 @@
       <div class="col">
       </div>
     </div>
+
     <h3>Общие вопросы для брифа</h3>
-    <!--<div class="title">-->
-      <div class="row">
-        <div class="col-6">
-          {{g}}
+    <div class="row">
+      <div class="col-5">
+        {{g}}
+
+        <p>{{er}}</p>
+        <table id="table">
+            <tr>
+                <td></td>
+                <td>* Клиент/Брэнд</td>
+                <td>
+                    <input name="client" list="cl"/>
+                    <datalist id="cl">
+                    {% for i in cl %}
+                        <option>{{i}}</option>
+                    {% endfor %}
+                    </datalist>
+                </td>
+          </tr>
+          <tr>
+                <td></td>
+                <td>Продукт/Кампания</td>
+                <td>
+                    <input name="product" />
+                </td>
+          </tr>
+          <tr>
+                <td></td>
+                <td>Название РК</td>
+                <td>
+                    <input name="name_rk" id="rk"/>
+                    <datalist id="rk">
+                    {% for k in n_rk %}
+                        <option>{{k}}</option>
+                    {% endfor %}
+                    </datalist>
+                </td>
+          </tr>
+          <tr>
+                <td></td>
+                <td>Посадочная</td>
+                <td>
+                    <input name="posad" type="text" />
+                </td>
+          </tr>
+          <tr>
+                <td></td>
+                <td>Вид деятельности/Категория</td>
+                <td>
+                    <input name="type_act" list="type" />
+                    <datalist id="type">
+                    <option>Авто</option>
+                    <option>Авиа</option>
+                    <option>Недвижимость</option>
+                    <option>Ресторан</option>
+                    <option>Одежда</option>
+                    <option>Бытовая техника</option>
+                    <option>Развлечения</option>
+                    <option>другое - указать(дописать)</option>
+                    </datalist>
+                </td>
+          </tr>
+          <tr>
+                <td></td>
+                <td>География</td>
+                <td>
+                  <input type="text" name="country">
+                </td>
+          </tr>
+          <tr>
+                <td></td>
+                <td>ЦА</td>
+                <td>
+                  <input type="text" name="ca">
+                </td>
+          </tr>
+          <!--
+          <tr>
+                <td></td>
+                <td>Пол</td>
+                <td>
+                    <input name="gender" list="gender" />
+                    <datalist id="gender">
+                    <option>Женщины</option>
+                    <option>Мужчины</option>
+                    <option>Все</option>
+                    </datalist>
+                </td>
+          </tr>
+          <tr>
+                <td></td>
+                <td>Возраст</td>
+                <td>
+                    <input name="age"/>
+                </td>
+          </tr>
+          <tr>
+                <td></td>
+                <td>Доп.таргетинги</td>
+                <td>
+                    <input type="text"  name="interes"/>
+                </td>
+          </tr>
+          <tr>
+                <td></td>
+                <td>Доход</td>
+                <td>
+                    <input name="income" list="income" />
+                    <datalist id="income">
+                    <option>A-низкий</option>
+                    <option>B-средний</option>
+                    <option>C-высокий</option>
+                    <option>другое - указать(дописать)</option>
+                    </datalist>
+                </td>
+          </tr>
+
+          <tr>
+                <td></td>
+                <td>
+                    Материалы<br> <br>
+                    Видео (указать длительность,<br>если будет несколько видео,
+                    <br>то указать - длинну каждого)
+                    <br>*длительность указывать желательно,<br>но не обязательно
+                    <br>*обычно не более 3 роликов<br>разной длительности
+                </td>
+                <td>
+                    <input name="materials" list="materials" />
+                    <datalist id="materials">
+                    <option>Баннеры</option>
+                    <option>Видео (указать длительность снизу)</option>
+                    <option>Видео (указать длительность снизу) и баннеры</option>
+                    <option>другое - указать</option>
+                    </datalist>
+                    <h6>Длительность:<br>(не более 3 видео)<h6>
+                    <input name="duration1"/>секунд<br>
+                    <input name="duration2"/>секунд<br>
+                    <input name="duration3"/>секунд<br>
+                </td>
+          </tr>
+          -->
+          <tr>
+                <td></td>
+                <td>* Период</td>
+                <td>
+                    <input name="period_c" type="date"/>
+                    <label>начало</label>
+                    
+                    <input name="period_p" type="date" />
+                    <label>конец</label>
+                </td>
+          </tr>
+          <tr>
+                <td></td>
+                <td>Задача, kpi</td>
+                <td>
+                    <input name="KPI" list="KPI" />
+                    <datalist id="KPI">
+                    <option>охват</option>
+                    <option>трафик</option>
+                    <option>конверсии</option>
+                    <option>охват/трафик</option>
+                    <option>другое - указать</option>
+
+                    </datalist>
+                </td>
+          </tr>
+        </table>
+      </div>
 
 
+      <div class="col-2">
+      </div>
+      <div class="col-4" id="dop">
+        <h3>Заполнить, если новый клиент(необязательно)</h3>
+        <div>
+            <input name="discount" value="3"/>
+            <label>коэф. скидки от 1 (min стоимость плана)<br>до 3 (max стоимость плана)</label>
+            
+            <input name="AK" value="10%"/>
+            <label>АК, %</label>
 
-	<div class="question">
-	<p>{{er}}</p>
-    <table id="table">
-        <tr>
-            <td></td>
-            <td>* Клиент/Брэнд</td>
-            <td>
-                <input name="client" list="cl"/>
-                <datalist id="cl">
-                {% for i in cl %}
-                    <option>{{i}}</option>
-                {% endfor %}
-                </datalist>
-            </td>
-    	</tr>
-    	<tr>
-            <td></td>
-            <td>Продукт/Кампания</td>
-            <td>
-                <input name="product" />
-            </td>
-    	</tr>
-    	<tr>
-            <td></td>
-            <td>Название РК</td>
-            <td>
-                <input name="name_rk" id="rk"/>
-                <datalist id="rk">
-                {% for k in n_rk %}
-                    <option>{{k}}</option>
-                {% endfor %}
-                </datalist>
-            </td>
-    	</tr>
-    	<tr>
-            <td></td>
-            <td>Посадочная</td>
-            <td>
-                <input name="posad" type="text" />
-            </td>
-    	</tr>
-    	<tr>
-            <td></td>
-            <td>Вид деятельности/Категория</td>
-            <td>
-                <input name="type_act" list="type" />
-                <datalist id="type">
-                <option>Авто</option>
-                <option>Авиа</option>
-                <option>Недвижимость</option>
-                <option>Ресторан</option>
-                <option>Одежда</option>
-                <option>Бытовая техника</option>
-                <option>Развлечения</option>
-                <option>другое - указать(дописать)</option>
-                </datalist>
-            </td>
-    	</tr>
-    	<tr>
-            <td></td>
-            <td>География</td>
-            <td>
-              <input type="text" name="country">
-            </td>
-    	</tr>
-      <tr>
-            <td></td>
-            <td>ЦА</td>
-            <td>
-              <input type="text" name="ca">
-            </td>
-    	</tr>
-      <!--
-    	<tr>
-            <td></td>
-            <td>Пол</td>
-            <td>
-                <input name="gender" list="gender" />
-                <datalist id="gender">
-                <option>Женщины</option>
-                <option>Мужчины</option>
-                <option>Все</option>
-                </datalist>
-            </td>
-    	</tr>
-    	<tr>
-            <td></td>
-            <td>Возраст</td>
-            <td>
-                <input name="age"/>
-            </td>
-    	</tr>
-    	<tr>
-            <td></td>
-            <td>Доп.таргетинги</td>
-            <td>
-                <input type="text"  name="interes"/>
-            </td>
-    	</tr>
-    	<tr>
-            <td></td>
-            <td>Доход</td>
-            <td>
-                <input name="income" list="income" />
-                <datalist id="income">
-                <option>A-низкий</option>
-                <option>B-средний</option>
-                <option>C-высокий</option>
-                <option>другое - указать(дописать)</option>
-                </datalist>
-            </td>
-      </tr>
+            <input name="Треккер" value="1,5р."/>
+            <label>DCM, руб.</label>
+            <br><br>
 
-    	<tr>
-            <td></td>
-            <td>
-                Материалы<br> <br>
-                Видео (указать длительность,<br>если будет несколько видео,
-                <br>то указать - длинну каждого)
-                <br>*длительность указывать желательно,<br>но не обязательно
-                <br>*обычно не более 3 роликов<br>разной длительности
-            </td>
-            <td>
-                <input name="materials" list="materials" />
-                <datalist id="materials">
-                <option>Баннеры</option>
-                <option>Видео (указать длительность снизу)</option>
-                <option>Видео (указать длительность снизу) и баннеры</option>
-                <option>другое - указать</option>
-                </datalist>
-                <h6>Длительность:<br>(не более 3 видео)<h6>
-                <input name="duration1"/>секунд<br>
-                <input name="duration2"/>секунд<br>
-                <input name="duration3"/>секунд<br>
-            </td>
-    	</tr>
-      -->
-    	<tr>
-            <td></td>
-            <td>* Период</td>
-            <td>
-                <p>начало: </p>
-                <input name="period_c" type="date"/><br><br>
-                <p>конец: </p>
-                <input name="period_p" type="date" />
-            </td>
-    	</tr>
-    	<tr>
-            <td></td>
-            <td>Задача, kpi</td>
-            <td>
-                <input name="KPI" list="KPI" />
-                <datalist id="KPI">
-                <option>охват</option>
-                <option>трафик</option>
-                <option>конверсии</option>
-                <option>охват/трафик</option>
-                <option>другое - указать</option>
-
-                </datalist>
-            </td>
-    	</tr>
-    </table>
-
-
-	</div>
-    </div>
-    <div class="col-2">
-    </div>
-    <div class="col-4" id="dop">
-      <h3>Заполнить, если новый клиент(необязательно)</h3>
-      <div>
-          <p>коэф. скидки от 1 (min стоимость плана)<br>до 3 (max стоимость плана)</p>
-          <input name="discount" value="3"/>
-          <p>АК, %</p>
-              <input name="AK" value="10%"/>
-          <p>DCM, руб.</p>
-              <input name="Треккер" value="1,5р."/>
-          <br><br>
-
-          {{form}}
+            {{form}}
+        </div>
       </div>
     </div>
-</div>
 
 
   <div class="row">
     <div class="col">
-        <input type="submit" class="button" value="РАССЧИТАТЬ">
+      <button class="btn waves-effect waves-light" type="submit" name="action">РАССЧИТАТЬ<i class="material-icons right">send</i></button>
     </div>
   </div>
 
@@ -250,13 +249,6 @@
 
 
 	<script>
-    window.onload = function () {
-      document.body.classList.add('loaded_hiding');
-      window.setTimeout(function () {
-        document.body.classList.add('loaded');
-        document.body.classList.remove('loaded_hiding');
-      }, 500);
-    }
   </script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.esm.min.js" integrity="sha384-sKZy8g2KJhBTFCD6cIg8d4EifJxaa8c/iYIERdeKorHWhAgZgQOfqOKMe3xBqye1" crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

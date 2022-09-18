@@ -1,15 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.core.files.storage import FileSystemStorage
 import pandas as pd
 import numpy as np
-import math
 from django.db.models.signals import pre_delete
-from django.core.files.base import ContentFile
-import openpyxl
-from openpyxl.styles import Alignment, Border, Side, PatternFill
 from openpyxl import load_workbook
 
 
@@ -21,6 +16,9 @@ def content_file_name(instance, filename):
 
 def content_file(instance, filename):
     return '/'.join(['clients', instance.bying_username, filename])
+
+def content_file_report(instance, filename):
+    return '/'.join(['clients', instance.username, 'reports', filename])
 
 class Profile(models.Model):
     agency = models.CharField(max_length = 60)
@@ -36,6 +34,13 @@ class Feed(models.Model):
 class FeedFile(models.Model):
     file = models.FileField(upload_to="clients/materials/%Y/%m/%d")
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE)
+
+class ReportFile(models.Model):
+    #user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.IntegerField()
+    username = models.CharField(max_length = 60)
+    file = models.FileField(upload_to=content_file_report, null=True)
+    
 
 class Complete(models.Model):
     username = models.CharField(max_length = 60)
@@ -56,11 +61,12 @@ class Cleared(models.Model):
     utm = models.FileField(upload_to = content_file_name, null=True)
 
 class All_file(models.Model):
+    user_id = models.IntegerField()
     username = models.CharField(max_length = 60)
     client = models.CharField(max_length = 50)
     name_rk = models.CharField(max_length = 200)
-    dmp = models.FileField(upload_to = content_file_name, null=True)
-    brief = models.FileField(upload_to = content_file_name, null=True)
+    #dmp = models.FileField(upload_to = content_file_name, null=True)
+    #brief = models.FileField(upload_to = content_file_name, null=True)
     report = models.FileField(upload_to = content_file_name, null=True)
     presentation = models.FileField(upload_to = content_file_name, null=True)
     comments = models.TextField(null=True)
@@ -177,50 +183,31 @@ def content(instance, img):
     return '/'.join(['clients', 'img', instance.username, img])
 
 class Brief(models.Model):
-    agency = models.CharField(max_length = 100, null=True)
     duploaded_at = models.DateTimeField(auto_now_add=True, null=True)
     username = models.CharField(max_length = 60)
+    user_id = models.IntegerField()
     client = models.CharField(max_length = 100)
     product = models.CharField(max_length = 100, null=True)
     name_rk = models.CharField(max_length = 200, null=True)
     posad = models.CharField(max_length = 300, null=True)
     description = models.CharField(max_length = 500, null=True)
-    competitors = models.CharField(max_length = 500, null=True)
     type_act = models.CharField(max_length = 60, null=True)
     country = models.CharField(max_length = 60, null=True)
     region = models.CharField(max_length = 100, null=True)
     ca = models.CharField(max_length = 150, null=True)
-    gender = models.CharField(max_length = 20, null=True)
-    age = models.CharField(max_length = 10, null=True)
-    interes = models.TextField(null=True)
-    income = models.CharField(max_length = 30, null=True)
-    rek = models.TextField(null=True)
-    materials = models.CharField(max_length = 60, null=True)
-    duration1 = models.CharField(max_length = 30, null=True)
-    duration2 = models.CharField(max_length = 30, null=True)
-    duration3 = models.CharField(max_length = 30, null=True)
     period_c = models.CharField(max_length = 10)
     period_p = models.CharField(max_length = 10)
     KPI = models.CharField(max_length = 60, null=True)
-    plan = models.TextField(null=True)
-    budget = models.CharField(max_length = 30, null=True)
-    who_prep_materials = models.CharField(max_length = 300, null=True)
     discount = models.CharField(max_length = 10, null=True)
     AK = models.CharField(max_length = 20, null=True)
     DCM = models.CharField(max_length = 20, null=True)
     img = models.ImageField('Логотип', upload_to=content)
 
 
-class Bying(models.Model):
-    agency = models.CharField(max_length = 100, null=True)
-    sell = models.CharField(max_length = 100, null=True)
+class BuyingDB(models.Model):
+    seller = models.CharField(max_length = 100, null=True)
     site = models.CharField(max_length = 100, null=True)
-    plan = models.CharField(max_length = 100, null=True)
-    phact = models.CharField(max_length = 100, null=True)
-    procent = models.CharField(max_length = 10, null=True)
+    sell = models.CharField(max_length = 100, null=True)
+    buying_priority = models.CharField(max_length = 100, null=True)
 
 
-class Dmp_priority(models.Model):
-    agency = models.CharField(max_length = 100, null=True)
-    sell = models.CharField(max_length = 100, null=True)
-    site = models.CharField(max_length = 100, null=True)

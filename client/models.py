@@ -11,10 +11,13 @@ class Profile(models.Model):
     example = models.CharField(max_length=80, blank=True, null=True)
     price = models.CharField(max_length=80, blank=True, null=True)
     mediakit = models.CharField(max_length=80, blank=True, null=True)
+    TT_text = models.CharField(max_length=80, blank=True, null=True)
+    example_text = models.CharField(max_length=80, blank=True, null=True)
+    price_text = models.CharField(max_length=80, blank=True, null=True)
+    mediakit_text = models.CharField(max_length=80, blank=True, null=True)
     AdRiver = models.CharField(max_length=20, blank=True, null=True)
     contacts = models.CharField(max_length=200, blank=True, null=True)
     launch = models.CharField(max_length=200, blank=True, null=True)
-    seasons = models.CharField(max_length=200, blank=True, null=True)
     dop_comments = models.CharField(max_length=200, blank=True, null=True)
     prepayment = models.CharField(max_length=40, blank=True, null=True)
     budget = models.CharField(max_length=40, blank=True, null=True)
@@ -28,4 +31,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+    try:
+        instance.profile.save()
+    except:
+        pass

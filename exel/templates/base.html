@@ -3,90 +3,28 @@
 <html lang="ru">
 <head>
   <title>{% block title %}Главная{% endblock %}</title>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.esm.min.js" integrity="sha384-sKZy8g2KJhBTFCD6cIg8d4EifJxaa8c/iYIERdeKorHWhAgZgQOfqOKMe3xBqye1" crossorigin="anonymous"></script>
-    <!-- Required meta tags  <link rel="stylesheet" href="{% static 'base.css' %}" type="text/css">-->
+   <!-- Required meta tags  <link rel="stylesheet" href="{% static 'base.css' %}" type="text/css">-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'base.css' %}" type="text/css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
             
 
 </head>
 <body>
-<div class="preloader">
-<div class="preloader__row">
-<div class="preloader__item"></div>
-<div class="preloader__item"></div>
-</div>
-</div>
 
 {% block content %}
 <div class="container">
-  <!--
-  <nav class="navbar navbar-expand-lg navbar-light bg-light" >
-    <a class="navbar-brand" href="#">
-    <img src="./static/background/pattern.png" width="30" height="30" alt="">
-    Company
-  </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-
-
-    <div class="navbar-nav mx-auto" style="font-family: 'Lobster';font-size: 18px;">
-      <a class="nav-item nav-link active" href="{% url 'exel:main' %}">Главная <span class="sr-only">(current)</span></a>
-      <a class="nav-item nav-link" href="{% url 'exel:prepare' %}">Подготовить расчет</a>
-      <a class="nav-item nav-link" href="{% url 'exel:download_calc' %}">Загрузить расчет</a>
-
-      {% if body == 'on' %}
-          {% autoescape on %}
-            <a class="nav-item nav-link disabled" href="{% url 'exel:buying' %}">Баинг</a>
-            <a class="nav-item nav-link disabled" href="{% url 'exel:dmp' %}" name="button_dmp">Баинговые приоритеты</a>
-          {% endautoescape %}
-      {% endif %}
-      <a class="nav-item nav-link" href="{% url 'exel:logout' %}" class="button">Выйти</a>
-      {% if user.is_authenticated %}
-          <span class="navbar-text">
-            Пользователь:</br>{{ user.username }}
-          </span>
-      {% endif %}
-    </div>
-  </div>
-  </nav>
-
-
-
-
-
-
-{{t}}
-
-
-        <a href="{% url 'exel:prepare' %}" class="button">ПОДГОТОВИТЬ РАСЧЕТ</a>
-        <a href="{% url 'exel:download_calc' %}" class="button">ЗАГРУЗИТЬ РАСЧЕТ</a>
-
-          {% if body == 'on' %}
-              {% autoescape on %}
-                  <a href="{% url 'exel:buying' %}" class="button">БАИНГ</a>
-                  <a href="{% url 'exel:dmp' %}" name="button_dmp" class="button">Баинговые приоритеты</a>
-              {% endautoescape %}
-          {% endif %}
-
-
-
-            <a href="{% url 'exel:logout' %}" class="button">Выйти</a></li>
-
-          {% if user.is_authenticated %}
-              <h3 id="user">Пользователь: {{ user.username }}</h3>
-          {% endif %}
--->
-
 
           <nav>
             <div class="nav-wrapper">
@@ -94,6 +32,8 @@
               <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a href="{% url 'exel:prepare' %}">ПОДГОТОВИТЬ РАСЧЕТ</a></li>
                 <li><a href="{% url 'exel:download_calc' %}">ЗАГРУЗИТЬ РАСЧЕТ</a></li>
+                <li><a href="{% url 'exel:buying' %}" class="button">БАИНГ</a></li>
+                <li><a href="{% url 'exel:report' %}" class="button">Отчеты</a></li>
                 <li><a href="{% url 'exel:logout' %}">Выйти</a></li>
               </ul>
             </div>
@@ -198,7 +138,7 @@
                 	{% for name in cleared %}
                     {% if forloop.counter < 4 %}
                       <tr scope="row">
-                        <td><a href="{% url 'exel:but_cleared' name.id %}" class="s1">{{name.client}}</a>
+                        <td><a href="{% url 'exel:but_cleared'%}" class="s1">{{name.client}}</a>
                         </td>
                         <td>
                         <div>
@@ -227,7 +167,7 @@
                   {% for name in cleared %}
                       {% if forloop.counter >= 4 %}
                         <tr>
-                          <td><a href="{% url 'exel:but_cleared' name.id %}">{{name.client}}</a>
+                          <td><a href="{% url 'exel:but_cleared' %}">{{name.client}}</a>
                           </td>
                           <td>
                           <div>
@@ -282,7 +222,7 @@
                 {% for name in files %}
                   {% if forloop.counter < 4 %}
                     <tr scope="row">
-                      <td><a href="{% url 'exel:but_not_cleared' name.id %}">{{name.client}}</a>
+                      <td><a href="{% url 'exel:but_not_cleared' %}">{{name.client}}</a>
                       </td>
                       <td>
                       <div>
@@ -316,7 +256,7 @@
           {% for name in files %}
             {% if forloop.counter >= 4 %}
               <tr scope="row">
-                <td><a href="{% url 'exel:but_not_cleared' name.id %}">{{name.client}}</a>
+                <td><a href="{% url 'exel:but_not_cleared'%}">{{name.client}}</a>
                 </td>
                 <td>
                 <div>
@@ -378,7 +318,7 @@
                           <td width="25%">{{name.name_rk}}</td>
                           <td width="25%">{{name.period_c}} - {{name.period_p}}</td>
                             <td width="25%">
-                                <a class="s3" href="{% url 'exel:but_cleared' name.id %}">Карточка проекта</a>
+                                <a class="s3" href="{% url 'exel:but_cleared'%}">Карточка проекта</a>
                             </td>
                   		  </tr>
                       {% endif %}
@@ -401,7 +341,7 @@
                   <td width="25%">{{name.name_rk}}</td>
                   <td width="25%">{{name.period_c}} - {{name.period_p}}</td>
                     <td width="25%">
-                        <a class="s3" href="{% url 'exel:but_cleared' name.id %}">Карточка проекта</a>
+                        <a class="s3" href="{% url 'exel:but_cleared'%}">Карточка проекта</a>
                     </td>
               </tr>
             {% endif %}
@@ -459,7 +399,7 @@
                         	<td>{{name.budget}}</td>
                         	<td>{{name.period_c}} - {{name.period_p}}</td>
                             <td>
-                                <a class="s3" href="{% url 'exel:but_cleared' name.id %}">Карточка проекта</a>
+                                <a class="s3" href="{% url 'exel:but_cleared' %}">Карточка проекта</a>
                             </td>
                 		</tr>
                 	{% endfor %}
